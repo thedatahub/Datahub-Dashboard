@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            {{ title }}
+        {% endblock %}
+    </title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+        <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
+    {% endblock %}
+</head>
+<body>
+<div class="content">
+    <div class="content-inside">
+        <nav class="navbar navbar-static-top navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/"></a>
+                </div>
+                {{ knp_menu_render('main', {'currentClass':'active'}) }}
+            </div>
+        </nav>
+        {% block body %}
+        {% endblock %}
+    </div>
+</div>
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Contact: <a href="mailto:{{ email }}?Subject={{ title }}" target="_top">{{ email }}</a></span>
+    </div>
+</footer>
+{% block javascripts %}
+    <script src="{{ asset('build/js/app.js') }}"></script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!-- use class="active" for proper background for active buttons-->
+<div class="left-menu">
+    <div class="btn-group-vertical">
+        {% set loopI = 1 %}
+
+        {% for name, sub_menus in left_menu %}
+            <p class="left-menu-level-one">{{ name }}</p>
+            {% set url_name = name|url_encode|replace({'%20': '+'}) %}
+
+            {%  for sub_name, sub_menu in sub_menus %}
+                {% set url_sub_name = sub_name|url_encode|replace({'%20': '+'}) %}
+                {% set loopI = loopI + 1 %}
+                <div id="accordion{{ loopI }}">
+                    <div class="card">
+                        <div class="card-header" id="heading{{ loopI }}">
+                            <button class="btn btn-default not-rounded sub-menu {% if name == cur_menu and sub_name == cur_sub_menu %}sub-menu-active{% endif %}" data-toggle="collapse"
+                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if name == cur_menu and sub_name == cur_sub_menu %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ sub_name }}<span class="caret"></span></button>
+                        </div>
+
+                        <div id="collapse{{ loopI }}" class="collapse {% if name == cur_menu and sub_name == cur_sub_menu %}show{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
+                            <div class="card-body">
+                                <div class="btn-group-vertical collapse collapsed-buttons">
+
+                                    {% for sub_sub_menu, call in sub_menu %}
+                                        {% set url_sub_sub_name = sub_sub_menu|url_encode|replace({'%20': '+'}) %}
+                                        <a href="{{ route ~ "&menu=" ~ url_name ~ "&submenu=" ~ url_sub_name ~ "&subsubmenu=" ~ url_sub_sub_name }}"
+                                           class="btn btn-default not-rounded collapsed-button sub-sub-menu {% if name == cur_menu and sub_name == cur_sub_menu and sub_sub_menu == cur_sub_sub_menu %}sub-sub-menu-active{% endif %}">{{ sub_sub_menu }}</a>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% endfor %}
+
+    </div>
+</div>

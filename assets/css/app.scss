@@ -1,0 +1,266 @@
+
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+
+$fa-font-path: "~font-awesome/fonts";
+
+@import '~bootstrap-sass/assets/stylesheets/bootstrap';
+
+html {
+  position: relative;
+  min-height: 100%;
+  overflow: scroll;
+}
+
+body {
+  margin-bottom: 70px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 70px;
+  line-height: 35px;
+  background-color: #f5f5f5;
+}
+
+.navbar {
+  margin-bottom: 0;
+  border-style: hidden;
+}
+
+.container-fluid {
+  max-width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.navbar-default {
+  background: #00bce4;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: black;
+  font-size: 1.25em;
+}
+
+.navbar-default .navbar-nav > li.active > a {
+  color: white;
+  background-color: transparent;
+}
+
+.navbar-default .navbar-nav > li.active > a:hover {
+  background-color: transparent;
+}
+
+.navbar-default .navbar-brand {
+  padding: 0;
+  margin-left: 10px;
+  width: 182px;
+  height: 51px;
+  background: url(../dashboard.png);
+}
+
+.main-nav {
+  margin-left: 30px;
+}
+
+.navbar > .container-fluid {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 63px;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.provider-div-home {
+  max-width: 1140px;
+  min-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(220, 220, 220);
+  border-radius: 4px;
+}
+
+.provider-div-home .select-provider {
+  margin: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.select-provider > ul {
+  width: 100%;
+}
+
+#dropdownMenuButton {
+  width: 100%;
+  text-align:left;
+  background: white;
+}
+
+#dropdownMenuButton:hover {
+  background: white;
+}
+
+#dropdownMenuButton:active {
+  background: white;
+}
+
+#main-container {
+  width: 1140px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.provider-div-report {
+  background-color: rgb(220, 220, 220);
+}
+
+.provider-div-report .select-provider {
+  width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.left-menu {
+  float: left;
+  width: 320px;
+  margin-right: 20px;
+}
+
+.btn-group-vertical {
+  width: 320px;
+}
+
+.left-menu-level-one {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+.not-rounded {
+  border-radius: 0 !important;
+  width: 100%;
+  text-align: left;
+  margin-bottom: -1px;
+}
+
+.sub-menu,.sub-menu:focus {
+  background-color: rgb(220, 220, 220);
+  border-color: #adadad;
+}
+
+.sub-sub-menu-active {
+  background-color: #5F585D;
+  color: white;
+  border-color: #adadad;
+}
+
+.sub-menu:hover, .sub-sub-menu:hover {
+  background-color: #00BCE4;
+  color: white;
+  border-color: #adadad;
+}
+
+.left-menu > button:hover {
+  background-color: rgb(220, 220, 220);
+}
+
+.collapsed-buttons {
+  width: 100%;
+}
+
+.collapsed-button {
+  padding-left: 30px;
+}
+
+.caret {
+  float: right;
+  margin-top: -12px;
+}
+
+.left-menu button[aria-expanded='false'] > .caret {
+  transform: rotate(-90deg);
+}
+
+#graph {
+  float: right;
+  width: 800px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.single-barchart {
+  float: right;
+}
+
+.bar {
+  fill: #00BCE4;
+}
+
+.bar:hover {
+  fill: #5F585D;
+}
+
+.axis > g > text {
+  font-size: 13px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  display: none;
+}
+
+.graph-label {
+  font-size: 13px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3.5px;
+}
+
+.dot {
+  stroke: #000;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 125px;
+  height: 50px;
+  padding: 4px;
+  font: 16px sans-serif;
+  color: white;
+  font-weight: 500;
+  background: black;
+  border: 0px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.grid .tick {
+  stroke: lightgrey;
+  opacity: 0.7;
+}

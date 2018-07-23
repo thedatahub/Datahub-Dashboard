@@ -1,0 +1,10 @@
+<div class="provider-div-report">
+    <div class="dropdown select-provider">
+        <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ provider }}<span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            {% for provider in providers %}
+                <li><a class="dropdown-item" href="/report?provider={{ provider|url_encode|replace({'%20': '+'}) }}">{{  provider }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
