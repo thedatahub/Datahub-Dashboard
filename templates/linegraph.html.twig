@@ -1,6 +1,6 @@
 
-    <div id="linegraph"></div>
-    <script>
+<div id="linegraph"></div>
+<script>
     //I increased the bottom margin a little bit because the x label is tied to it; so I could lower the x label a little bit
     var margin = {top: 35, right: 20, bottom: 70, left: 90},
         width = 960 - margin.left - margin.right,
@@ -64,7 +64,7 @@
     }
 
     //The format in the CSV, which d3 will read
-    data = d3.csv.parse({{ report.data|json_encode|raw }}, function(d) {
+    data = d3.csv.parse("{{ report.data|raw }}", function(d) {
         return {
             date:d.date,
             value:+d.value

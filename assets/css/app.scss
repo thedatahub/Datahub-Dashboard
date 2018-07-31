@@ -189,9 +189,13 @@ h1 {
   transform: rotate(-90deg);
 }
 
-#graph {
+#graphs {
   float: right;
   width: 800px;
+}
+
+.graph {
+  margin-bottom: 70px;
 }
 
 .title {
@@ -225,6 +229,10 @@ h1 {
 
 .graph-label {
   font-size: 13px;
+}
+
+.empty-text {
+  height: 50px;
 }
 
 .axis path,

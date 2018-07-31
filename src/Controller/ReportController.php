@@ -58,9 +58,33 @@ class ReportController extends AbstractController {
         return $this->render('report.html.twig', $data);
     }
 
+    private function generateBarChart($csvData, $header) {
+        return new Report('barchart.html.twig', 'name,value' . $csvData, $header);
+    }
+
+    private function generatePieChart($pieces) {
+        $pieChartData = '';
+        foreach($pieces as $key => $value) {
+            if(strlen($pieChartData) > 0)
+                $pieChartData .= ",";
+            $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
+        }
+        return new Report('piechart.html.twig', '[' . $pieChartData . ']');
+    }
+
+    private function generateLineChart($name, $type, $header) {
+        $maxMonths = $this->getParameter('trends.max_history_months');
+        $data = DatahubData::getTrend($this->provider, $name, $maxMonths);
+
+        $lineChartData = 'date,value';
+        foreach($data as $dataPoint)
+            $lineChartData .= '\n' . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
+        return new Report('linegraph.html.twig', $lineChartData, $header);
+    }
+
     private function fieldOverview($type) {
         $data = DatahubData::getReport($this->provider, $type);
-        $csvData = "name,value";
+        $csvData = '';
         foreach($data as $key => $value) {
             $label = null;
             if(strpos($key, '/')) {
@@ -69,44 +93,26 @@ class ReportController extends AbstractController {
             }
             else
                 $label = $this->dataDef[$key]['label'];
-            $csvData .= "\n" . $label . "," . count($value);
+            $csvData .= '\n' . $label . ',' . count($value);
         }
-        return array(new Report("barchart.html.twig", $csvData, "ingevulde records"));
+        return array($this->generateBarChart($csvData, 'Ingevulde records'));
     }
 
     private function fullRecords($name) {
         $data = DatahubData::getCompleteness($this->provider);
         $total = $data['total'];
         $done = $data[$name];
-        $pieces = array("Onvolledige records" => $total - $done, "Volledige records" => $done);
-        return array(new Report("piechart.html.twig", $this->generatePieChart($pieces)));
-    }
-
-    private function generatePieChart($pieces) {
-        $pieChartData = '';
-        $firstkey = null;
-        foreach($pieces as $key => $value) {
-            if(!$firstkey)
-                $firstkey = $key;
-            if($value > 0) {
-                if(strlen($pieChartData) > 0)
-                    $pieChartData .= ",";
-                $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
-            }
+        $pieces = array('Volledige records' => $done, 'Onvolledige records' => $total - $done);
+        $pieChart = $this->generatePieChart($pieces);
+        if($total - $done == 0 && $done > 0) {
+            $pieChart->isFull = true;
+            $pieChart->fullText = 'Dit veld is ingevuld in alle records.';
         }
-        if(strlen($pieChartData) == 0 && $firstkey)
-            $pieChartData = '{"label":"' . $firstkey . ' (0)", "value":"1"}';
-        return "[" . $pieChartData . "]";
-    }
-
-    private function trend($name) {
-        $maxMonths = $this->getParameter('trends.max_history_months');
-        $data = DatahubData::getTrend($this->provider, 'completeness', $maxMonths);
-
-        $lineChartData = "date,value";
-        foreach($data as $dataPoint)
-            $lineChartData .= "\n" . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$name];
-        return array(new Report("linegraph.html.twig", $lineChartData, "Volledig ingevulde records"));
+        else if($done == 0) {
+            $pieChart->isEmpty = true;
+            $pieChart->emptyText = 'Er zijn geen records aanwezig waarvoor dit veld is ingevuld.';
+        }
+        return array($pieChart);
     }
 
     private function minFieldOverview() {
@@ -118,7 +124,7 @@ class ReportController extends AbstractController {
     }
 
     private function minTrend() {
-        return $this->trend('minimum');
+        return array($this->generateLineChart('completeness', 'minimum', 'Volledig ingevulde records'));
     }
 
     private function basicFieldOverview() {
@@ -130,7 +136,7 @@ class ReportController extends AbstractController {
     }
 
     private function basicTrend() {
-        return $this->trend('basic');
+        return array($this->generateLineChart('completeness', 'basic', 'Volledig ingevulde records'));
     }
 
     private function extendedFieldOverview() {
@@ -151,79 +157,123 @@ class ReportController extends AbstractController {
         }
         $counts = array();
         foreach($ids as $id => $count) {
-            $count = $label . " die " . $count . "x voorkomen";
+            $count = $label . ' die ' . $count . 'x voorkomen';
             if(!array_key_exists($count, $counts))
                 $counts[$count] = 1;
             else
                 $counts[$count]++;
         }
-        return array(new Report("piechart.html.twig", $this->generatePieChart($counts)));
+        $report = $this->generatePieChart($counts);
+        $isGood = false;
+        if(count($counts) == 1 && array_key_exists($label . ' die 1x voorkomen', $counts))
+            $isGood = true;
+        if($isGood) {
+            $report->isFull = true;
+            $report->fullText = 'Alle ' . $label . ' komen exact 1x voor.';
+        }
+        return array($report);
     }
 
     private function ambigWorkPids() {
-        return $this->ambigIds('work_pid', "Work PID's");
+        return $this->ambigIds('work_pid', 'Work PID\'s');
     }
 
     private function ambigDataPids() {
-        return $this->ambigIds('data_pid', "Data PID's");
+        return $this->ambigIds('data_pid', 'Data PID\'s');
     }
 
-    private function ambigTerms($parentKey, $termKey, $idKey) {
+    private function ambigTerms($field) {
         $data = DatahubData::getAllData($this->provider);
-        $termsWithId = 0;
-        $termsWithoutId = 0;
+        $termsWithId = array();
+        $termsWithoutId = array();
+        $authorities = array();
         foreach ($data as $record) {
-            if($record->{$parentKey} && count($record->{$parentKey}) > 0) {
-                $rec = $record->{$parentKey};
+            if($record->{$field} && count($record->{$field}) > 0) {
+                $rec = $record->{$field};
                 foreach($rec as $r) {
-                    if ($r->{$termKey} && count($r->{$termKey}) > 0) {
-                        if($r->{$idKey} && count($r->{$idKey}) > 0)
-                            $termsWithId++;
-                        else
-                            $termsWithoutId++;
+                    if ($r->term && count($r->term) > 0) {
+                        if($r->id && count($r->id) > 0) {
+                            $id = $r->id[0];
+                            if(!array_key_exists($r->term[0], $termsWithId))
+                                $termsWithId[$r->term[0]] = $id;
+                            $pos = strrpos($id, '/');
+                            if($pos) {
+                                $authority = substr($id, 0, $pos);
+                                $expl = explode('/', $authority);
+                                $authority = end($expl);
+                                if (array_key_exists($authority, $authorities)) {
+                                    if(!in_array($id, $authorities[$authority]))
+                                        $authorities[$authority][] = $id;
+                                }
+                                else
+                                    $authorities[$authority] = array($id);
+                            }
+                        }
+                        else {
+                            if(!array_key_exists($r->term[0], $termsWithoutId))
+                                $termsWithoutId[$r->term[0]] = '';
+                        }
                     }
                 }
             }
         }
-        $pieces = array('Termen met ID' => $termsWithId, 'Termen zonder ID' => $termsWithoutId);
-        return array(new Report("piechart.html.twig", $this->generatePieChart($pieces)));
+
+        $pieces = array('Termen met ID' => count($termsWithId), 'Termen zonder ID' => count($termsWithoutId));
+        $pieChart = $this->generatePieChart($pieces);
+        if(count($termsWithoutId) == 0 && count($termsWithId) > 0) {
+            $pieChart->isFull = true;
+            $pieChart->fullText = 'Alle termen hebben een ID.';
+        }
+        else if(count($termsWithId) == 0) {
+            $pieChart->isEmpty = true;
+            $pieChart->emptyText = 'Er zijn geen termen met een ID.';
+        }
+
+        $csvData = '';
+        foreach($authorities as $key => $value)
+            $csvData .= '\n' . $key . ',' . count($value);
+        $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
+        if(count($authorities) == 0)
+            $barChart->isEmpty = true;
+
+        $lineChart = $this->generateLineChart('terms_with_ids', $field, 'Termen met ID');
+
+        return array($pieChart, $barChart, $lineChart);
     }
 
     private function ambigObjectName() {
-        return $this->ambigTerms('object_name', 'term', 'id');
+        return $this->ambigTerms('object_name');
     }
 
     private function ambigCatagory() {
-        return $this->ambigTerms('classification', 'term', 'id');
+        return $this->ambigTerms('classification');
     }
 
     private function ambigMainMotif() {
-        return $this->ambigTerms('main_motif', 'term', 'id');
+        return $this->ambigTerms('main_motif');
     }
 
     private function ambigCreator() {
-        return $this->ambigTerms('creator', 'name_term', 'name_id');
+        return $this->ambigTerms('creator');
     }
 
     private function ambigMaterial() {
-        return $this->ambigTerms('material', 'term', 'id');
+        return $this->ambigTerms('material');
     }
 
     private function ambigConcept() {
-        return $this->ambigTerms('displayed_concept', 'term', 'id');
+        return $this->ambigTerms('displayed_concept');
     }
 
     private function ambigSubject() {
-        return $this->ambigTerms('displayed_subject', 'term', 'id');
+        return $this->ambigTerms('displayed_subject');
     }
 
     private function ambigLocation() {
-        return $this->ambigTerms('displayed_location', 'term', 'id');
+        return $this->ambigTerms('displayed_location');
     }
 
     private function ambigEvent() {
-        return $this->ambigTerms('displayed_event', 'term', 'id');
+        return $this->ambigTerms('displayed_event');
     }
-
-
 }

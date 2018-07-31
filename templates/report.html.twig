@@ -4,11 +4,13 @@
     {% include 'providers.html.twig' %}
     <div id="main-container">
         {% include 'menu_left.html.twig' %}
-        <div id="graph">
+        <div id="graphs">
             <script src="{{ asset('d3.v3.min.js') }}"></script>
             <p class="title">{{ cur_sub_sub_menu }}</p>
             {% for report in reports %}
-                {% include report.template with {'report': report} only %}
+                <div class="graph">
+                    {% include report.template with {'report': report} only %}
+                </div>
             {% endfor %}
         </div>
     </div>

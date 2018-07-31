@@ -15,6 +15,11 @@ class Report {
     public $data;
     public $header;
 
+    public $isEmpty = false;
+    public $emptyText = '';
+    public $isFull = false;
+    public $fullText = '';
+
     public function __construct($template, $data, $header = '') {
         $this->template = $template;
         $this->data = $data;

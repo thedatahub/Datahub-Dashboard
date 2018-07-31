@@ -10,6 +10,7 @@ parameters:
     data_definition:
         # provider_name should always be present; other terms can be changed, added or removed at will
         # maximum depth is 2 (e.g. object_name:term, but not object:name:term)
+        # for ambiguity, always use "term" to identify terms and "id" to identity id's
         provider_name:
             class: 'minimum'
             label: 'Naam bewaarinstelling'
@@ -35,7 +36,7 @@ parameters:
             id:
                 class: 'extended'
                 label: 'Identificatie objectnaam'
-                xpath: 'conceptID'
+                xpath: 'conceptID[@pref="alternate"]'
         acquisition:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventMethod'
             term:
@@ -66,11 +67,11 @@ parameters:
                 xpath: 'conceptID'
         creator:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole'
-            name_term:
+            term:
                 class: 'basic'
                 label: 'Naam vervaardiger'
                 xpath: 'actor/nameActorSet/appellationValue'
-            name_id:
+            id:
                 class: 'extended'
                 label: 'Identificatie vervaardiger'
                 xpath: 'actor/actorID'
@@ -244,6 +245,18 @@ parameters:
                 class: 'extended'
                 label: 'Identificatie data provider'
                 xpath: 'legalBodyID'
+
+    terms_with_ids:
+      - 'object_name'
+      - 'classification'
+      - 'main_motif'
+      - 'creator'
+      - 'material'
+      - 'displayed_concept'
+      - 'displayed_subject'
+      - 'displayed_location'
+      - 'displayed_event'
+
 
     # Values at the right are defined in ReportController.php
     left_menu:

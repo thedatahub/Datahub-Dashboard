@@ -133,8 +133,10 @@ class FetchDataCommand extends ContainerAwareCommand {
                 break;
             }
         }
-        if (!$isIn)
+        if (!$isIn) {
             $providers[] = array('name' => $providerName);
+            echo 'Provider added: ' . $providerName . PHP_EOL;
+        }
     }
 
     private function generateAndStoreReport($dataDef, $providers) {
@@ -149,7 +151,6 @@ class FetchDataCommand extends ContainerAwareCommand {
             );
 
             $fields = array('provider' => $provider, 'minimum' => array(), 'basic' => array(), 'extended' => array());
-
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value))
                     $fields[$value['class']][$key] = array();
@@ -161,6 +162,12 @@ class FetchDataCommand extends ContainerAwareCommand {
                     }
                 }
             }
+
+            $termsWithIds = array('provider' => $provider);
+            $termIds = array();
+            $termsWithIdFields = $this->getContainer()->getParameter('terms_with_ids');
+            foreach($termsWithIdFields as $field)
+                $termIds[$field] = array();
 
             foreach ($data as $record) {
                 $minimumComplete = true;
@@ -191,14 +198,19 @@ class FetchDataCommand extends ContainerAwareCommand {
                             if (array_key_exists('xpath', $v)) {
                                 $found = false;
                                 foreach ($record as $recKey => $reco) {
-                                    if($found) break;
                                     if($recKey === $key && $reco) {
                                         foreach ($reco as $rec) {
-                                            if($found) break;
                                             if ($rec) {
                                                 try {
-                                                    if ($rec->{$k} && count($rec->{$k}) >= 1)
+                                                    if ($rec->{$k} && count($rec->{$k}) > 0) {
                                                         $found = true;
+                                                        if($k == 'term') {
+                                                            if($rec->id && count($rec->id) > 0) {
+                                                                if(!array_key_exists($rec->term[0], $termIds[$key]))
+                                                                    $termIds[$key][$rec->term[0]] = $rec->id[0];
+                                                            }
+                                                        }
+                                                    }
                                                 } catch (Exception $e) {}
                                             }
                                         }
@@ -223,7 +235,11 @@ class FetchDataCommand extends ContainerAwareCommand {
                 if ($basicComplete)
                     $completeness['basic']++;
             }
-            DatahubData::storeReport($provider, $completeness, $fields);
+
+            foreach($termIds as $key => $terms)
+                $termsWithIds[$key] = count($terms);
+
+            DatahubData::storeReport($provider, $completeness, $fields, $termsWithIds);
         }
     }
 }

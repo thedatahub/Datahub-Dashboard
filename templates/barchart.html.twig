@@ -1,34 +1,30 @@
 
-    <div id="barchart"></div>
-    <script>
-        data = d3.csv.parse({{ report.data|json_encode|raw }}, function(d) {
+<div id="barchart"></div>
+<script>
+
+    if(!{{ report.isEmpty | json_encode | raw }}) {
+        data = d3.csv.parse("{{ report.data | raw }}", function(d) {
             return {
                 name:d.name,
                 value:+d.value
             };
         });
-
-/*
-        //sort bars based on value
-        data = data.sort(function (a, b) {
-            return d3.ascending(a.value, b.value);
-        })*/
         data.reverse();
         var maxWidthL = 0;
         var maxWidthR = 0;
-        for(var i = 0; i < data.length; i++) {
-            if(data[i].name.length > maxWidthL)
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].name.length > maxWidthL)
                 maxWidthL = data[i].name.length;
-            if(data[i].value.toString().length > maxWidthR)
+            if (data[i].value.toString().length > maxWidthR)
                 maxWidthR = data[i].value.toString().length;
         }
 
         //set up svg using margin conventions - we'll need plenty of room on the left for labels
         var margin = {
-            top: 15,
-            right: maxWidthR * 10,
+            top: 25,
+            right: maxWidthR * 10 + 20,
             bottom: 15,
-            left: maxWidthL * 9
+            left: maxWidthL * 10 + 30
         };
 
         var width = 820 - margin.left - margin.right,
@@ -96,6 +92,14 @@
             .text(function (d) {
                 return d.value;
             });
-        bars.selectAll(".bar").on("click", function(d){location.assign("index.php");});
+        bars.selectAll(".bar").on("click", function (d) {
+            location.assign("index.php");
+        });
 
-    </script>
+        svg.append("text")
+            .attr("x", 0)
+            .attr("y", -10)
+            .style("text-anchor", "right")
+            .text("{{ report.header | raw }}");
+    }
+</script>
