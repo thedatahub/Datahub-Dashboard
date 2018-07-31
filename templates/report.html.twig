@@ -6,7 +6,7 @@
         {% include 'menu_left.html.twig' %}
         <div id="graphs">
             <script src="{{ asset('d3.v3.min.js') }}"></script>
-            <p class="title">{{ cur_sub_sub_menu }}</p>
+            <p class="title">{{ active_question }}</p>
             {% for report in reports %}
                 <div class="graph">
                     {% include report.template with {'report': report} only %}

@@ -151,18 +151,18 @@ h1 {
   margin-bottom: -1px;
 }
 
-.sub-menu,.sub-menu:focus {
+.menu,.menu:focus {
   background-color: rgb(220, 220, 220);
   border-color: #adadad;
 }
 
-.sub-sub-menu-active {
+.question-active {
   background-color: #5F585D;
   color: white;
   border-color: #adadad;
 }
 
-.sub-menu:hover, .sub-sub-menu:hover {
+.menu:hover, .question:hover {
   background-color: #00BCE4;
   color: white;
   border-color: #adadad;

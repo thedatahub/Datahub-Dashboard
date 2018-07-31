@@ -26,13 +26,13 @@ class ReportController extends AbstractController {
      */
     public function reports(Request $request) {
         $this->provider = urldecode($request->query->get('provider'));
-        $curMenu = urldecode($request->query->get('menu'));
-        $curSubMenu = urldecode($request->query->get('submenu'));
-        $curSubSubMenu = urldecode($request->query->get('subsubmenu'));
-        if(!$curMenu || !$curSubMenu || !$curSubSubMenu) {
-            $curMenu = 'Volledigheid';
-            $curSubMenu = 'Minimale registratie';
-            $curSubSubMenu = 'Overzicht van alle velden';
+        $category = urldecode($request->query->get('category'));
+        $menu = urldecode($request->query->get('menu'));
+        $question = urldecode($request->query->get('question'));
+        if(!$category || !$menu || !$question) {
+            $category = 'Volledigheid';
+            $menu = 'Minimale registratie';
+            $question = 'Overzicht van alle velden';
         }
         $title = $this->getParameter('title');
         $email = $this->getParameter('email');
@@ -41,7 +41,7 @@ class ReportController extends AbstractController {
             $this->dataDef = $this->getParameter('data_definition');
         $providers = DatahubData::getAllProviders();
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
-        $functionCall = $leftMenu[$curMenu][$curSubMenu][$curSubSubMenu];
+        $functionCall = $leftMenu[$category][$menu][$question];
         $reports = $this->$functionCall();
         $data = array(
             'title' => $title,
@@ -50,9 +50,9 @@ class ReportController extends AbstractController {
             'provider' => $this->provider,
             'providers' => $providers,
             'left_menu' => $leftMenu,
-            'cur_menu' => $curMenu,
-            'cur_sub_menu' => $curSubMenu,
-            'cur_sub_sub_menu' => $curSubSubMenu,
+            'active_category' => $category,
+            'active_menu' => $menu,
+            'active_question' => $question,
             'reports' => $reports
         );
         return $this->render('report.html.twig', $data);
