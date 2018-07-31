@@ -2,10 +2,21 @@
 <div id="barchart"></div>
 <script>
 
-    if(!{{ report.isEmpty | json_encode | raw }}) {
+    if({{ report.isEmpty | json_encode | raw }}) {
+        if("{{ report.emptyText | raw }}".length > 0) {
+            var para = document.createElement("p");
+            var node = document.createTextNode("{{ report.emptyText|raw }}");
+            para.setAttribute("class", "empty-text");
+            para.setAttribute("align", "center");
+            para.appendChild(node);
+            var barChart = document.getElementById("barchart");
+            barChart.appendChild(para);
+        }
+    }
+    else {
         data = d3.csv.parse("{{ report.data | raw }}", function(d) {
             return {
-                name:d.name,
+                name:d.name.replace(";", ","),
                 value:+d.value
             };
         });
@@ -22,13 +33,13 @@
         //set up svg using margin conventions - we'll need plenty of room on the left for labels
         var margin = {
             top: 25,
-            right: maxWidthR * 10 + 20,
+            right: maxWidthR * 9 + 30,
             bottom: 15,
-            left: maxWidthL * 10 + 30
+            left: maxWidthL * 9 + 30
         };
 
         var width = 820 - margin.left - margin.right,
-            height = data.length * 30;
+            height = data.length * 26;
 
         var svg = d3.select("#barchart").append("svg")
             .attr("width", width + margin.left + margin.right)

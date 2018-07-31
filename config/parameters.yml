@@ -287,6 +287,7 @@ parameters:
                 Afgebeelde gebeurtenis: 'ambigEvent'
         Rijkheid:
             Records:
+                Naam bewaarinstelling: 'richRecProviderName'
                 Objectnummer / Inventarisnummer: 'richRecObjectId'
                 Objectnummer / Data PID: 'richRecDataPid'
                 Titel: 'richRecTitle'

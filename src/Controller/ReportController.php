@@ -276,4 +276,162 @@ class ReportController extends AbstractController {
     private function ambigEvent() {
         return $this->ambigTerms('displayed_event');
     }
+
+    private function richRecs($field) {
+        $data = DatahubData::getAllData($this->provider);
+        $counts = array();
+        foreach ($data as $record) {
+            if($record->{$field} && count($record->{$field}) > 0) {
+                $count = count($record->{$field});
+                if(array_key_exists($count, $counts))
+                    $counts[$count]++;
+                else
+                    $counts[$count] = 1;
+            }
+        }
+
+        ksort($counts);
+
+        $csvData = '';
+        foreach($counts as $key => $value)
+            $csvData .= '\n' . $key . ',' . $value;
+        $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        if(count($counts) == 0) {
+            $barChart->isEmpty = true;
+            $barChart->emptyText = 'Er zijn geen records waarvoor dit veld werd ingevuld.';
+        }
+
+        return array($barChart);
+    }
+
+    private function richRecProviderName() {
+        return $this->richRecs('provider_name');
+    }
+
+    private function richRecObjectId() {
+        return $this->richRecs('database_id');
+    }
+
+    private function richRecDataPid() {
+        return $this->richRecs('data_pid');
+    }
+
+    private function richRecTitle() {
+        return $this->richRecs('title');
+    }
+
+    private function richRecShortDesc() {
+        return $this->richRecs('short_description');
+    }
+
+    private function richRecObjectName() {
+        return $this->richRecs('object_name');
+    }
+
+    private function richRecObjectCat() {
+        return $this->richRecs('classification');
+    }
+
+    private function richRecMainMotif() {
+        return $this->richRecs('main_motif');
+    }
+
+    private function richRecCreator() {
+        return $this->richRecs('creator');
+    }
+
+    private function richRecMaterial() {
+        return $this->richRecs('material');
+    }
+
+    private function richRecConcept() {
+        return $this->richRecs('displayed_concept');
+    }
+
+    private function richRecSubject() {
+        return $this->richRecs('displayed_subject');
+    }
+
+    private function richRecLocation() {
+        return $this->richRecs('displayed_location');
+    }
+
+    private function richRecEvent() {
+        return $this->richRecs('displayed_event');
+    }
+
+    private function richTerms($field) {
+        $data = DatahubData::getAllData($this->provider);
+        $counts = array();
+        foreach ($data as $record) {
+            if ($record->{$field} && count($record->{$field}) > 0) {
+                $rec = $record->{$field};
+                foreach ($rec as $r) {
+                    if ($r->term && count($r->term) > 0) {
+                        foreach($r->term as $term) {
+                            if (array_key_exists($term, $counts))
+                                $counts[$term]++;
+                            else
+                                $counts[$term] = 1;
+                        }
+                    }
+                    else {
+                        if (array_key_exists($rec, $counts))
+                            $counts[$rec]++;
+                        else
+                            $counts[$rec] = 1;
+                    }
+                }
+            }
+        }
+
+        var_dump($counts);
+
+        arsort($counts);
+
+        $csvData = '';
+        foreach($counts as $key => $value)
+            $csvData .= '\n' . str_replace(",", ";", $key) . ',' . $value;
+        $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        if(count($counts) == 0) {
+            $barChart->isEmpty = true;
+            $barChart->emptyText = 'Er zijn geen termen voor dit veld.';
+        }
+
+        return array($barChart);
+    }
+
+    private function richTermObjectName() {
+        return $this->richTerms('object_name');
+    }
+
+    private function richTermMainMotif() {
+        return $this->richTerms('main_motif');
+    }
+
+    private function richTermCreator() {
+        return $this->richTerms('creator');
+    }
+
+    private function richTermMaterial() {
+        return $this->richTerms('material');
+    }
+
+    private function richTermConcept() {
+        return $this->richTerms('displayed_concept');
+    }
+
+    private function richTermSubject() {
+        return $this->richTerms('displayed_subject');
+    }
+
+    private function richTermLocation() {
+        return $this->richTerms('displayed_location');
+    }
+
+    private function richTermEvent() {
+        return $this->richTerms('displayed_event');
+    }
+
+
 }
