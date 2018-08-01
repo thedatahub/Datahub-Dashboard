@@ -277,7 +277,7 @@ parameters:
                 Verdeling van data PID's over de records: 'ambigDataPids'
             Termen:
                 Objectnaam: 'ambigObjectName'
-                Objectcategorie: 'ambigCatagory'
+                Objectcategorie: 'ambigCategory'
                 Hoofdmotief: 'ambigMainMotif'
                 Vervaardiger: 'ambigCreator'
                 Materiaal: 'ambigMaterial'

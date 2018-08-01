@@ -19,6 +19,7 @@
     else {
         data = d3.csv.parse("{{ report.data | raw }}", function(d) {
             return {
+                field:d.field.replace(";", ","),
                 name:d.name.replace(";", ","),
                 value:+d.value
             };
@@ -107,7 +108,7 @@
                 return d.value;
             });
         bars.selectAll(".bar").on("click", function (d) {
-            location.assign("index.php");
+            location.assign("{{ route | raw }}&aspect={{ active_aspect | raw }}&parameter={{ active_parameter | raw }}&question={{ active_question | raw }}&chart={{ report.chart | raw }}&field=" + d.field);
         });
 
         svg.append("text")

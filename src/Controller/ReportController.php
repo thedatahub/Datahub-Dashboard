@@ -36,8 +36,7 @@ class ReportController extends AbstractController {
         $title = $this->getParameter('title');
         $email = $this->getParameter('email');
         $leftMenu = $this->getParameter('left_menu');
-        if(!$this->dataDef)
-            $this->dataDef = $this->getParameter('data_definition');
+        $this->dataDef = $this->getParameter('data_definition');
         $providers = DatahubData::getAllProviders();
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
@@ -59,12 +58,12 @@ class ReportController extends AbstractController {
         return $this->render('report.html.twig', $data);
     }
 
-    private function filterComma($csvData) {
+    public static function filterComma($csvData) {
         return str_replace(',', ';', $csvData);
     }
 
     private function generateBarChart($csvData, $header) {
-        return new Report('barchart.html.twig', 'name,value' . $csvData, $header);
+        return new Report('barchart', 'field,name,value' . $csvData, $header);
     }
 
     private function generatePieChart($pieces) {
@@ -74,7 +73,7 @@ class ReportController extends AbstractController {
                 $pieChartData .= ",";
             $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
         }
-        return new Report('piechart.html.twig', '[' . $pieChartData . ']');
+        return new Report('piechart', '[' . $pieChartData . ']');
     }
 
     private function generateLineChart($name, $type, $header) {
@@ -84,7 +83,7 @@ class ReportController extends AbstractController {
         $lineChartData = 'date,value';
         foreach($data as $dataPoint)
             $lineChartData .= '\n' . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
-        return new Report('linegraph.html.twig', $lineChartData, $header);
+        return new Report('linegraph', $lineChartData, $header);
     }
 
     private function fieldOverview($type) {
@@ -98,7 +97,7 @@ class ReportController extends AbstractController {
             }
             else
                 $label = $this->dataDef[$key]['label'];
-            $csvData .= '\n' . $this->filterComma($label) . ',' . count($value);
+            $csvData .= '\n' . $this->filterComma($key) . ',' . $this->filterComma($label) . ',' . count($value);
         }
         $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
         $barChart->canDownload = true;
@@ -238,7 +237,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($authorities as $key => $value)
-            $csvData .= '\n' . $this->filterComma($key) . ',' . count($value);
+            $csvData .= '\n' . $this->filterComma($field) . ',' . $this->filterComma($key) . ',' . count($value);
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         $barChart->canDownload = true;
         if(count($authorities) == 0)
@@ -253,7 +252,7 @@ class ReportController extends AbstractController {
         return $this->ambigTerms('object_name');
     }
 
-    private function ambigCatagory() {
+    private function ambigCategory() {
         return $this->ambigTerms('classification');
     }
 
@@ -302,7 +301,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . $this->filterComma($key) . ',' . $value;
+            $csvData .= '\n' . $this->filterComma($field) . $this->filterComma($key) . ',' . $value;
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
@@ -397,7 +396,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . $this->filterComma($key) . ',' . $value;
+            $csvData .= '\n' . $this->filterComma($field) . $this->filterComma($key) . ',' . $value;
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;

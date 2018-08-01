@@ -11,6 +11,7 @@ namespace App\Entity;
 
 class Report {
 
+    public $chart;
     public $template;
     public $data;
     public $header;
@@ -21,8 +22,9 @@ class Report {
     public $fullText = '';
     public $canDownload = false;
 
-    public function __construct($template, $data, $header = '') {
-        $this->template = $template;
+    public function __construct($chart, $data, $header = '') {
+        $this->chart = $chart;
+        $this->template = $chart . '.html.twig';
         $this->data = $data;
         $this->header = $header;
     }
