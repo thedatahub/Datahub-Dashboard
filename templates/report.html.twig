@@ -6,9 +6,9 @@
         {% include 'menu_left.html.twig' %}
         <div id="graphs">
             <script src="{{ asset('d3.v3.min.js') }}"></script>
-            <p class="provider-hidden">{{ provider }}</p>
+            <p class="provider-print">{{ provider }}</p>
             <div class="title-div">
-                <p class="title-hidden">{{ active_category ~ ' - ' ~ active_menu ~ ' - ' ~ active_question }}</p>
+                <p class="title-print">{{ active_category ~ ' - ' ~ active_menu ~ ' - ' ~ active_question }}</p>
                 <p class="title">{{ active_question }}</p>
                 <div class="print-icon">
                     <a href="#"><span onClick="window.print()" class="glyphicon glyphicon-print"></span></a>
