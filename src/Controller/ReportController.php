@@ -11,7 +11,6 @@ namespace App\Controller;
 
 use App\Entity\Report;
 use App\Repository\DatahubData;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,12 +40,14 @@ class ReportController extends AbstractController {
             $this->dataDef = $this->getParameter('data_definition');
         $providers = DatahubData::getAllProviders();
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
+        $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
         $functionCall = $leftMenu[$category][$menu][$question];
         $reports = $this->$functionCall();
         $data = array(
             'title' => $title,
             'email' => $email,
             'route' => $route,
+            'download' => $download,
             'provider' => $this->provider,
             'providers' => $providers,
             'left_menu' => $leftMenu,
@@ -56,6 +57,10 @@ class ReportController extends AbstractController {
             'reports' => $reports
         );
         return $this->render('report.html.twig', $data);
+    }
+
+    private function filterComma($csvData) {
+        return str_replace(',', ';', $csvData);
     }
 
     private function generateBarChart($csvData, $header) {
@@ -93,7 +98,7 @@ class ReportController extends AbstractController {
             }
             else
                 $label = $this->dataDef[$key]['label'];
-            $csvData .= '\n' . $label . ',' . count($value);
+            $csvData .= '\n' . $this->filterComma($label) . ',' . count($value);
         }
         return array($this->generateBarChart($csvData, 'Ingevulde records'));
     }
@@ -110,7 +115,7 @@ class ReportController extends AbstractController {
         }
         else if($done == 0) {
             $pieChart->isEmpty = true;
-            $pieChart->emptyText = 'Er zijn geen records aanwezig waarvoor dit veld is ingevuld.';
+            $pieChart->emptyText = 'Er zijn geen volledig ingevulde records.';
         }
         return array($pieChart);
     }
@@ -231,7 +236,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($authorities as $key => $value)
-            $csvData .= '\n' . $key . ',' . count($value);
+            $csvData .= '\n' . $this->filterComma($key) . ',' . count($value);
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         if(count($authorities) == 0)
             $barChart->isEmpty = true;
@@ -294,7 +299,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . $key . ',' . $value;
+            $csvData .= '\n' . $this->filterComma($key) . ',' . $value;
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
@@ -391,7 +396,7 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . str_replace(",", ";", $key) . ',' . $value;
+            $csvData .= '\n' . $this->filterComma($key) . ',' . $value;
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;

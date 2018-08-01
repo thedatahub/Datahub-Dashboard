@@ -129,6 +129,13 @@ h1 {
   padding-bottom: 10px;
 }
 
+.provider-hidden {
+  display: none;
+  position: absolute;
+  left: -115px;
+  top: -15px;
+}
+
 .left-menu {
   float: left;
   width: 320px;
@@ -198,11 +205,31 @@ h1 {
   margin-bottom: 70px;
 }
 
+.title-div {
+  position: relative;
+  width: 100%;
+  height: 50px;
+}
+
+.title-hidden {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  display: none;
+}
+
 .title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
   margin-top: 20px;
+}
+
+.print-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .single-barchart {
@@ -271,4 +298,35 @@ div.tooltip {
 .grid .tick {
   stroke: lightgrey;
   opacity: 0.7;
+}
+
+.csv-icon {
+  float: right;
+}
+
+.glyphicon.glyphicon-print {
+  font-size: 30px;
+}
+
+
+
+
+
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+  .left-menu, .csv-icon, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
+    display: none !important;
+  }
+  .provider-hidden, .title-hidden {
+    display: block !important;
+  }
+  @page {
+    size: auto;   /* auto is the initial value */
+    margin: 0;  /* this affects the margin in the printer settings */
+  }
+  #graphs {
+    transform: translateX(-200px);
+  }
 }

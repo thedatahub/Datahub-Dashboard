@@ -1,5 +1,6 @@
 
 <div id="barchart"></div>
+{% include 'download.html.twig' %}
 <script>
 
     if({{ report.isEmpty | json_encode | raw }}) {
