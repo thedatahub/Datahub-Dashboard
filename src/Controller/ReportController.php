@@ -25,12 +25,12 @@ class ReportController extends AbstractController {
      */
     public function reports(Request $request) {
         $this->provider = urldecode($request->query->get('provider'));
-        $category = urldecode($request->query->get('category'));
-        $menu = urldecode($request->query->get('menu'));
+        $aspect = urldecode($request->query->get('aspect'));
+        $parameter = urldecode($request->query->get('parameter'));
         $question = urldecode($request->query->get('question'));
-        if(!$category || !$menu || !$question) {
-            $category = 'Volledigheid';
-            $menu = 'Minimale registratie';
+        if(!$aspect || !$parameter || !$question) {
+            $aspect = 'Volledigheid';
+            $parameter = 'Minimale registratie';
             $question = 'Overzicht van alle velden';
         }
         $title = $this->getParameter('title');
@@ -41,7 +41,7 @@ class ReportController extends AbstractController {
         $providers = DatahubData::getAllProviders();
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
-        $functionCall = $leftMenu[$category][$menu][$question];
+        $functionCall = $leftMenu[$aspect][$parameter][$question];
         $reports = $this->$functionCall();
         $data = array(
             'title' => $title,
@@ -51,8 +51,8 @@ class ReportController extends AbstractController {
             'provider' => $this->provider,
             'providers' => $providers,
             'left_menu' => $leftMenu,
-            'active_category' => $category,
-            'active_menu' => $menu,
+            'active_aspect' => $aspect,
+            'active_parameter' => $parameter,
             'active_question' => $question,
             'reports' => $reports
         );
@@ -100,7 +100,9 @@ class ReportController extends AbstractController {
                 $label = $this->dataDef[$key]['label'];
             $csvData .= '\n' . $this->filterComma($label) . ',' . count($value);
         }
-        return array($this->generateBarChart($csvData, 'Ingevulde records'));
+        $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
+        $barChart->canDownload = true;
+        return array($barChart);
     }
 
     private function fullRecords($name) {
@@ -111,7 +113,7 @@ class ReportController extends AbstractController {
         $pieChart = $this->generatePieChart($pieces);
         if($total - $done == 0 && $done > 0) {
             $pieChart->isFull = true;
-            $pieChart->fullText = 'Dit veld is ingevuld in alle records.';
+            $pieChart->fullText = 'Alle records zijn volledig ingevuld.';
         }
         else if($done == 0) {
             $pieChart->isEmpty = true;
@@ -169,6 +171,7 @@ class ReportController extends AbstractController {
                 $counts[$count]++;
         }
         $report = $this->generatePieChart($counts);
+        $report->canDownload = true;
         $isGood = false;
         if(count($counts) == 1 && array_key_exists($label . ' die 1x voorkomen', $counts))
             $isGood = true;
@@ -201,11 +204,9 @@ class ReportController extends AbstractController {
                             $id = $r->id[0];
                             if(!array_key_exists($r->term[0], $termsWithId))
                                 $termsWithId[$r->term[0]] = $id;
-                            $pos = strrpos($id, '/');
-                            if($pos) {
-                                $authority = substr($id, 0, $pos);
-                                $expl = explode('/', $authority);
-                                $authority = end($expl);
+
+                            if($r->source && count($r->source) > 0) {
+                                $authority = $r->source[0];
                                 if (array_key_exists($authority, $authorities)) {
                                     if(!in_array($id, $authorities[$authority]))
                                         $authorities[$authority][] = $id;
@@ -225,6 +226,7 @@ class ReportController extends AbstractController {
 
         $pieces = array('Termen met ID' => count($termsWithId), 'Termen zonder ID' => count($termsWithoutId));
         $pieChart = $this->generatePieChart($pieces);
+        $pieChart->canDownload = true;
         if(count($termsWithoutId) == 0 && count($termsWithId) > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = 'Alle termen hebben een ID.';
@@ -238,6 +240,7 @@ class ReportController extends AbstractController {
         foreach($authorities as $key => $value)
             $csvData .= '\n' . $this->filterComma($key) . ',' . count($value);
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
+        $barChart->canDownload = true;
         if(count($authorities) == 0)
             $barChart->isEmpty = true;
 
@@ -389,8 +392,6 @@ class ReportController extends AbstractController {
                 }
             }
         }
-
-        var_dump($counts);
 
         arsort($counts);
 

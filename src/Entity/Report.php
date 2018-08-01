@@ -19,6 +19,7 @@ class Report {
     public $emptyText = '';
     public $isFull = false;
     public $fullText = '';
+    public $canDownload = false;
 
     public function __construct($template, $data, $header = '') {
         $this->template = $template;

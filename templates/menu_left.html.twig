@@ -3,28 +3,28 @@
     <div class="btn-group-vertical">
         {% set loopI = 1 %}
 
-        {% for category_label, category in left_menu %}
-            <p class="left-menu-level-one">{{ category_label }}</p>
-            {% set url_name = category_label|url_encode|replace({'%20': '+'}) %}
+        {% for aspect_label, aspect in left_menu %}
+            <p class="left-menu-level-one">{{ aspect_label }}</p>
+            {% set url_name = aspect_label|url_encode|replace({'%20': '+'}) %}
 
-            {%  for menu_label, menu in category %}
-                {% set url_sub_name = menu_label|url_encode|replace({'%20': '+'}) %}
+            {%  for parameter_label, parameter in aspect %}
+                {% set url_sub_name = parameter_label|url_encode|replace({'%20': '+'}) %}
                 {% set loopI = loopI + 1 %}
                 <div id="accordion{{ loopI }}">
                     <div class="card">
                         <div class="card-header" id="heading{{ loopI }}">
-                            <button class="btn btn-default not-rounded menu {% if category_label == active_category and menu_label == active_menu %}menu-active{% endif %}" data-toggle="collapse"
-                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if category_label == active_category and menu_label == active_menu %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ menu_label }}<span class="caret"></span></button>
+                            <button class="btn btn-default not-rounded parameter {% if aspect_label == active_aspect and parameter_label == active_parameter %}parameter-active{% endif %}" data-toggle="collapse"
+                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if aspect_label == active_aspect and parameter_label == active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ parameter_label }}<span class="caret"></span></button>
                         </div>
 
-                        <div id="collapse{{ loopI }}" class="collapse {% if category_label == active_category and menu_label == active_menu %}show{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
+                        <div id="collapse{{ loopI }}" class="collapse {% if aspect_label == active_aspect and parameter_label == active_parameter %}show{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
                             <div class="card-body">
                                 <div class="btn-group-vertical collapse collapsed-buttons">
 
-                                    {% for question, call in menu %}
+                                    {% for question, call in parameter %}
                                         {% set url_sub_sub_name = question|url_encode|replace({'%20': '+'}) %}
-                                        <a href="{{ route ~ "&category=" ~ url_name ~ "&menu=" ~ url_sub_name ~ "&question=" ~ url_sub_sub_name }}"
-                                           class="btn btn-default not-rounded collapsed-button question {% if category_label == active_category and menu_label == active_menu and question == active_question %}question-active{% endif %}">{{ question }}</a>
+                                        <a href="{{ route ~ "&aspect=" ~ url_name ~ "&parameter=" ~ url_sub_name ~ "&question=" ~ url_sub_sub_name }}"
+                                           class="btn btn-default not-rounded collapsed-button question {% if aspect_label == active_aspect and parameter_label == active_parameter and question == active_question %}question-active{% endif %}">{{ question }}</a>
                                     {% endfor %}
 
                                 </div>

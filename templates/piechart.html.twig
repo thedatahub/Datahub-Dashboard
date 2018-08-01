@@ -1,6 +1,8 @@
 
 <div id="piechart"></div>
-{% include 'download.html.twig' %}
+{% if report.canDownload %}
+    {% include 'download.html.twig' %}
+{% endif %}
 <script>
 
     if({{ report.isEmpty | json_encode | raw }}) {

@@ -83,7 +83,14 @@ class FetchDataCommand extends ContainerAwareCommand {
                     $res = $data->xpath($xpath);
                     if ($res) {
                         $arr = array();
+                        $sourceArr = array();
                         foreach ($res as $resChild) {
+                            if($key === 'id') {
+                                $attributes = $resChild->attributes($namespace, true);
+                                if ($attributes && $attributes->source)
+                                    $sourceArr[] = (string)$attributes->source;
+                            }
+
                             $child = (string)$resChild;
                             if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
                                 $arr[] = $child;
@@ -92,6 +99,8 @@ class FetchDataCommand extends ContainerAwareCommand {
                             }
                         }
                         $result[$key] = $arr;
+                        if($key === 'id')
+                            $result['source'] = $sourceArr;
                     } else
                         $result[$key] = null;
                 } catch (Exception $e) {

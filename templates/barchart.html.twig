@@ -1,6 +1,8 @@
 
 <div id="barchart"></div>
-{% include 'download.html.twig' %}
+{% if not report.isEmpty and report.canDownload %}
+    {% include 'download.html.twig' %}
+{% endif %}
 <script>
 
     if({{ report.isEmpty | json_encode | raw }}) {
