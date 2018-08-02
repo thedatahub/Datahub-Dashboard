@@ -1,14 +1,11 @@
 
 <div id="barchart"></div>
-{% if not report.isEmpty and report.canDownload %}
-    {% include 'download.html.twig' %}
-{% endif %}
 <script>
 
-    if({{ report.isEmpty | json_encode | raw }}) {
-        if("{{ report.emptyText | raw }}".length > 0) {
+    if({{ graph.isEmpty | json_encode | raw }}) {
+        if("{{ graph.emptyText | raw }}".length > 0) {
             var para = document.createElement("p");
-            var node = document.createTextNode("{{ report.emptyText|raw }}");
+            var node = document.createTextNode("{{ graph.emptyText|raw }}");
             para.setAttribute("class", "empty-text");
             para.setAttribute("align", "center");
             para.appendChild(node);
@@ -17,7 +14,8 @@
         }
     }
     else {
-        data = d3.csv.parse("{{ report.data | raw }}", function(d) {
+        var canDownload = {{ graph.canDownload | json_encode | raw }};
+        data = d3.csv.parse({{ graph.data | json_encode | raw }}, function(d) {
             return {
                 field:d.field.replace(";", ","),
                 name:d.name.replace(";", ","),
@@ -83,7 +81,7 @@
 
         //append rects
         bars.append("rect")
-            .attr("class", "bar")
+            .attr("class", canDownload ? "bar clickable-bar" : "bar")
             .attr("y", function (d) {
                 return y(d.name);
             })
@@ -107,14 +105,16 @@
             .text(function (d) {
                 return d.value;
             });
-        bars.selectAll(".bar").on("click", function (d) {
-            location.assign("{{ route | raw }}&aspect={{ active_aspect | raw }}&parameter={{ active_parameter | raw }}&question={{ active_question | raw }}&chart={{ report.chart | raw }}&field=" + d.field);
-        });
+        if(canDownload) {
+            bars.selectAll(".bar").on("click", function (d) {
+                location.assign("{{ route | raw }}&aspect={{ active_aspect | raw }}&parameter={{ active_parameter | raw }}&question={{ active_question | raw }}&graph={{ graph.type | raw }}&field=" + d.field);
+            });
+        }
 
         svg.append("text")
             .attr("x", 0)
             .attr("y", -10)
             .style("text-anchor", "right")
-            .text("{{ report.header | raw }}");
+            .text("{{ graph.header | raw }}");
     }
 </script>

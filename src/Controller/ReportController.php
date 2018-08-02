@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Graph;
 use App\Entity\Report;
 use App\Repository\DatahubData;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -41,7 +42,7 @@ class ReportController extends AbstractController {
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
         $functionCall = $leftMenu[$aspect][$parameter][$question];
-        $reports = $this->$functionCall();
+        $report = $this->$functionCall();
         $data = array(
             'title' => $title,
             'email' => $email,
@@ -53,17 +54,14 @@ class ReportController extends AbstractController {
             'active_aspect' => $aspect,
             'active_parameter' => $parameter,
             'active_question' => $question,
-            'reports' => $reports
+            'report' => $report
         );
         return $this->render('report.html.twig', $data);
     }
 
-    public static function filterComma($csvData) {
-        return str_replace(',', ';', $csvData);
-    }
-
     private function generateBarChart($csvData, $header) {
-        return new Report('barchart', 'field,name,value' . $csvData, $header);
+        $csvData = '"field","name","value"' . $csvData;
+        return new Graph('barchart', $csvData, $header);
     }
 
     private function generatePieChart($pieces) {
@@ -73,20 +71,20 @@ class ReportController extends AbstractController {
                 $pieChartData .= ",";
             $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
         }
-        return new Report('piechart', '[' . $pieChartData . ']');
+        return new Graph('piechart', '[' . $pieChartData . ']');
     }
 
-    private function generateLineChart($name, $type, $header) {
+    private function generateLineGraph($name, $type, $header) {
         $maxMonths = $this->getParameter('trends.max_history_months');
         $data = DatahubData::getTrend($this->provider, $name, $maxMonths);
 
         $lineChartData = 'date,value';
         foreach($data as $dataPoint)
-            $lineChartData .= '\n' . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
-        return new Report('linegraph', $lineChartData, $header);
+            $lineChartData .= PHP_EOL . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
+        return new Graph('linegraph', $lineChartData, $header);
     }
 
-    private function fieldOverview($type) {
+    private function fieldOverview($type, $title, $description) {
         $data = DatahubData::getReport($this->provider, $type);
         $csvData = '';
         foreach($data as $key => $value) {
@@ -97,14 +95,14 @@ class ReportController extends AbstractController {
             }
             else
                 $label = $this->dataDef[$key]['label'];
-            $csvData .= '\n' . $this->filterComma($key) . ',' . $this->filterComma($label) . ',' . count($value);
+            $csvData .= PHP_EOL . "'" . $key . '","' . $label . '","' . count($value) . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
         $barChart->canDownload = true;
-        return array($barChart);
+        return new Report($title, $title, $description, array($barChart));
     }
 
-    private function fullRecords($name) {
+    private function fullRecords($name, $title, $description) {
         $data = DatahubData::getCompleteness($this->provider);
         $total = $data['total'];
         $done = $data[$name];
@@ -118,43 +116,57 @@ class ReportController extends AbstractController {
             $pieChart->isEmpty = true;
             $pieChart->emptyText = 'Er zijn geen volledig ingevulde records.';
         }
-        return array($pieChart);
+        return new Report($title, $title, $description, array($pieChart));
     }
 
     private function minFieldOverview() {
-        return $this->fieldOverview('minimum');
+        return $this->fieldOverview('minimum',
+            'Minimale registratie - Overzicht velden',
+            'Korte beschrijving (todo)');
     }
 
     private function minFullRecords() {
-        return $this->fullRecords('minimum');
+        return $this->fullRecords('minimum',
+            'Minimale registratie - Volledig ingevulde records',
+            'Korte beschrijving (todo)');
     }
 
     private function minTrend() {
-        return array($this->generateLineChart('completeness', 'minimum', 'Volledig ingevulde records'));
+        $title = 'Historiek minimale registratie';
+        return new Report($title, $title, 'Korte beschrijving (todo)',
+            array($this->generateLineGraph('completeness', 'minimum', 'Volledig ingevulde records')));
     }
 
     private function basicFieldOverview() {
-        return $this->fieldOverview('basic');
+        return $this->fieldOverview('basic',
+            'Basisregistratie - Overzicht velden',
+            'Korte beschrijving (todo)');
     }
 
     private function basicFullRecords() {
-        return $this->fullRecords('basic');
+        return $this->fullRecords('basic',
+            'Basisregistratie - Volledig ingevulde records',
+            'Korte beschrijving (todo)');
     }
 
     private function basicTrend() {
-        return array($this->generateLineChart('completeness', 'basic', 'Volledig ingevulde records'));
+        $title = 'Historiek basisregistratie';
+        return new Report($title, $title, 'Korte beschrijving (todo)',
+            array($this->generateLineGraph('completeness', 'basic', 'Volledig ingevulde records')));
     }
 
     private function extendedFieldOverview() {
-        return $this->fieldOverview('extended');
+        return $this->fieldOverview('extended',
+            'Uitgebreide registratie - Overzicht velden',
+            'Korte beschrijving (todo)');
     }
 
-    private function ambigIds($name, $label) {
+    private function ambigIds($field, $label) {
         $data = DatahubData::getAllData($this->provider);
         $ids = array();
         foreach ($data as $record) {
-            if($record->{$name} && count($record->{$name}) > 0) {
-                $id = $record->{$name}[0];
+            if($record->{$field} && count($record->{$field}) > 0) {
+                $id = $record->{$field}[0];
                 if (!array_key_exists($id, $ids))
                     $ids[$id] = 1;
                 else
@@ -169,16 +181,17 @@ class ReportController extends AbstractController {
             else
                 $counts[$count]++;
         }
-        $report = $this->generatePieChart($counts);
-        $report->canDownload = true;
+        $pieChart = $this->generatePieChart($counts);
+        $pieChart->canDownload = true;
         $isGood = false;
         if(count($counts) == 1 && array_key_exists($label . ' die 1x voorkomen', $counts))
             $isGood = true;
         if($isGood) {
-            $report->isFull = true;
-            $report->fullText = 'Alle ' . $label . ' komen exact 1x voor.';
+            $pieChart->isFull = true;
+            $pieChart->fullText = 'Alle ' . $label . ' komen exact 1x voor.';
         }
-        return array($report);
+        $title = 'Ondubbelzinnigheid ' . $label;
+        return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart));
     }
 
     private function ambigWorkPids() {
@@ -237,15 +250,16 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($authorities as $key => $value)
-            $csvData .= '\n' . $this->filterComma($field) . ',' . $this->filterComma($key) . ',' . count($value);
+            $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . count($value) . '"';
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         $barChart->canDownload = true;
         if(count($authorities) == 0)
             $barChart->isEmpty = true;
 
-        $lineChart = $this->generateLineChart('terms_with_ids', $field, 'Termen met ID');
+        $lineChart = $this->generateLineGraph('terms_with_ids', $field, 'Termen met ID');
 
-        return array($pieChart, $barChart, $lineChart);
+        $title = 'Ondubbelzinnigheid ' . DownloadController::getFieldLabel($field, $this->dataDef);
+        return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart, $barChart, $lineChart));
     }
 
     private function ambigObjectName() {
@@ -301,14 +315,15 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . $this->filterComma($field) . $this->filterComma($key) . ',' . $value;
+            $csvData .= PHP_EOL . '"' . $field . '","'. $key . '","' . $value . '"';
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = 'Er zijn geen records waarvoor dit veld werd ingevuld.';
         }
 
-        return array($barChart);
+        $title = 'Rijkheid ' . DownloadController::getFieldLabel($field, $this->dataDef) . ' in records';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
     }
 
     private function richRecProviderName() {
@@ -396,14 +411,15 @@ class ReportController extends AbstractController {
 
         $csvData = '';
         foreach($counts as $key => $value)
-            $csvData .= '\n' . $this->filterComma($field) . $this->filterComma($key) . ',' . $value;
+            $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . $value . '"';
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = 'Er zijn geen termen voor dit veld.';
         }
 
-        return array($barChart);
+        $title = 'Rijkheid ' . DownloadController::getFieldLabel($field, $this->dataDef);
+        return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
     }
 
     private function richTermObjectName() {
@@ -438,5 +454,33 @@ class ReportController extends AbstractController {
         return $this->richTerms('displayed_event');
     }
 
+    private function openWorkRecords() {
+        $title = 'Openheid werk - records';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
 
+    private function openWorkTerms() {
+        $title = 'Openheid werk - termen';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
+
+    private function openDigRepRecords() {
+        $title = 'Openheid digitale representatie - records';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
+
+    private function openDigRepTerms() {
+        $title = 'Openheid digitale representatie - termen';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
+
+    private function openRecordRecords() {
+        $title = 'Openheid record - records';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
+
+    private function openRecordTerms() {
+        $title = 'Openheid record - termen';
+        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+    }
 }

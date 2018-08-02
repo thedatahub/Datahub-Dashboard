@@ -129,7 +129,7 @@ h1 {
   padding-bottom: 10px;
 }
 
-.provider-print {
+.print-provider {
   display: none;
   position: absolute;
   left: -115px;
@@ -211,7 +211,7 @@ h1 {
   height: 50px;
 }
 
-.title-print {
+.print-title {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
@@ -224,6 +224,11 @@ h1 {
   font-weight: bold;
   text-align: center;
   margin-top: 20px;
+}
+
+.description {
+  margin-left: 40px;
+  margin-bottom: 40px;
 }
 
 .print-icon {
@@ -240,7 +245,7 @@ h1 {
   fill: #00BCE4;
 }
 
-.bar:hover {
+.clickable-bar:hover {
   fill: #5F585D;
 }
 
@@ -319,7 +324,7 @@ div.tooltip {
   .left-menu, .csv-icon, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
     display: none !important;
   }
-  .provider-print, .title-print {
+  .print-provider, .print-title {
     display: block !important;
   }
   @page {

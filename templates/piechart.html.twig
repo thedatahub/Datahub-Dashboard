@@ -1,13 +1,13 @@
 
 <div id="piechart"></div>
-{% if report.canDownload %}
+{% if graph.canDownload %}
     {% include 'download.html.twig' %}
 {% endif %}
 <script>
 
-    if({{ report.isEmpty | json_encode | raw }}) {
+    if({{ graph.isEmpty | json_encode | raw }}) {
         var para = document.createElement("p");
-        var node = document.createTextNode("{{ report.emptyText|raw }}");
+        var node = document.createTextNode("{{ graph.emptyText|raw }}");
         para.setAttribute("class", "empty-text");
         para.setAttribute("align", "center");
         para.appendChild(node);
@@ -22,7 +22,7 @@
         var down = 25;
         var cols = ["#00BCE4", "#FFFFFF", "#5F585D"];
 
-        var data = {{ report.data | raw }};
+        var data = {{ graph.data | raw }};
         var vis = d3.select('#piechart')
             .append("svg:svg")
             .data([data])
@@ -62,10 +62,9 @@
             });
 
 
-        if({{ report.isFull | json_encode | raw }}) {
-
+        if({{ graph.isFull | json_encode | raw }}) {
             var para = document.createElement("p");
-            var node = document.createTextNode("{{ report.fullText|raw }}");
+            var node = document.createTextNode("{{ graph.fullText | raw }}");
             para.setAttribute("align", "center");
             para.appendChild(node);
             var pieChart = document.getElementById("piechart");

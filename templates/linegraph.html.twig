@@ -64,7 +64,7 @@
     }
 
     //The format in the CSV, which d3 will read
-    data = d3.csv.parse("{{ report.data|raw }}", function(d) {
+    data = d3.csv.parse("{{ graph.data | raw }}", function(d) {
         return {
             date:d.date,
             value:+d.value
@@ -203,7 +203,7 @@
         .attr("transform", "rotate(-90)")
         .style("text-anchor", "end")
         .style("font-size", "16px")
-        .text({{ report.header|json_encode|raw }});
+        .text("{{ graph.header | raw }}");
 
     svg.append("g")
         .attr("class", "y axis")

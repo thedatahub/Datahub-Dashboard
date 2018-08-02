@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: mike
- * Date: 7/9/18
- * Time: 12:51 PM
+ * Date: 8/2/18
+ * Time: 11:55 AM
  */
 
 namespace App\Entity;
@@ -11,21 +11,15 @@ namespace App\Entity;
 
 class Report {
 
-    public $chart;
-    public $template;
-    public $data;
-    public $header;
+    public $title;
+    public $printTitle;
+    public $description;
+    public $graphs;
 
-    public $isEmpty = false;
-    public $emptyText = '';
-    public $isFull = false;
-    public $fullText = '';
-    public $canDownload = false;
-
-    public function __construct($chart, $data, $header = '') {
-        $this->chart = $chart;
-        $this->template = $chart . '.html.twig';
-        $this->data = $data;
-        $this->header = $header;
+    public function __construct($title, $printTitle, $description, $graphs) {
+        $this->title = $title;
+        $this->printTitle = $printTitle;
+        $this->description = $description;
+        $this->graphs = $graphs;
     }
 }
