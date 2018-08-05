@@ -80,7 +80,7 @@ class ReportController extends AbstractController {
 
         $lineChartData = 'date,value';
         foreach($data as $dataPoint)
-            $lineChartData .= PHP_EOL . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
+            $lineChartData .= '\n' . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
         return new Graph('linegraph', $lineChartData, $header);
     }
 
