@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mike
- * Date: 6/28/18
- * Time: 10:43 AM
- */
-
 namespace AppBundle\Menu;
 
 use Knp\Menu\FactoryInterface;
@@ -14,11 +7,13 @@ class MenuBuilder
 {
     private $factory;
 
-    public function __construct(FactoryInterface $factory) {
+    public function __construct(FactoryInterface $factory)
+    {
         $this->factory = $factory;
     }
 
-    public function createMainMenu() {
+    public function createMainMenu()
+    {
         $menu = $this->factory->createItem('root');
 
         $menu->setChildrenAttributes(array('class' => 'nav navbar-nav main-nav navbar-right'));

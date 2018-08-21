@@ -6,54 +6,35 @@ use AppBundle\PhpD3\Builder\Graphs\LineGraph;
 use AppBundle\PhpD3\Builder\Charts\PieChart;
 use AppBundle\PhpD3\Builder\Graphs\BarGraph;
 
-// ref: https://github.com/d3/d3/wiki/Gallery
-
-class Draw{
-
+class Draw
+{
     private $data;
     public $chart;
 
-    function __construct($type, $chart_data=array())
+    function __construct($type, $chartData = array())
     {
-        $this->data = $chart_data;
-        if($type){
-            switch($type){
-
+        $this->data = $chartData;
+        if($type) {
+            switch($type) {
             case 'simple_pie_chart';
-                
-                $built_chart = $this->simplePieChart();
-
-                $this->chart = $this->load($built_chart);
-                
+                $builtChart = $this->simplePieChart();
+                $this->chart = $this->load($builtChart);
                 break;
-
             case 'simple_bar_graph';
-
-                $built_chart = $this->simpleBarGraph();
-
-                $this->chart = $this->load($built_chart);
-
+                $builtChart = $this->simpleBarGraph();
+                $this->chart = $this->load($builtChart);
                 break;
-
             case 'dual_scale_bar_graph';
-
-                $built_chart = $this->dualScaleBarGraph();
-
-                $this->chart = $this->load($built_chart);
-
+                $builtChart = $this->dualScaleBarGraph();
+                $this->chart = $this->load($builtChart);
                 break;
-
             case 'simple_line_graph';
-
-                $built_chart = $this->simpleLineGraph();
-
-                $this->chart = $this->load($built_chart);
-
+                $builtChart = $this->simpleLineGraph();
+                $this->chart = $this->load($builtChart);
                 break;
     
             }
         }
-
     }
 
     public function __toString()
@@ -65,21 +46,21 @@ class Draw{
      * Render the finished chart
      * @return string
      */
-    public function render(){
+    public function render()
+    {
         return $this->chart;
     }
-
 
     /**
      * Add the "<script>" wrapper
      * @param string $built_chart
      * @return string
      */
-    function load($built_chart=''){
-        $load='<script type="text/javascript">';
-        $load.=$built_chart;
-        $load.='</script>';
-
+    function load($built_chart = '')
+    {
+        $load = '<script type="text/javascript">';
+        $load .= $built_chart;
+        $load .= '</script>';
         return $load;
     }
     
@@ -88,10 +69,9 @@ class Draw{
      *
      * @return PieChart
      */
-    private function simplePieChart(){
-
+    private function simplePieChart()
+    {
         $render = new PieChart($this->data);
-        
         return $render;
     }
 
@@ -101,10 +81,9 @@ class Draw{
      * 
      * @return BarGraph
      */
-    private function simpleBarGraph(){
-
+    private function simpleBarGraph()
+    {
         $render = new BarGraph($this->data);
-
         return $render;
     }
 
@@ -114,10 +93,9 @@ class Draw{
      *
      * @return DualScaleBarGraph
      */
-    private function dualScaleBarGraph(){
-
+    private function dualScaleBarGraph()
+    {
         $render = new DualScaleBarGraph($this->data);
-
         return $render;
     }
 
@@ -127,12 +105,9 @@ class Draw{
      *
      * @return LineGraph
      */
-    private function simpleLineGraph(){
-
+    private function simpleLineGraph()
+    {
         $render = new LineGraph($this->data);
-
         return $render;
     }
-
-
 }

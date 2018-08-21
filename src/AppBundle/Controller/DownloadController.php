@@ -1,22 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mike
- * Date: 7/31/18
- * Time: 4:22 PM
- */
-
 namespace AppBundle\Controller;
 
-
 use AppBundle\Repository\DatahubData;
+use AppBundle\Util\RecordUtil;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DownloadController extends Controller {
+class DownloadController extends Controller
+{
 
     private $provider = null;
     private $dataDef = null;
@@ -25,7 +19,8 @@ class DownloadController extends Controller {
     /**
      * @Route("/download", name="download")
      */
-    public function download(Request $request) {
+    public function download(Request $request)
+    {
         $this->provider = urldecode($request->query->get('provider'));
         $aspect = urldecode($request->query->get('aspect'));
         $parameter = urldecode($request->query->get('parameter'));
@@ -62,48 +57,39 @@ class DownloadController extends Controller {
         }
     }
 
-    public static function getFieldLabel($field, $dataDef) {
-        $label = '';
-        if(strpos($field, '/')) {
-            $parts = explode('/', $field);
-            $label = $dataDef[$parts[0]][$parts[1]]['label'];
-        }
-        else {
-            $def = $dataDef[$field];
-            if(array_key_exists('label', $def))
-                $label = $def['label'];
-            else if(array_key_exists('term', $def))
-                $label = $def['term']['label'];
-        }
-        return $label;
-    }
-
-    private function extractFieldFromRecord($record, $field) {
+    private function extractFieldFromRecord($record, $field)
+    {
         if(strpos($field, '/')) {
             $parts = explode('/', $field);
             if($record->{$parts[0]} && count($record->{$parts[0]}) > 0) {
                 foreach($record->{$parts[0]} as $part) {
-                    if($part->{$parts[1]} && count($part->{$parts[1]}))
+                    if($part->{$parts[1]} && count($part->{$parts[1]})) {
                         return $part->{$parts[1]};
+                    }
                 }
             }
         }
-        else if($record->{$field} && count($record->{$field}))
+        elseif($record->{$field} && count($record->{$field})) {
             return $record->{$field};
+        }
         return null;
     }
 
-    private function getRecordIds($record) {
+    private function getRecordIds($record)
+    {
         $applicationId = '';
-        if ($record->application_id && count($record->application_id) > 0)
+        if ($record->application_id && count($record->application_id) > 0) {
             $applicationId = $record->application_id[0];
+        }
         $objectNumber = '';
-        if ($record->object_number && count($record->object_number) > 0)
+        if ($record->object_number && count($record->object_number) > 0) {
             $objectNumber = $record->object_number[0];
+        }
         return array($applicationId, $objectNumber);
     }
 
-    private function fieldOverview() {
+    private function fieldOverview()
+    {
         $data = DatahubData::getAllData($this->provider);
 
         $csvData = '';
@@ -113,43 +99,52 @@ class DownloadController extends Controller {
             $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . ($part ? 'ingevuld' : 'niet ingevuld');
         }
 
-        $label = $this->getFieldLabel($this->field, $this->dataDef);
+        $label = RecordUtil::getFieldLabel($this->field, $this->dataDef);
 
         return 'Applicatie ID,Objectnummer,' . $label . $csvData;
     }
 
-    private function minFieldOverviewBarchart() {
+    private function minFieldOverviewBarchart()
+    {
         return $this->fieldOverview();
     }
 
-    private function basicFieldOverviewBarchart() {
+    private function basicFieldOverviewBarchart()
+    {
         return $this->fieldOverview();
     }
 
-    private function extendedFieldOverviewBarchart() {
+    private function extendedFieldOverviewBarchart()
+    {
         return $this->fieldOverview();
     }
 
-    private function ambigIdsCmp($a, $b) {
-        if($a['count'] == 0)
+    private function ambigIdsCmp($a, $b)
+    {
+        if($a['count'] == 0) {
             return 1;
-        if($b['count'] == 0)
+        } elseif($b['count'] == 0) {
             return -1;
-        if ($a['count'] == $b['count'])
+        } elseif ($a['count'] == $b['count']) {
             return 0;
-        return ($a['count'] < $b['count']) ? 1 : -1;
+        } else {
+            return ($a['count'] < $b['count']) ? 1 : -1;
+        }
     }
 
-    private function ambigIds($field, $label) {
+    private function ambigIds($field, $label)
+    {
         $data = DatahubData::getAllData($this->provider);
         $ids = array();
         foreach ($data as $record) {
             if($record->{$field} && count($record->{$field}) > 0) {
                 $id = $record->{$field}[0];
-                if (!array_key_exists($id, $ids))
+                if (!array_key_exists($id, $ids)) {
                     $ids[$id] = 1;
-                else
+                }
+                else {
                     $ids[$id]++;
+                }
             }
         }
 
@@ -169,21 +164,25 @@ class DownloadController extends Controller {
         usort($csvArray, array('App\Controller\DownloadController', 'ambigIdsCmp'));
 
         $csvData = '';
-        foreach($csvArray as $csvLine)
+        foreach($csvArray as $csvLine) {
             $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['id'] . '","' . $csvLine['count'] . '"';
+        }
 
         return 'Applicatie ID,Objectnummer,' . $label . ',Aantal voorkomens' . $csvData;
     }
 
-    private function ambigWorkPidsPiechart() {
+    private function ambigWorkPidsPiechart()
+    {
         return $this->ambigIds('work_pid', 'Work PID');
     }
 
-    private function ambigDataPidsPiechart() {
+    private function ambigDataPidsPiechart()
+    {
         return $this->ambigIds('data_pid', 'Data PID');
     }
 
-    private function ambigtermPie($field) {
+    private function ambigtermPie($field)
+    {
         $data = DatahubData::getAllData($this->provider);
 
         $termsWithId = array();
@@ -195,12 +194,14 @@ class DownloadController extends Controller {
                     if ($r->term && count($r->term) > 0) {
                         if($r->id && count($r->id) > 0) {
                             $id = $r->id[0];
-                            if(!array_key_exists($r->term[0], $termsWithId))
+                            if(!array_key_exists($r->term[0], $termsWithId)) {
                                 $termsWithId[$r->term[0]] = $id;
+                            }
                         }
                         else {
-                            if(!array_key_exists($r->term[0], $termsWithoutId))
+                            if(!array_key_exists($r->term[0], $termsWithoutId)) {
                                 $termsWithoutId[$r->term[0]] = '';
+                            }
                         }
                     }
                 }
@@ -208,17 +209,20 @@ class DownloadController extends Controller {
         }
 
         $csvData = '';
-        foreach($termsWithId as $term => $id)
+        foreach($termsWithId as $term => $id) {
             $csvData .= PHP_EOL . '"' . $term . '","' . $id . '",ingevuld';
-        foreach($termsWithoutId as $term => $id)
+        }
+        foreach($termsWithoutId as $term => $id) {
             $csvData .= PHP_EOL . '"' . $term . '",,niet ingevuld';
+        }
 
-        $label = $this->getFieldLabel($field, $this->dataDef);
+        $label = RecordUtil::getFieldLabel($field, $this->dataDef);
 
         return $label . ',Persistente ID,Aanwezig' . $csvData;
     }
 
-    private function ambigtermBar($field) {
+    private function ambigtermBar($field)
+    {
         $data = DatahubData::getAllData($this->provider);
 
         $termsWithId = array();
@@ -229,10 +233,12 @@ class DownloadController extends Controller {
                     if ($r->term && count($r->term) > 0) {
                         if($r->id && count($r->id) > 0) {
                             $id = $r->id[0];
-                            if(!array_key_exists($r->term[0], $termsWithId))
+                            if(!array_key_exists($r->term[0], $termsWithId)) {
                                 $termsWithId[$r->term[0]] = array($id);
-                            else if(!in_array($id, $termsWithId[$r->term[0]]))
+                            }
+                            elseif(!in_array($id, $termsWithId[$r->term[0]])) {
                                 $termsWithId[$r->term[0]][] = $id;
+                            }
                         }
                     }
                 }
@@ -241,84 +247,103 @@ class DownloadController extends Controller {
 
         $csvData = '';
         foreach($termsWithId as $term => $id) {
-            foreach($id as $i)
+            foreach($id as $i) {
                 $csvData .= PHP_EOL . '"' . $term . '","' . $i . '",';
+            }
         }
 
-        $label = $this->getFieldLabel($field, $this->dataDef);
+        $label = RecordUtil::getFieldLabel($field, $this->dataDef);
 
         return $label . ',Persistente ID' . $csvData;
     }
 
-    private function ambigObjectNamePiechart() {
+    private function ambigObjectNamePiechart()
+    {
         return $this->ambigtermPie('object_name');
     }
 
-    private function ambigObjectNameBarchart() {
+    private function ambigObjectNameBarchart()
+    {
         return $this->ambigtermBar('object_name');
     }
 
-    private function ambigCategoryPiechart() {
+    private function ambigCategoryPiechart()
+    {
         return $this->ambigtermPie('category');
     }
 
-    private function ambigCategoryBarchart() {
+    private function ambigCategoryBarchart()
+    {
         return $this->ambigtermBar('category');
     }
 
-    private function ambigMainMotifPiechart() {
+    private function ambigMainMotifPiechart()
+    {
         return $this->ambigtermPie('main_motif');
     }
 
-    private function ambigMainMotifBarchart() {
+    private function ambigMainMotifBarchart()
+    {
         return $this->ambigtermBar('main_motif');
     }
 
-    private function ambigCreatorPiechart() {
+    private function ambigCreatorPiechart()
+    {
         return $this->ambigtermPie('creator');
     }
 
-    private function ambigCreatorBarchart() {
+    private function ambigCreatorBarchart()
+    {
         return $this->ambigtermBar('creator');
     }
 
-    private function ambigMaterialPiechart() {
+    private function ambigMaterialPiechart()
+    {
         return $this->ambigtermPie('material');
     }
 
-    private function ambigMaterialBarchart() {
+    private function ambigMaterialBarchart()
+    {
         return $this->ambigtermBar('material');
     }
 
-    private function ambigConceptPiechart() {
+    private function ambigConceptPiechart()
+    {
         return $this->ambigtermPie('displayed_concept');
     }
 
-    private function ambigConceptBarchart() {
+    private function ambigConceptBarchart()
+    {
         return $this->ambigtermBar('displayed_concept');
     }
 
-    private function ambigSubjectPiechart() {
+    private function ambigSubjectPiechart()
+    {
         return $this->ambigtermPie('displayed_subject');
     }
 
-    private function ambigSubjectBarchart() {
+    private function ambigSubjectBarchart()
+    {
         return $this->ambigtermBar('displayed_subject');
     }
 
-    private function ambigLocationPiechart() {
+    private function ambigLocationPiechart()
+    {
         return $this->ambigtermPie('displayed_location');
     }
 
-    private function ambigLocationBarchart() {
+    private function ambigLocationBarchart()
+    {
         return $this->ambigtermBar('displayed_location');
     }
 
-    private function ambigEventPiechart() {
+    private function ambigEventPiechart()
+    {
         return $this->ambigtermPie('displayed_event');
     }
 
-    private function ambigEventBarchart() {
+    private function ambigEventBarchart()
+    {
         return $this->ambigtermBar('displayed_event');
     }
 }

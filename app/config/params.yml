@@ -7,6 +7,10 @@ parameters:
     datahub.metadataprefix: 'oai_lido'
     trends.max_history_months: 2
 
+    providers:
+      Museum voor Schone Kunsten Gent: 'MSK'
+      Musea Brugge - Groeningemuseum: 'GRO'
+
     data_definition:
         # provider_name should always be present; other terms can be changed, added or removed at will
         # maximum depth is 2 (e.g. object_name:term, but not object:name:term)
