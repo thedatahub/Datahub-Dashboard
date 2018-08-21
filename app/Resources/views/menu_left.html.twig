@@ -17,7 +17,7 @@
                                     data-target="#collapse{{ loopI }}" aria-expanded="{% if aspect_label == active_aspect and parameter_label == active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ parameter_label }}<span class="caret"></span></button>
                         </div>
 
-                        <div id="collapse{{ loopI }}" class="collapse {% if aspect_label == active_aspect and parameter_label == active_parameter %}show{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
+                        <div id="collapse{{ loopI }}" class="collapse {% if aspect_label == active_aspect and parameter_label == active_parameter %}in{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
                             <div class="card-body">
                                 <div class="btn-group-vertical collapse collapsed-buttons">
 
