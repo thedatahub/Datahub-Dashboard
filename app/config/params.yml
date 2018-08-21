@@ -1,0 +1,322 @@
+parameters:
+    locale: 'nl'
+    title: 'Datahub Dashboard'
+    email: 'info@vlaamsekunstcollectie.be'
+    datahub.url: 'http://datahub.vlaamsekunstcollectie.be/oai'
+    datahub.namespace: 'lido'
+    datahub.metadataprefix: 'oai_lido'
+    trends.max_history_months: 2
+
+    data_definition:
+        # provider_name should always be present; other terms can be changed, added or removed at will
+        # maximum depth is 2 (e.g. object_name:term, but not object:name:term)
+        # for ambiguity, always use "term" to identify terms and "id" to identity id's
+        provider_name:
+            class: 'minimum'
+            label: 'Naam bewaarinstelling'
+            xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/repositoryName/legalBodyName/appellationValue'
+        object_number:
+            class: 'minimum'
+            label: 'Waarde objectnummer'
+            xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="objectnummer"]'
+        title:
+            class: 'minimum'
+            label: 'Titel'
+            xpath: 'descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/appellationValue'
+        short_description:
+            class: 'minimum'
+            label: 'Korte beschrijving'
+            xpath: 'descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap/objectDescriptionSet/descriptiveNoteValue'
+        object_name:
+            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/objectWorkType'
+            term:
+                class: 'minimum'
+                label: 'Term objectnaam'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie objectnaam'
+                xpath: 'conceptID[@pref="alternate"]'
+        acquisition:
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventMethod'
+            term:
+                class: 'minimum'
+                label: 'Term verwervingsmethode'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Naam verwervingsbron'
+                xpath: 'conceptID'
+        acquisition_source:
+            class: 'minimum'
+            label: 'Naam verwervingsbron'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appelationValue'
+        acquisition_date:
+            class: 'minimum'
+            label: 'Waarde verwervingsdatum'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventDate/displayDate'
+        main_motif:
+            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="hoofdmotief"]'
+            term:
+                class: 'basic'
+                label: 'Term hoofdmotief'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie hoofdmotief'
+                xpath: 'conceptID'
+        creator:
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole'
+            term:
+                class: 'basic'
+                label: 'Naam vervaardiger'
+                xpath: 'actor/nameActorSet/appellationValue'
+            id:
+                class: 'extended'
+                label: 'Identificatie vervaardiger'
+                xpath: 'actor/actorID'
+            role:
+                class: 'extended'
+                label: 'Rol vervaardiger'
+                xpath: 'roleActor/term'
+            qualification:
+                class: 'extended'
+                label: 'Kwalificatie vervaardiger'
+                xpath: 'attributionQualifierActor'
+        date:
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventDate/date'
+            start:
+                class: 'basic'
+                label: 'Begindatum'
+                xpath: 'earliestDate'
+            end:
+                class: 'basic'
+                label: 'Einddatum'
+                xpath: 'latestDate'
+        material:
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech'
+            term:
+                class: 'basic'
+                label: 'Term materiaal'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie materiaal'
+                xpath: 'conceptID'
+        condition:
+            class: 'basic'
+            label: 'Term conditie'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDescriptionSet/descriptiveNoteValue'
+        condition_assessor:
+            class: 'extended'
+            label: 'Assessor conditie'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventActor/actorInRole/actor/nameActorSet/appelationValue'
+        condition_date:
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDate/date'
+            start:
+                class: 'extended'
+                label: 'Begindatum conditie'
+                xpath: 'earliestDate'
+            end:
+                class: 'extended'
+                label: 'Einddatum conditie'
+                xpath: 'latestDate'
+        measurement:
+            parent_xpath: 'descriptiveMetadata/objectIdentificationWrap/objectMeasurementsWrap/objectMeasurementsSet/objectMeasurements'
+            extent:
+                class: 'basic'
+                label: 'Onderdeel afmeting'
+                xpath: 'extentMeasurements'
+            type:
+                class: 'basic'
+                label: 'Dimensie afmeting'
+                xpath: 'measurementsSet/measurementType'
+            value:
+                class: 'basic'
+                label: 'Waarde afmeting'
+                xpath: 'measurementsSet/measurementValue'
+            unit:
+                class: 'basic'
+                label: 'Eenheid afmeting'
+                xpath: 'measurementsSet/measurementUnit'
+        displayed_concept:
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@label="concept"]/subjectConcept'
+            term:
+                class: 'basic'
+                label: 'Term afgebeeld concept'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie afgebeeld concept'
+                xpath: 'conceptID'
+        displayed_subject:
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectActor/actor'
+            term:
+                class: 'basic'
+                label: 'Naam afgebeelde persoon of instelling'
+                xpath: 'nameActorSet/appelationValue'
+            id:
+                class: 'extended'
+                label: 'Identificatie afgebeelde persoon of instelling'
+                xpath: 'actorID'
+        displayed_location:
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace/place'
+            term:
+                class: 'basic'
+                label: 'Naam afgebeelde locatie'
+                xpath: 'namePlaceSet/appelationValue'
+            id:
+                class: 'extended'
+                label: 'Identificatie afgebeelde locatie'
+                xpath: 'placeID'
+        displayed_event:
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectEvent/event'
+            term:
+                class: 'basic'
+                label: 'Naam afgebeelde gebeurtenis'
+                xpath: 'eventName/appelationValue'
+            id:
+                class: 'extended'
+                label: 'Identificatie afgebeelde gebeurtenis'
+                xpath: 'eventID'
+        work_pid:
+            class: 'extended'
+            label: 'Waarde objectnummer'
+            xpath: 'objectPublishedID'
+        database_id:
+            class: 'minimum'
+            label: 'Databank ID (priref, tmsid,..)'
+            xpath: 'administrativeMetadata/recordWrap/recordID[@type="local"]'
+        data_pid:
+            class: 'minimum'
+            label: 'Data PID'
+            xpath: 'lidoRecID[@pref="alternate"]'
+        application_id:
+            class: 'minimum'
+            label: 'Online record ID'
+            xpath: 'lidoRecID[@pref="preferred"]'
+        classification:
+            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]'
+            term:
+                class: 'extended'
+                label: 'Term classificatie'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie classificatie'
+                xpath: 'conceptID'
+        rights:
+            parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
+            status:
+                class: 'extended'
+                label: 'Term rechten status'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie rechten status'
+                xpath: 'conceptID'
+        rights_work:
+            parent_xpath: 'administrativeMetadata/rightsWorkWrap/rightsWorkSet/rightsType'
+            term:
+                class: 'extended'
+                label: 'Term rechten werk'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie rechten werk'
+                xpath: 'conceptID'
+        rights_digital_representation:
+            parent_xpath: 'administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType'
+            term:
+                class: 'extended'
+                label: 'Term rechten digitale representatie'
+                xpath: 'term'
+            id:
+                class: 'extended'
+                label: 'Identificatie rechten digitale representatie'
+                xpath: 'conceptID'
+        data_provider:
+            parent_xpath: 'administrativeMetadata/recordWrap/recordSource'
+            name:
+                class: 'extended'
+                label: 'Naam data provider'
+                xpath: 'legalBodyName/appellationValue'
+            id:
+                class: 'extended'
+                label: 'Identificatie data provider'
+                xpath: 'legalBodyID'
+
+    terms_with_ids:
+      - 'object_name'
+      - 'classification'
+      - 'main_motif'
+      - 'creator'
+      - 'material'
+      - 'displayed_concept'
+      - 'displayed_subject'
+      - 'displayed_location'
+      - 'displayed_event'
+
+
+    # Values at the right are defined in ReportController.php
+    left_menu:
+        Volledigheid:
+            Minimale registratie:
+                Overzicht van alle velden: 'minFieldOverview'
+                Aantal volledig ingevulde records: 'minFullRecords'
+                Historische trend volledig ingevulde records: 'minTrend'
+            Basisregistratie:
+                Overzicht van alle velden: 'basicFieldOverview'
+                Aantal volledig ingevulde records: 'basicFullRecords'
+                Historische trend volledig ingevulde records: 'basicTrend'
+            Uitgebreide set:
+                Overzicht van alle velden: 'extendedFieldOverview'
+        Ondubbelzinnigheid:
+            Records:
+                Verdeling van work PID's over de records: 'ambigWorkPids'
+                Verdeling van data PID's over de records: 'ambigDataPids'
+            Termen:
+                Objectnaam: 'ambigObjectName'
+                Objectcategorie: 'ambigCategory'
+                Hoofdmotief: 'ambigMainMotif'
+                Vervaardiger: 'ambigCreator'
+                Materiaal: 'ambigMaterial'
+                Afgebeeld concept: 'ambigConcept'
+                Afgebeelde persoon of instelling: 'ambigSubject'
+                Afgebeelde locatie: 'ambigLocation'
+                Afgebeelde gebeurtenis: 'ambigEvent'
+        Rijkheid:
+            Records:
+                Naam bewaarinstelling: 'richRecProviderName'
+                Objectnummer / Inventarisnummer: 'richRecObjectId'
+                Objectnummer / Data PID: 'richRecDataPid'
+                Titel: 'richRecTitle'
+                Korte beschrijving: 'richRecShortDesc'
+                Objectnaam: 'richRecObjectName'
+                Objectcategorie: 'richRecObjectCat'
+                Hoofdmotief: 'richRecMainMotif'
+                Vervaardiger: 'richRecCreator'
+                Materiaal: 'richRecMaterial'
+                Afgebeeld concept: 'richRecConcept'
+                Afgebeelde persoon of instelling: 'richRecSubject'
+                Afgebeelde locatie: 'richRecLocation'
+                Afgebeelde gebeurtenis: 'richRecEvent'
+            Termen:
+                Objectnaam: 'richTermObjectName'
+                Hoofdmotief: 'richTermMainMotif'
+                Vervaardiger: 'richTermCreator'
+                Materiaal: 'richTermMaterial'
+                Afgebeeld concept: 'richTermConcept'
+                Afgebeelde persoon of instelling: 'richTermSubject'
+                Afgebeelde locatie: 'richTermLocation'
+                Afgebeelde gebeurtenis: 'richTermEvent'
+        Openheid:
+            Werk:
+                Records: 'openWorkRecords'
+                Termen: 'openWorkTerms'
+            Digitale representatie:
+                Records: 'openDigRepRecords'
+                Termen: 'openDigRepTerms'
+            Record:
+                Records: 'openRecordRecords'
+                Termen: 'openRecordTerms'
