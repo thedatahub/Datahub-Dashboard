@@ -4,10 +4,6 @@
 
 The Datahub Dashboard is an application which allows users and data providers to measure the correctness, unambiguity, richness and openness of their metadata. The metadata is retrieved from an OAI-PMH endpoint, for example a [Datahub](https://github.com/thedatahub/Datahub) application.
 
-## Features
-
-* TODO
-
 ## Requirements
 
 This project requires following dependencies:
@@ -125,7 +121,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Copyright and license
 
-The Datahub is copyright (c) 2016 by Vlaamse Kunstcollectie vzw and PACKED vzw.
+The Datahub Dashboard is copyright (c) 2018 by Vlaamse Kunstcollectie vzw.
 
 This is free software; you can redistribute it and/or modify it under the 
 terms of the The GPLv3 License (GPL). Please see [License File](LICENSE) for 
