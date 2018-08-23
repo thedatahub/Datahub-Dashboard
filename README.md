@@ -32,12 +32,6 @@ will need to provide these details (but can currently be skipped due to still be
 
 Before you install, ensure that you have a running MongoDB instance. A mongodb user is not required at this point.
 
-In order to build the proper CSS files for the dashboard, run the following commands:
-```bash
-$ yarn install
-$ ./node_modules/.bin/encore dev
-```
-
 If you want to run the dashboard for testing or development purposes, execute this command:
 
 ``` bash
@@ -84,10 +78,13 @@ Get started:
 ```
 # Install all dependencies
 $ yarn install
+
 # Build everything in development
 $ yarn run encore dev
+
 # Watch files and build automatically
 $ yarn run encore dev --watch
+
 # Build for production
 $ yarn run encore production
 ```
