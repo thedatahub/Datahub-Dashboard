@@ -2,13 +2,13 @@
 
 [![Software License][ico-license]](LICENSE)
 
-The Datahub Dashboard is an application which allows users and data providers to measure the correctness, unambiguity, richness and openness of their metadata. The metadata is retrieved from an OAI-PMH endpoint, for example a [Datahub](https://github.com/thedatahub/Datahub) application.
+The Datahub Dashboard is an application which allows users and data providers to measure the completeness, unambiguity, richness and openness of their metadata. The metadata is retrieved from an OAI-PMH endpoint, for example a [Datahub](https://github.com/thedatahub/Datahub) application.
 
 ## Requirements
 
 This project requires following dependencies:
 * PHP >= 5.5.9
-  * With the php-cli extension.
+  * With the php-cli and php-xml extensions.
   * The [PECL Mongo](https://pecl.php.net/package/mongo) (PHP5) or [PECL Mongodb](https://pecl.php.net/package/mongodb) (PHP7) extension. Note that the _mongodb_ extension must be version 1.2.0 or higher. Notably, the package included in Ubuntu 16.04 (_php-mongodb_) is only at 1.1.5.
 * MongoDB >= 3.2.10
 
@@ -22,38 +22,20 @@ $ cd Datahub-Dashboard
 $ composer install # Composer will ask you to fill in any missing parameters before it continues
 ```
 
-
 You will be asked to configure the connection to your MongoDB database. You 
-will need to provide these details:
+will need to provide these details (but can currently be skipped due to still being in development):
 
 * The connection to your MongoDB instance (i.e. mongodb://127.0.0.1:27017)
 * The username of the user (i.e. datahub_dashboard)
 * The password of the user
 * The database where your data will persist (i.e. datahub_dashboard)
 
-Before you install, ensure that you have a running MongoDB instance, and you 
-have created a user with the right permissions. From the 
-[Mongo shell]https://docs.mongodb.com/getting-started/shell/client/) run these
-commands to create the required artefacts in MongoDB:
+Before you install, ensure that you have a running MongoDB instance. A mongodb user is not required at this point.
 
-```
-> use datahub_dashboard
-> db.createUser(
-   {
-     user: "datahub_dashboard",
-     pwd: "password",
-     roles: [ "readWrite", "dbAdmin" ]
-   }
-)
-```
-
-The configuration parameters will be stored in `app/config/parameters.yml`.  
-You'll need to run an initiial one-time setup script, which will scaffold the 
-database structure, generate CSS assets and create the application 'admin' user.
-
-``` bash
-$ app/console app:setup
-$ app/console doctrine:mongodb:fixtures:load --append
+In order to build the proper CSS files for the dashboard, run the following commands:
+```bash
+yarn install
+./node_modules/.bin/encore dev
 ```
 
 If you want to run the dashboard for testing or development purposes, execute this command:
@@ -63,7 +45,7 @@ $ app/console server:run
 ```
 
 Use a browser and Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000). 
-You should now see the welcome screen.
+You should now see the dashboard homepage.
 
 Refer to the [Symfony setup documentation](https://symfony.com/doc/current/setup/web_server_configuration.html) 
 to complete your installation using a fully featured web server to make your 

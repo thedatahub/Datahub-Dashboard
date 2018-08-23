@@ -16,21 +16,21 @@ class DatahubData
     public static function clearData()
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub->data;
+        $collection = $client->datahub_dashboard->data;
         $collection->deleteMany([]);
     }
 
     public static function storeData($data)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub->data;
+        $collection = $client->datahub_dashboard->data;
         $collection->insertOne($data);
     }
 
     public static function getAllData($provider)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub->data;
+        $collection = $client->datahub_dashboard->data;
         $iterator = $collection->find(array('provider_name' => $provider));
         $result = array();
         foreach($iterator as $key => $value) {
@@ -42,7 +42,7 @@ class DatahubData
     public static function storeProviders($providers)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub->providers;
+        $collection = $client->datahub_dashboard->providers;
         $collection->deleteMany([]);
         $collection->insertMany($providers);
     }
@@ -50,7 +50,7 @@ class DatahubData
     public static function getAllProviders()
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub->providers;
+        $collection = $client->datahub_dashboard->providers;
         $iterator = $collection->find();
         $result = array();
         foreach($iterator as $key => $value) {
@@ -63,7 +63,7 @@ class DatahubData
     {
         $client = new \MongoDB\Client();
 
-        $collection = $client->trends->completeness;
+        $collection = $client->datahub_dashboard->trend_completeness;
         $collection->insertOne(array('timestamp' => new UTCDateTime()) + $completeness);
 
         //TODO remove on release, hack to mock 3 months of data
@@ -75,7 +75,7 @@ class DatahubData
             $collection->insertOne($comp);
         }
 
-        $collection = $client->trends->terms_with_ids;
+        $collection = $client->datahub_dashboard->trend_terms_with_ids;
         $collection->insertOne(array('timestamp' => new UTCDateTime()) + $termsWithIds);
 
         //TODO remove on release, hack to mock 3 months of data
@@ -87,11 +87,11 @@ class DatahubData
             $collection->insertOne($comp);
         }
 
-        $collection = $client->report->completeness;
+        $collection = $client->datahub_dashboard->report_completeness;
         $collection->deleteMany(array('provider' => $provider));
         $collection->insertOne($completeness);
 
-        $collection = $client->report->fields;
+        $collection = $client->datahub_dashboard->report_fields;
         $collection->deleteMany(array('provider' => $provider));
         $collection->insertOne($fields);
     }
@@ -99,21 +99,21 @@ class DatahubData
     public static function getCompleteness($provider)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->report->completeness;
+        $collection = $client->datahub_dashboard->report_completeness;
         return $collection->findOne(array('provider' => $provider));
     }
 
     public static function getReport($provider, $type)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->report->fields;
+        $collection = $client->datahub_dashboard->report_fields;
         return $collection->findOne(array('provider' => $provider))[$type];
     }
 
     public static function getTrend($provider, $name, $maxMonths)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->trends->{$name};
+        $collection = $client->datahub_dashboard->trend_{$name};
         $curTime = new UTCDateTime();
         $curTs = $curTime->toDateTime()->getTimestamp() * 1000;
         $cursor = $collection->find(array('provider' => $provider, "timestamp" => array('$lte' => new UTCDateTime(), '$gte' => new UTCDateTime($curTs - $maxMonths * 30 * 24 * 3600 * 1000))));
