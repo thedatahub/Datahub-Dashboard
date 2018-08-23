@@ -34,8 +34,8 @@ Before you install, ensure that you have a running MongoDB instance. A mongodb u
 
 In order to build the proper CSS files for the dashboard, run the following commands:
 ```bash
-yarn install
-./node_modules/.bin/encore dev
+$ yarn install
+$ ./node_modules/.bin/encore dev
 ```
 
 If you want to run the dashboard for testing or development purposes, execute this command:
