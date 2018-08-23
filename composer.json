@@ -22,8 +22,6 @@
     "require": {
         "php": ">=5.5.9",
         "caseyamcl/phpoaipmh": "^2.6",
-        "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/orm": "^2.5",
         "guzzlehttp/guzzle": "^6.3",
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-menu-bundle": "^2.2",
@@ -36,7 +34,7 @@
         "symfony/symfony": "3.4.*",
         "symfony/webpack-encore-pack": "^1.0",
         "twbs/bootstrap": "4.1.1",
-        "twig/twig": "^1.0||^2.0"
+        "twig/twig": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
