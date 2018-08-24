@@ -33,7 +33,15 @@ class ReportController extends Controller
         $email = $this->getParameter('email');
         $leftMenu = $this->getParameter('left_menu');
         $this->dataDef = $this->getParameter('data_definition');
+
         $providers = DatahubData::getAllProviders();
+        $providerName = null;
+        foreach($providers as $provider) {
+            if($provider['id'] == $this->provider) {
+                $providerName = $provider['name'];
+            }
+        }
+
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
         $functionCall = $leftMenu[$aspect][$parameter][$question];
@@ -43,7 +51,8 @@ class ReportController extends Controller
             'email' => $email,
             'route' => $route,
             'download' => $download,
-            'provider' => $this->provider,
+            'provider_id' => $this->provider,
+            'provider_name' => $providerName,
             'providers' => $providers,
             'left_menu' => $leftMenu,
             'active_aspect' => $aspect,
@@ -380,7 +389,7 @@ class ReportController extends Controller
 
     private function richRecProviderName()
     {
-        return $this->richRecs('provider_name');
+        return $this->richRecs('provider');
     }
 
     private function richRecObjectId()

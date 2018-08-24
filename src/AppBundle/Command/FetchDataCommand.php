@@ -41,6 +41,7 @@ class FetchDataCommand extends ContainerAwareCommand
         $namespace = $this->getContainer()->getParameter('datahub.namespace');
         $metadataPrefix = $this->getContainer()->getParameter('datahub.metadataprefix');
         $dataDef = $this->getContainer()->getParameter('data_definition');
+        $providerIds = $this->getContainer()->getParameter('providers');
 
         $providers = null;
         if(!$skip) {
@@ -53,7 +54,7 @@ class FetchDataCommand extends ContainerAwareCommand
             foreach ($recs as $rec) {
                 $i++;
                 $data = $rec->metadata->children($namespace, true);
-                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $prov);
+                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $prov, $providerIds);
                 DatahubData::storeData($fetchedData);
                 if($i % 1000 === 0) {
                     echo 'At ' . $i . PHP_EOL;
@@ -62,7 +63,7 @@ class FetchDataCommand extends ContainerAwareCommand
             DatahubData::storeProviders($prov);
             $providers = array();
             foreach($prov as $provider) {
-                $providers[] = $provider['name'];
+                $providers[] = $provider;
             }
         }
         else {
@@ -72,7 +73,7 @@ class FetchDataCommand extends ContainerAwareCommand
         $this->generateAndStoreReport($dataDef, $providers);
     }
 
-    private function fetchData($dataDef, $namespace, $data, & $providers) {
+    private function fetchData($dataDef, $namespace, $data, &$providers, $providerIds) {
         $result = array();
         foreach ($dataDef as $key => $value) {
             if($key === 'parent_xpath') {
@@ -95,9 +96,10 @@ class FetchDataCommand extends ContainerAwareCommand
 
                             $child = (string)$resChild;
                             if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
-                                $arr[] = $child;
-                                if ($key === 'provider_name') {
-                                    $this->addToProviders($child, $providers);
+                                if ($key === 'provider') {
+                                    $arr[] = $this->addToProviders($child, $providers, $providerIds);
+                                } else {
+                                    $arr[] = $child;
                                 }
                             }
                         }
@@ -118,7 +120,7 @@ class FetchDataCommand extends ContainerAwareCommand
                     $res = $data->xpath($xpath);
                     if ($res) {
                         foreach($res as $r) {
-                            $result[$key][] = $this->fetchData($value, $namespace, $r, $providers);
+                            $result[$key][] = $this->fetchData($value, $namespace, $r, $providers, $providerIds);
                         }
                     } else {
                         $result[$key] = null;
@@ -143,34 +145,46 @@ class FetchDataCommand extends ContainerAwareCommand
         return $xpath;
     }
 
-    private function addToProviders($providerName, &$providers)
+    private function addToProviders($providerName, &$providers, $providerIds)
     {
-        $isIn = false;
         foreach ($providers as $provider) {
             if ($provider['name'] === $providerName) {
-                $isIn = true;
-                break;
+                return $provider['id'];
             }
         }
-        if (!$isIn) {
-            $providers[] = array('name' => $providerName);
-            echo 'Provider added: ' . $providerName . PHP_EOL;
+        if(array_key_exists($providerName, $providerIds))
+            $providerId = $providerIds[$providerName];
+        else {
+            $providerId = preg_replace("/[^A-Za-z0-9 ]/", '', $providerName);
+            while(strpos($providerId, '  ') > -1) {
+                $providerId = str_replace('  ', ' ', $providerId);
+            }
+            $providerId = str_replace(' ', '_', $providerId);
+            $providerId = strtolower($providerId);
+            if(strlen($providerId) > 25) {
+                $providerId = substr($providerId, 0, 25);
+            }
         }
+        $providers[] = array('id' => $providerId, 'name' => $providerName);
+        echo 'Provider added: ' . $providerName . PHP_EOL;
+        return $providerId;
     }
 
     private function generateAndStoreReport($dataDef, $providers)
     {
         foreach($providers as $provider) {
-            $data = DatahubData::getAllData($provider);
+            $providerId = $provider['id'];
+
+            $data = DatahubData::getAllData($providerId);
 
             $completeness = array(
-                'provider' => $provider,
+                'provider' => $providerId,
                 'total' => 0,
                 'minimum' => 0,
                 'basic' => 0
             );
 
-            $fields = array('provider' => $provider, 'minimum' => array(), 'basic' => array(), 'extended' => array());
+            $fields = array('provider' => $providerId, 'minimum' => array(), 'basic' => array(), 'extended' => array());
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value)) {
                     $fields[$value['class']][$key] = array();
@@ -187,7 +201,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
             }
 
-            $termsWithIds = array('provider' => $provider);
+            $termsWithIds = array('provider' => $providerId);
             $termIds = array();
             $termsWithIdFields = $this->getContainer()->getParameter('terms_with_ids');
             foreach($termsWithIdFields as $field) {
@@ -276,7 +290,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 $termsWithIds[$key] = count($terms);
             }
 
-            DatahubData::storeReport($provider, $completeness, $fields, $termsWithIds);
+            DatahubData::storeReport($providerId, $completeness, $fields, $termsWithIds);
         }
     }
 }

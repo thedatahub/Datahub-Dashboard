@@ -12,7 +12,6 @@ use MongoDB\BSON\UTCDateTime;
 
 class DatahubData
 {
-
     public static function clearData()
     {
         $client = new \MongoDB\Client();
@@ -31,7 +30,7 @@ class DatahubData
     {
         $client = new \MongoDB\Client();
         $collection = $client->datahub_dashboard->data;
-        $iterator = $collection->find(array('provider_name' => $provider));
+        $iterator = $collection->find(array('provider' => $provider));
         $result = array();
         foreach($iterator as $key => $value) {
             $result[] = $value;
@@ -54,7 +53,7 @@ class DatahubData
         $iterator = $collection->find();
         $result = array();
         foreach($iterator as $key => $value) {
-            $result[] = $value->name;
+            $result[] = array('id' => $value->id, 'name' => $value->name);
         }
         return $result;
     }
@@ -113,7 +112,8 @@ class DatahubData
     public static function getTrend($provider, $name, $maxMonths)
     {
         $client = new \MongoDB\Client();
-        $collection = $client->datahub_dashboard->trend_{$name};
+        $trend = 'trend_' . $name;
+        $collection = $client->datahub_dashboard->{$trend};
         $curTime = new UTCDateTime();
         $curTs = $curTime->toDateTime()->getTimestamp() * 1000;
         $cursor = $collection->find(array('provider' => $provider, "timestamp" => array('$lte' => new UTCDateTime(), '$gte' => new UTCDateTime($curTs - $maxMonths * 30 * 24 * 3600 * 1000))));
