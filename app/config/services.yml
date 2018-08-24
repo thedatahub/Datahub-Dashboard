@@ -1,5 +1,5 @@
 imports:
-    - { resource: params.yml }
+    - { resource: dashboard.yml }
 
 services:
     # default configuration for services in *this* file

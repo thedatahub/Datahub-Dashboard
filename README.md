@@ -10,6 +10,12 @@ This project requires following dependencies:
 * PHP >= 5.5.9
   * With the php-cli and php-xml extensions.
   * The [PECL Mongo](https://pecl.php.net/package/mongo) (PHP5) or [PECL Mongodb](https://pecl.php.net/package/mongodb) (PHP7) extension. Note that the _mongodb_ extension must be version 1.2.0 or higher. Notably, the package included in Ubuntu 16.04 (_php-mongodb_) is only at 1.1.5.
+
+    To install PECL and mongodb:
+      ```bash
+      $ apt-get install php-pear
+      $ pecl install mongodb
+      ```
 * MongoDB >= 3.2.10
 
 ## Install
@@ -35,7 +41,7 @@ Before you install, ensure that you have a running MongoDB instance. A mongodb u
 If you want to run the dashboard for testing or development purposes, execute this command:
 
 ``` bash
-$ app/console server:run
+$ bin/console server:run
 ```
 
 Use a browser and Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000). 
@@ -63,7 +69,7 @@ Front end workflows are managed via [yarn](https://yarnpkg.com/en/) and
 [webpack-encore](https://symfony.com/blog/introducing-webpack-encore-for-asset-management).
 
 The layout is based on [Bootstrap 3.3](https://getbootstrap.com/docs/3.3/) 
-and managed via sass. The code can be found under `app/resources/public/sass`. 
+and managed via sass. The code can be found under `app/resources/public/sass`.
 
 Javascript files can be found under `assets/js`. Dependencies are 
 managed via `yarn`. Add vendor modules using `require`.
