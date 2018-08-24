@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class IndexController extends Controller
 {
-
     private function getBasicData()
     {
         return array('title' => $this->getParameter('title'), 'email' => $this->getParameter('email'));

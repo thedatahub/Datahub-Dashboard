@@ -38,6 +38,13 @@ class DatahubData
         return $result;
     }
 
+    public static function getRecordCount($provider)
+    {
+        $client = new \MongoDB\Client();
+        $collection = $client->datahub_dashboard->data;
+        return $collection->count(array('provider' => $provider));
+    }
+
     public static function storeProviders($providers)
     {
         $client = new \MongoDB\Client();

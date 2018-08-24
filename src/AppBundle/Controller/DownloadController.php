@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DownloadController extends Controller
 {
-
     private $provider = null;
     private $dataDef = null;
     private $field = null;

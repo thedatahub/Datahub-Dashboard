@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ReportController extends Controller
 {
-
     private $dataDef;
     private $provider;
 
@@ -94,6 +93,7 @@ class ReportController extends Controller
 
     private function fieldOverview($type, $title, $description)
     {
+        $total = DatahubData::getRecordCount($this->provider);
         $data = DatahubData::getReport($this->provider, $type);
         $csvData = '';
         foreach($data as $key => $value) {
@@ -109,6 +109,7 @@ class ReportController extends Controller
         }
         $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
         $barChart->canDownload = true;
+        $barChart->max = $total;
         return new Report($title, $title, $description, array($barChart));
     }
 
@@ -296,13 +297,17 @@ class ReportController extends Controller
         }
 
         $csvData = '';
+        $totalTerms = 0;
         foreach($authorities as $key => $value) {
             $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . count($value) . '"';
+            $totalTerms += count($value);
         }
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         $barChart->canDownload = true;
         if(count($authorities) == 0) {
             $barChart->isEmpty = true;
+        } else {
+            $barChart->max = $totalTerms;
         }
 
         $lineChart = $this->generateLineGraph('terms_with_ids', $field, 'Termen met ID');

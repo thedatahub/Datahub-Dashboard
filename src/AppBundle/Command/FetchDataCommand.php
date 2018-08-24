@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class FetchDataCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this

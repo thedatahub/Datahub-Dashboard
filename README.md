@@ -41,7 +41,7 @@ Before you install, ensure that you have a running MongoDB instance. A mongodb u
 If you want to run the dashboard for testing or development purposes, execute this command:
 
 ``` bash
-$ bin/console server:run
+$ php bin/console server:run
 ```
 
 Use a browser and Navigate to [http://127.0.0.1:8000](http://127.0.0.1:8000). 

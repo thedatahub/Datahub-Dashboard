@@ -4,12 +4,12 @@ namespace AppBundle\Entity;
 
 class Graph
 {
-
     public $type;
     public $template;
     public $data;
     public $header;
 
+    public $max = 0;
     public $isEmpty = false;
     public $emptyText = '';
     public $isFull = false;

@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Util;
 
-
 class RecordUtil
 {
     public static function getFieldLabel($field, $dataDef)

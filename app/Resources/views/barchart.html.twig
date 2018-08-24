@@ -25,18 +25,21 @@
         data.reverse();
         var maxWidthL = 0;
         var maxWidthR = 0;
+        var dataRange = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i].name.length > maxWidthL)
                 maxWidthL = data[i].name.length;
             if (data[i].value.toString().length > maxWidthR)
                 maxWidthR = data[i].value.toString().length;
+            if(data[i].value > dataRange)
+                dataRange = data[i].value;
         }
 
         //set up svg using margin conventions - we'll need plenty of room on the left for labels
         var margin = {
             top: 25,
             right: maxWidthR * 9 + 30,
-            bottom: 15,
+            bottom: 25,
             left: maxWidthL * 9 + 30
         };
 
@@ -50,17 +53,36 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var max = {{ graph.max | json_encode | raw }};
+
         var x = d3.scale.linear()
-            .range([0, width])
+            .range([0, max > 0 ? dataRange / max * width : width ])
             .domain([0, d3.max(data, function (d) {
                 return d.value;
             })]);
+
+        var xScale = d3.scale.linear()
+            .range([0, width ])
+            .domain([0, max]);
 
         var y = d3.scale.ordinal()
             .rangeRoundBands([height, 0], .1)
             .domain(data.map(function (d) {
                 return d.name;
             }));
+
+        if(max > 0) {
+            var xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom")
+                .tickValues(xScale.ticks(1).concat([0, max]))
+                .tickFormat(d3.format("f"));
+
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+        }
 
         //make y axis to show bar names
         var yAxis = d3.svg.axis()
@@ -70,7 +92,7 @@
             .orient("left");
 
         var gy = svg.append("g")
-            .attr("class", "y axis")
+            .attr("class", "y axis y-axis")
             .attr("transform", "translate(-10, 0)")
             .call(yAxis);
 
@@ -105,6 +127,7 @@
             .text(function (d) {
                 return d.value;
             });
+
         if(canDownload) {
             bars.selectAll(".bar").on("click", function (d) {
                 location.assign("{{ route | raw }}&aspect={{ active_aspect | raw }}&parameter={{ active_parameter | raw }}&question={{ active_question | raw }}&graph={{ graph.type | raw }}&field=" + d.field);

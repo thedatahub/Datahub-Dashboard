@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 
 class Report
 {
-
     public $title;
     public $printTitle;
     public $description;

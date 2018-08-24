@@ -8,7 +8,6 @@ class PieChart extends Builder
     public $chart_complete;
     protected $radius = '';
 
-
     function __construct($fullDataArray = array())
     {
         parent::__construct();
