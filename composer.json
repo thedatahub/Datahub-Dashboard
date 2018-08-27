@@ -21,7 +21,9 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "alcaeus/mongo-php-adapter": "^1.1",
         "caseyamcl/phpoaipmh": "^2.6",
+        "doctrine/mongodb-odm-bundle": "^3.4",
         "guzzlehttp/guzzle": "^6.3",
         "incenteev/composer-parameter-handler": "^2.0",
         "knplabs/knp-menu-bundle": "^2.2",
