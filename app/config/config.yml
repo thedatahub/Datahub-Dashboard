@@ -7,6 +7,7 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    mongodb_server: "mongodb://localhost:27017"
 
 framework:
     #esi: ~
@@ -36,10 +37,77 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
 
+# app/config/config.yml
+doctrine_mongodb:
+    connections:
+        default:
+            server: "%mongodb_server%"
+            options: {}
+    default_database: datahub_dashboard
+    document_managers:
+        default:
+            auto_mapping: true
+
+# app/config/config.yml
+#doctrine:
+#    dbal:
+#        driver:   pdo_mysql
+#        host:     '%database_host%'
+#        dbname:   '%database_name%'
+#        user:     '%database_user%'
+#        password: '%database_password%'
+#doctrine_mongodb:
+#    connections:
+#        default:
+#            server: mongodb://localhost:27017
+#            options: {}
+#    default_database: datahub_dashboard
+#    document_managers:
+#        default:
+#            auto_mapping: true
+
+
 # Doctrine Configuration
 #doctrine:
 #    dbal:
 #        driver: pdo_mysql
+#        server_version: '5.7'
+#        charset: utf8mb4
+#        default_table_options:
+#            charset: utf8mb4
+#            collate: utf8mb4_unicode_ci
+#        url: 'mongodb://localhost:27017'
+
+#    orm:
+#        auto_generate_proxy_classes: '%kernel.debug%'
+#        naming_strategy: doctrine.orm.naming_strategy.underscore
+#        auto_mapping: true
+#        mappings:
+#            App:
+#                is_bundle: false
+#                type: annotation
+#                dir: '%kernel.project_dir%/src/Entity'
+#                prefix: 'AppBundle\Entity'
+#                alias: AppBundle
+
+
+#doctrine_mongodb:
+#    connections:
+#        default:
+#            server: "%mongodb_server%"
+#            options: {}
+#    default_database: yourdbnamehere
+#    document_managers:
+#        default:
+#            auto_mapping: true
+#            mappings:
+#                App:
+#                    is_bundle: false
+#                    type: annotation
+#                    dir: '%kernel.project_dir%/src/AppBundle/Document'
+#                    prefix: 'AppBundle\Document'
+#                    alias: AppBundle
+
 #        host: '%database_host%'
 #        port: '%database_port%'
 #        dbname: '%database_name%'

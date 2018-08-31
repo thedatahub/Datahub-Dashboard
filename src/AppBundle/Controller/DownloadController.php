@@ -1,7 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\Repository\DatahubData;
+use AppBundle\ProviderBundle\DatahubData;
 use AppBundle\Util\RecordUtil;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -56,6 +56,16 @@ class DownloadController extends Controller
         }
     }
 
+    private function getDocumentManager()
+    {
+        return $this->get('doctrine_mongodb')->getManager();
+    }
+
+    private function getAllRecords()
+    {
+        return $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $this->provider));
+    }
+
     private function extractFieldFromRecord($record, $field)
     {
         if(strpos($field, '/')) {
@@ -89,13 +99,16 @@ class DownloadController extends Controller
 
     private function fieldOverview()
     {
-        $data = DatahubData::getAllData($this->provider);
+        $records = $this->getAllRecords();
 
         $csvData = '';
-        foreach($data as $record) {
-            $recordIds = $this->getRecordIds($record);
-            $part = $this->extractFieldFromRecord($record, $this->field);
-            $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . ($part ? 'ingevuld' : 'niet ingevuld');
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                $recordIds = $this->getRecordIds($data);
+                $part = $this->extractFieldFromRecord($data, $this->field);
+                $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . ($part ? 'ingevuld' : 'niet ingevuld');
+            }
         }
 
         $label = RecordUtil::getFieldLabel($this->field, $this->dataDef);
@@ -133,34 +146,36 @@ class DownloadController extends Controller
 
     private function ambigIds($field, $label)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $records = $this->getAllRecords();
         $ids = array();
-        foreach ($data as $record) {
-            if($record->{$field} && count($record->{$field}) > 0) {
-                $id = $record->{$field}[0];
-                if (!array_key_exists($id, $ids)) {
-                    $ids[$id] = 1;
+        $csvArray = array();
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                if ($data->{$field} && count($data->{$field}) > 0) {
+                    $id = $data->{$field}[0];
+                    if (!array_key_exists($id, $ids)) {
+                        $ids[$id] = 1;
+                    } else {
+                        $ids[$id]++;
+                    }
+                }
+            }
+
+            foreach ($records as $data) {
+                if($data->{$field} && count($data->{$field}) > 0) {
+                    $id = $data->{$field}[0];
+                    $count = $ids[$id];
                 }
                 else {
-                    $ids[$id]++;
+                    $id = '';
+                    $count = 0;
                 }
+                $recordIds = $this->getRecordIds($data);
+                $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'id' => $id, 'count' => $count);
             }
+            usort($csvArray, array('AppBundle\Controller\DownloadController', 'ambigIdsCmp'));
         }
-
-        $csvArray = array();
-        foreach ($data as $record) {
-            if($record->{$field} && count($record->{$field}) > 0) {
-                $id = $record->{$field}[0];
-                $count = $ids[$id];
-            }
-            else {
-                $id = '';
-                $count = 0;
-            }
-            $recordIds = $this->getRecordIds($record);
-            $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'id' => $id, 'count' => $count);
-        }
-        usort($csvArray, array('App\Controller\DownloadController', 'ambigIdsCmp'));
 
         $csvData = '';
         foreach($csvArray as $csvLine) {
@@ -182,24 +197,26 @@ class DownloadController extends Controller
 
     private function ambigtermPie($field)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $records = $this->getAllRecords();
 
         $termsWithId = array();
         $termsWithoutId = array();
-        foreach ($data as $record) {
-            $part = $this->extractFieldFromRecord($record, $field);
-            if($part) {
-                foreach($part as $r) {
-                    if ($r->term && count($r->term) > 0) {
-                        if($r->id && count($r->id) > 0) {
-                            $id = $r->id[0];
-                            if(!array_key_exists($r->term[0], $termsWithId)) {
-                                $termsWithId[$r->term[0]] = $id;
-                            }
-                        }
-                        else {
-                            if(!array_key_exists($r->term[0], $termsWithoutId)) {
-                                $termsWithoutId[$r->term[0]] = '';
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                $part = $this->extractFieldFromRecord($data, $field);
+                if ($part) {
+                    foreach ($part as $r) {
+                        if ($r->term && count($r->term) > 0) {
+                            if ($r->id && count($r->id) > 0) {
+                                $id = $r->id[0];
+                                if (!array_key_exists($r->term[0], $termsWithId)) {
+                                    $termsWithId[$r->term[0]] = $id;
+                                }
+                            } else {
+                                if (!array_key_exists($r->term[0], $termsWithoutId)) {
+                                    $termsWithoutId[$r->term[0]] = '';
+                                }
                             }
                         }
                     }
@@ -222,21 +239,23 @@ class DownloadController extends Controller
 
     private function ambigtermBar($field)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $records = $this->getAllRecords();
 
         $termsWithId = array();
-        foreach ($data as $record) {
-            $part = $this->extractFieldFromRecord($record, $field);
-            if($part) {
-                foreach($part as $r) {
-                    if ($r->term && count($r->term) > 0) {
-                        if($r->id && count($r->id) > 0) {
-                            $id = $r->id[0];
-                            if(!array_key_exists($r->term[0], $termsWithId)) {
-                                $termsWithId[$r->term[0]] = array($id);
-                            }
-                            elseif(!in_array($id, $termsWithId[$r->term[0]])) {
-                                $termsWithId[$r->term[0]][] = $id;
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                $part = $this->extractFieldFromRecord($data, $field);
+                if ($part) {
+                    foreach ($part as $r) {
+                        if ($r['term'] && count($r['term']) > 0) {
+                            if ($r['id'] && count($r['id']) > 0) {
+                                $id = $r['id'];
+                                if (!array_key_exists($r['term'][0], $termsWithId)) {
+                                    $termsWithId[$r['term'][0]] = array($id);
+                                } elseif (!in_array($id, $termsWithId[$r['term'][0]])) {
+                                    $termsWithId[$r['term'][0]][] = $id;
+                                }
                             }
                         }
                     }

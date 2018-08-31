@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\Repository\DatahubData;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -18,7 +17,7 @@ class IndexController extends Controller
     public function home()
     {
         $reportUrl = $this->generateUrl('report');
-        $providers = DatahubData::getAllProviders();
+        $providers = $this->get('doctrine_mongodb')->getRepository('ProviderBundle:Provider')->findAll();
 
         $data = array(
             'report_url' => $reportUrl,

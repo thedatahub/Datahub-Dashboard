@@ -19,6 +19,10 @@ class AppKernel extends Kernel
 
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
+
+            new AppBundle\ProviderBundle\ProviderBundle(),
+            new AppBundle\RecordBundle\RecordBundle(),
+            new AppBundle\ReportBundle\ReportBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

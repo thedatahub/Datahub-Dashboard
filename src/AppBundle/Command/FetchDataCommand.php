@@ -1,8 +1,12 @@
 <?php
 namespace AppBundle\Command;
 
-use AppBundle\Repository\DatahubData;
-use Exception;
+use AppBundle\ProviderBundle\Document\Provider;
+use AppBundle\RecordBundle\Document\Record;
+use AppBundle\ReportBundle\Document\CompletenessReport;
+use AppBundle\ReportBundle\Document\CompletenessTrend;
+use AppBundle\ReportBundle\Document\FieldReport;
+use AppBundle\ReportBundle\Document\FieldTrend;
 use Phpoaipmh\Endpoint;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,6 +31,11 @@ class FetchDataCommand extends ContainerAwareCommand
         ;
     }
 
+    private function getDocumentManager()
+    {
+        return $this->getContainer()->get('doctrine_mongodb')->getManager();
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $url = $input->getArgument("url");
@@ -40,39 +49,44 @@ class FetchDataCommand extends ContainerAwareCommand
         $namespace = $this->getContainer()->getParameter('datahub.namespace');
         $metadataPrefix = $this->getContainer()->getParameter('datahub.metadataprefix');
         $dataDef = $this->getContainer()->getParameter('data_definition');
-        $providerIds = $this->getContainer()->getParameter('providers');
+        $providerDef = $this->getContainer()->getParameter('providers');
 
         $providers = null;
         if(!$skip) {
             $myEndpoint = Endpoint::build($url);
             $recs = $myEndpoint->listRecords($metadataPrefix);
 
-            DatahubData::clearData();
-            $prov = array();
+            $dm = $this->getDocumentManager();
+            $dm->getDocumentCollection('RecordBundle:Record')->remove([]);
+
+            $providers = array();
             $i = 0;
             foreach ($recs as $rec) {
                 $i++;
                 $data = $rec->metadata->children($namespace, true);
-                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $prov, $providerIds);
-                DatahubData::storeData($fetchedData);
+                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $providers, $providerDef);
+                if(array_key_exists('provider', $fetchedData) && count($fetchedData['provider']) > 0) {
+                    $record = new Record();
+                    $record->setProvider($fetchedData['provider'][0]);
+                    $record->setData($fetchedData);
+                    $dm->persist($record);
+                }
                 if($i % 1000 === 0) {
                     echo 'At ' . $i . PHP_EOL;
+                    $dm->flush();
                 }
             }
-            DatahubData::storeProviders($prov);
-            $providers = array();
-            foreach($prov as $provider) {
-                $providers[] = $provider;
-            }
+            $dm->flush();
+            $this->storeProviders($providers);
         }
         else {
-            $providers = DatahubData::getAllProviders();
+            $providers = $this->getDocumentManager()->getRepository('ProviderBundle:Provider')->findAll();
         }
 
         $this->generateAndStoreReport($dataDef, $providers);
     }
 
-    private function fetchData($dataDef, $namespace, $data, &$providers, $providerIds) {
+    private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef) {
         $result = array();
         foreach ($dataDef as $key => $value) {
             if($key === 'parent_xpath') {
@@ -80,51 +94,43 @@ class FetchDataCommand extends ContainerAwareCommand
             }
             if(array_key_exists('xpath', $value)) {
                 $xpath = $this->buildXpath($value['xpath'], $namespace);
-                try {
-                    $res = $data->xpath($xpath);
-                    if ($res) {
-                        $arr = array();
-                        $sourceArr = array();
-                        foreach ($res as $resChild) {
-                            if($key === 'id') {
-                                $attributes = $resChild->attributes($namespace, true);
-                                if ($attributes && $attributes->source) {
-                                    $sourceArr[] = (string)$attributes->source;
-                                }
-                            }
-
-                            $child = (string)$resChild;
-                            if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
-                                if ($key === 'provider') {
-                                    $arr[] = $this->addToProviders($child, $providers, $providerIds);
-                                } else {
-                                    $arr[] = $child;
-                                }
-                            }
-                        }
-                        $result[$key] = $arr;
+                $res = $data->xpath($xpath);
+                if ($res) {
+                    $arr = array();
+                    $sourceArr = array();
+                    foreach ($res as $resChild) {
                         if($key === 'id') {
-                            $result['source'] = $sourceArr;
+                            $attributes = $resChild->attributes($namespace, true);
+                            if ($attributes && $attributes->source) {
+                                $sourceArr[] = (string)$attributes->source;
+                            }
                         }
-                    } else {
-                        $result[$key] = null;
+
+                        $child = (string)$resChild;
+                        if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
+                            if ($key === 'provider') {
+                                $arr[] = $this->addToProviders($child, $providers, $providerDef);
+                            } else {
+                                $arr[] = $child;
+                            }
+                        }
                     }
-                } catch (Exception $e) {
+                    $result[$key] = $arr;
+                    if($key === 'id') {
+                        $result['source'] = $sourceArr;
+                    }
+                } else {
                     $result[$key] = null;
                 }
             }
             elseif(array_key_exists('parent_xpath', $value)) {
                 $xpath = $this->buildXpath($value['parent_xpath'], $namespace);
-                try {
-                    $res = $data->xpath($xpath);
-                    if ($res) {
-                        foreach($res as $r) {
-                            $result[$key][] = $this->fetchData($value, $namespace, $r, $providers, $providerIds);
-                        }
-                    } else {
-                        $result[$key] = null;
+                $res = $data->xpath($xpath);
+                if ($res) {
+                    foreach($res as $r) {
+                        $result[$key][] = $this->fetchData($value, $namespace, $r, $providers, $providerDef);
                     }
-                } catch (Exception $e) {
+                } else {
                     $result[$key] = null;
                 }
             }
@@ -144,15 +150,15 @@ class FetchDataCommand extends ContainerAwareCommand
         return $xpath;
     }
 
-    private function addToProviders($providerName, &$providers, $providerIds)
+    private function addToProviders($providerName, &$providers, $providerDef)
     {
         foreach ($providers as $provider) {
-            if ($provider['name'] === $providerName) {
-                return $provider['id'];
+            if ($provider->getName() === $providerName) {
+                return $provider->getIdentifier();
             }
         }
-        if(array_key_exists($providerName, $providerIds))
-            $providerId = $providerIds[$providerName];
+        if(array_key_exists($providerName, $providerDef))
+            $providerId = $providerDef[$providerName];
         else {
             $providerId = preg_replace("/[^A-Za-z0-9 ]/", '', $providerName);
             while(strpos($providerId, '  ') > -1) {
@@ -164,26 +170,48 @@ class FetchDataCommand extends ContainerAwareCommand
                 $providerId = substr($providerId, 0, 25);
             }
         }
-        $providers[] = array('id' => $providerId, 'name' => $providerName);
+
+        $provider = new Provider();
+        $provider->setIdentifier($providerId);
+        $provider->setName($providerName);
+        $providers[] = $provider;
         echo 'Provider added: ' . $providerName . PHP_EOL;
+
         return $providerId;
+    }
+
+    private function storeProviders($providers)
+    {
+        $dm = $this->getDocumentManager();
+        $dm->getDocumentCollection('ProviderBundle:Provider')->remove([]);
+        foreach($providers as $provider) {
+            $dm->persist($provider);
+        }
+        $dm->flush();
     }
 
     private function generateAndStoreReport($dataDef, $providers)
     {
+        $dm = $this->getDocumentManager();
+        $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
+        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
+        $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
+        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
+
         foreach($providers as $provider) {
-            $providerId = $provider['id'];
+            $providerId = $provider->getIdentifier();
 
-            $data = DatahubData::getAllData($providerId);
+            $allRecords = $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $providerId));
 
-            $completeness = array(
-                'provider' => $providerId,
-                'total' => 0,
-                'minimum' => 0,
-                'basic' => 0
-            );
+            if(!$allRecords) {
+                continue;
+            }
 
-            $fields = array('provider' => $providerId, 'minimum' => array(), 'basic' => array(), 'extended' => array());
+            $completenessReport = new CompletenessReport();
+            $completenessReport->setProvider($providerId);
+
+            $fields = array('minimum' => array(), 'basic' => array(), 'extended' => array());
+
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value)) {
                     $fields[$value['class']][$key] = array();
@@ -200,32 +228,22 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
             }
 
-            $termsWithIds = array('provider' => $providerId);
             $termIds = array();
             $termsWithIdFields = $this->getContainer()->getParameter('terms_with_ids');
             foreach($termsWithIdFields as $field) {
                 $termIds[$field] = array();
             }
 
-            foreach ($data as $record) {
+            foreach ($allRecords as $record) {
+                $data = $record->getData();
                 $minimumComplete = true;
                 $basicComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
-                        try {
-                            if ($record->{$key} && count($record->{$key}) >= 1) {
-                                $fields[$value['class']][$key][] = $record->_id;
-                            }
-                            else {
-                                if ($value['class'] == 'minimum') {
-                                    $minimumComplete = false;
-                                    $basicComplete = false;
-                                } elseif ($value['class'] == 'basic') {
-                                    $basicComplete = false;
-                                }
-                            }
+                        if (array_key_exists($key, $data) && count($data[$key]) > 0) {
+                            $fields[$value['class']][$key][] = $record->getId();
                         }
-                        catch(Exception $e) {
+                        else {
                             if ($value['class'] == 'minimum') {
                                 $minimumComplete = false;
                                 $basicComplete = false;
@@ -240,29 +258,26 @@ class FetchDataCommand extends ContainerAwareCommand
                             }
                             if (array_key_exists('xpath', $v)) {
                                 $found = false;
-                                foreach ($record as $recKey => $reco) {
+                                foreach ($data as $recKey => $reco) {
                                     if($recKey === $key && $reco) {
                                         foreach ($reco as $rec) {
                                             if ($rec) {
-                                                try {
-                                                    if ($rec->{$k} && count($rec->{$k}) > 0) {
-                                                        $found = true;
-                                                        if($k == 'term') {
-                                                            if($rec->id && count($rec->id) > 0) {
-                                                                if(!array_key_exists($rec->term[0], $termIds[$key])) {
-                                                                    $termIds[$key][$rec->term[0]] = $rec->id[0];
-                                                                }
+                                                if (array_key_exists($k, $rec) && count($rec[$k]) > 0) {
+                                                    $found = true;
+                                                    if($k == 'term') {
+                                                        if(array_key_exists('id', $rec) && count($rec['id']) > 0) {
+                                                            if(!array_key_exists($rec['term'][0], $termIds[$key])) {
+                                                                $termIds[$key][$rec['term'][0]] = $rec['id'][0];
                                                             }
                                                         }
                                                     }
-                                                } catch (Exception $e) {
                                                 }
                                             }
                                         }
                                     }
                                 }
                                 if($found) {
-                                    $fields[$v['class']][$key . '/' . $k][] = $record->_id;
+                                    $fields[$v['class']][$key . '/' . $k][] = $record->getId();
                                 }
                                 else {
                                     if ($v['class'] == 'minimum') {
@@ -276,20 +291,44 @@ class FetchDataCommand extends ContainerAwareCommand
                         }
                     }
                 }
-                $completeness['total']++;
+                $completenessReport->incrementTotal();
                 if ($minimumComplete) {
-                    $completeness['minimum']++;
+                    $completenessReport->incrementMinimum();
                 }
                 if ($basicComplete) {
-                    $completeness['basic']++;
+                    $completenessReport->incrementBasic();
                 }
             }
 
+            $dm->persist($completenessReport);
+
+            $completenessTrend = new CompletenessTrend();
+            $completenessTrend->setProvider($providerId);
+            $completenessTrend->setTimestamp(new \MongoDate());
+            $completenessTrend->setTotal($completenessReport->getTotal());
+            $completenessTrend->setMinimum($completenessReport->getMinimum());
+            $completenessTrend->setBasic($completenessReport->getBasic());
+            $dm->persist($completenessTrend);
+
+            $fieldReport = new FieldReport();
+            $fieldReport->setTotal($completenessReport->getTotal());
+            $fieldReport->setProvider($providerId);
+            $fieldReport->setMinimum($fields['minimum']);
+            $fieldReport->setBasic($fields['basic']);
+            $fieldReport->setExtended($fields['extended']);
+            $dm->persist($fieldReport);
+
+            $termsWithIds = array();
             foreach($termIds as $key => $terms) {
                 $termsWithIds[$key] = count($terms);
             }
+            $fieldTrend = new FieldTrend();
+            $fieldTrend->setProvider($providerId);
+            $fieldTrend->setTimestamp(new \MongoDate());
+            $fieldTrend->setCounts($termsWithIds);
+            $dm->persist($fieldTrend);
 
-            DatahubData::storeReport($providerId, $completeness, $fields, $termsWithIds);
+            $dm->flush();
         }
     }
 }

@@ -3,8 +3,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Graph;
 use AppBundle\Entity\Report;
-use AppBundle\Repository\DatahubData;
+use AppBundle\ProviderBundle\DatahubData;
 use AppBundle\Util\RecordUtil;
+use MongoDB\BSON\UTCDateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,11 +34,11 @@ class ReportController extends Controller
         $leftMenu = $this->getParameter('left_menu');
         $this->dataDef = $this->getParameter('data_definition');
 
-        $providers = DatahubData::getAllProviders();
+        $providers = $this->getDocumentManager()->getRepository('ProviderBundle:Provider')->findAll();
         $providerName = null;
         foreach($providers as $provider) {
-            if($provider['id'] == $this->provider) {
-                $providerName = $provider['name'];
+            if($provider->getIdentifier() == $this->provider) {
+                $providerName = $provider->getName();
             }
         }
 
@@ -62,6 +63,16 @@ class ReportController extends Controller
         return $this->render('report.html.twig', $data);
     }
 
+    private function getDocumentManager()
+    {
+        return $this->get('doctrine_mongodb')->getManager();
+    }
+
+    private function getAllRecords()
+    {
+        return $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $this->provider));
+    }
+
     private function generateBarChart($csvData, $header)
     {
         $csvData = '"field","name","value"' . $csvData;
@@ -80,32 +91,77 @@ class ReportController extends Controller
         return new Graph('piechart', '[' . $pieChartData . ']');
     }
 
-    private function generateLineGraph($name, $type, $header)
+    private function generateLineGraph($lineChartData, $header)
     {
-        $maxMonths = $this->getParameter('trends.max_history_months');
-        $data = DatahubData::getTrend($this->provider, $name, $maxMonths);
-
-        $lineChartData = 'date,value';
-        foreach($data as $dataPoint)
-            $lineChartData .= '\n' . $dataPoint['timestamp']->toDateTime()->format('Y-m-d') . ' 00:00:00,' . $dataPoint[$type];
         return new Graph('linegraph', $lineChartData, $header);
     }
 
-    private function fieldOverview($type, $title, $description)
+    private function getTrend($repository)
     {
-        $total = DatahubData::getRecordCount($this->provider);
-        $data = DatahubData::getReport($this->provider, $type);
+        $maxMonths = $this->getParameter('trends.max_history_months');
+
+        $curTime = new UTCDateTime();
+        $curTs = $curTime->toDateTime()->getTimestamp() * 1000;
+        $trend = $this->getDocumentManager()->getRepository($repository)->findBy(array(
+            'provider' => $this->provider,
+            "timestamp" => array('$lte' => new UTCDateTime(), '$gte' => new UTCDateTime($curTs - $maxMonths * 30 * 24 * 3600 * 1000))
+        ));
+
+        return $trend;
+    }
+
+    private function generateCompletenessTrendGraph($isMinimum, $isBasic, $header)
+    {
+        $trend = $this->getTrend('ReportBundle:CompletenessTrend');
+
+        $lineChartData = 'date,value';
+        foreach($trend as $dataPoint) {
+            if($isMinimum) {
+                $value = $dataPoint->getMinimum();
+            } else if($isBasic) {
+                $value = $dataPoint->getBasic();
+            }
+            $lineChartData .= '\n' . $dataPoint->getTimestamp()->format('Y-m-d') . ' 00:00:00,' . $value;
+        }
+        return new Graph('linegraph', $lineChartData, $header);
+    }
+
+    private function generateFieldTrendGraph($type, $header)
+    {
+        $trend = $this->getTrend('ReportBundle:FieldTrend');
+
+        $lineChartData = 'date,value';
+        foreach($trend as $dataPoint) {
+            $lineChartData .= '\n' . $dataPoint->getTimestamp()->format('Y-m-d') . ' 00:00:00,' . $dataPoint->getCounts()[$type];
+        }
+        return $this->generateLineGraph($lineChartData, $header);
+    }
+
+    private function fieldOverview($isMinimum, $isBasic, $isExtended, $title, $description)
+    {
+        $reports = $this->getDocumentManager()->getRepository('ReportBundle:FieldReport')->findBy(array('provider' => $this->provider));
         $csvData = '';
-        foreach($data as $key => $value) {
-            $label = null;
-            if(strpos($key, '/')) {
-                $parts = explode('/', $key);
-                $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
+        $total = 0;
+        if($reports && count($reports) > 0) {
+            $report = $reports[0];
+            $total = $report->getTotal();
+            if($isMinimum) {
+                $data = $report->getMinimum();
+            } else if($isBasic) {
+                $data = $report->getBasic();
+            } else if($isExtended) {
+                $data = $report->getExtended();
             }
-            else {
-                $label = $this->dataDef[$key]['label'];
+            foreach ($data as $key => $value) {
+                $label = null;
+                if (strpos($key, '/')) {
+                    $parts = explode('/', $key);
+                    $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
+                } else {
+                    $label = $this->dataDef[$key]['label'];
+                }
+                $csvData .= PHP_EOL . "'" . $key . '","' . $label . '","' . count($value) . '"';
             }
-            $csvData .= PHP_EOL . "'" . $key . '","' . $label . '","' . count($value) . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
         $barChart->canDownload = true;
@@ -113,11 +169,19 @@ class ReportController extends Controller
         return new Report($title, $title, $description, array($barChart));
     }
 
-    private function fullRecords($name, $title, $description)
+    private function fullRecords($isBasic, $isMinimum, $title, $description)
     {
-        $data = DatahubData::getCompleteness($this->provider);
-        $total = $data['total'];
-        $done = $data[$name];
+        $reports = $this->getDocumentManager()->getRepository('ReportBundle:CompletenessReport')->findBy(array('provider' => $this->provider));
+        $done = 0;
+        if($reports && count($reports) > 0) {
+            $report = $reports[0];
+            $total = $report->getTotal();
+            if ($isBasic) {
+                $done = $report->getbasic();
+            } else if ($isMinimum) {
+                $done = $report->getMinimum();
+            }
+        }
         $pieces = array('Volledige records' => $done, 'Onvolledige records' => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
         if($total - $done == 0 && $done > 0) {
@@ -134,7 +198,9 @@ class ReportController extends Controller
     private function minFieldOverview()
     {
         return $this->fieldOverview(
-            'minimum',
+            true,
+            false,
+            false,
             'Minimale registratie - Overzicht velden',
             'Korte beschrijving (todo)'
         );
@@ -143,7 +209,8 @@ class ReportController extends Controller
     private function minFullRecords()
     {
         return $this->fullRecords(
-            'minimum',
+            false,
+            true,
             'Minimale registratie - Volledig ingevulde records',
             'Korte beschrijving (todo)'
         );
@@ -156,14 +223,18 @@ class ReportController extends Controller
             $title,
             $title,
             'Korte beschrijving (todo)',
-            array($this->generateLineGraph('completeness', 'minimum', 'Volledig ingevulde records'))
+            array($this->generateCompletenessTrendGraph(
+                true, false, 'Volledig ingevulde records'
+            ))
         );
     }
 
     private function basicFieldOverview()
     {
         return $this->fieldOverview(
-            'basic',
+            false,
+            true,
+            false,
             'Basisregistratie - Overzicht velden',
             'Korte beschrijving (todo)'
         );
@@ -172,7 +243,8 @@ class ReportController extends Controller
     private function basicFullRecords()
     {
         return $this->fullRecords(
-            'basic',
+            true,
+            false,
             'Basisregistratie - Volledig ingevulde records',
             'Korte beschrijving (todo)'
         );
@@ -185,42 +257,49 @@ class ReportController extends Controller
             $title,
             $title,
             'Korte beschrijving (todo)',
-            array($this->generateLineGraph('completeness', 'basic', 'Volledig ingevulde records')));
+            array($this->generateCompletenessTrendGraph(
+                false, true, 'Volledig ingevulde records'
+            ))
+        );
     }
 
     private function extendedFieldOverview()
     {
         return $this->fieldOverview(
-            'extended',
+            false,
+            false,
+            true,
             'Uitgebreide registratie - Overzicht velden',
             'Korte beschrijving (todo)');
     }
 
     private function ambigIds($field, $label)
     {
-        $data = DatahubData::getAllData($this->provider);
-        $ids = array();
-        foreach ($data as $record) {
-            if($record->{$field} && count($record->{$field}) > 0) {
-                $id = $record->{$field}[0];
-                if (!array_key_exists($id, $ids)) {
-                    $ids[$id] = 1;
-                }
-                else {
-                    $ids[$id]++;
-                }
-            }
-        }
+        $allRecords = $this->getAllRecords();
         $counts = array();
-        foreach($ids as $id => $count) {
-            $count = $label . ' die ' . $count . 'x voorkomen';
-            if(!array_key_exists($count, $counts)) {
-                $counts[$count] = 1;
+        if($allRecords) {
+            $ids = array();
+            foreach ($allRecords as $record) {
+                $data = $record->getData();
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $id = $data[$field][0];
+                    if (!array_key_exists($id, $ids)) {
+                        $ids[$id] = 1;
+                    } else {
+                        $ids[$id]++;
+                    }
+                }
             }
-            else {
-                $counts[$count]++;
+            foreach ($ids as $id => $count) {
+                $count = $label . ' die ' . $count . 'x voorkomen';
+                if (!array_key_exists($count, $counts)) {
+                    $counts[$count] = 1;
+                } else {
+                    $counts[$count]++;
+                }
             }
         }
+
         $pieChart = $this->generatePieChart($counts);
         $pieChart->canDownload = true;
         $isGood = false;
@@ -247,36 +326,37 @@ class ReportController extends Controller
 
     private function ambigTerms($field)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $allRecords = $this->getAllRecords();
         $termsWithId = array();
         $termsWithoutId = array();
         $authorities = array();
-        foreach ($data as $record) {
-            if($record->{$field} && count($record->{$field}) > 0) {
-                $rec = $record->{$field};
-                foreach($rec as $r) {
-                    if ($r->term && count($r->term) > 0) {
-                        if($r->id && count($r->id) > 0) {
-                            $id = $r->id[0];
-                            if(!array_key_exists($r->term[0], $termsWithId)) {
-                                $termsWithId[$r->term[0]] = $id;
-                            }
+        if($allRecords) {
+            foreach ($allRecords as $record) {
+                $data = $record->getData();
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $rec = $data[$field];
+                    foreach ($rec as $r) {
+                        if ($r['term'] && count($r['term']) > 0) {
+                            if ($r['id'] && count($r['id']) > 0) {
+                                $id = $r['id'][0];
+                                if (!array_key_exists($r['term'][0], $termsWithId)) {
+                                    $termsWithId[$r['term'][0]] = $id;
+                                }
 
-                            if($r->source && count($r->source) > 0) {
-                                $authority = $r->source[0];
-                                if (array_key_exists($authority, $authorities)) {
-                                    if(!in_array($id, $authorities[$authority])) {
-                                        $authorities[$authority][] = $id;
+                                if ($r['source'] && count($r['source']) > 0) {
+                                    $authority = $r['source'][0];
+                                    if (array_key_exists($authority, $authorities)) {
+                                        if (!in_array($id, $authorities[$authority])) {
+                                            $authorities[$authority][] = $id;
+                                        }
+                                    } else {
+                                        $authorities[$authority] = array($id);
                                     }
                                 }
-                                else {
-                                    $authorities[$authority] = array($id);
+                            } else {
+                                if (!array_key_exists($r['term'][0], $termsWithoutId)) {
+                                    $termsWithoutId[$r['term'][0]] = '';
                                 }
-                            }
-                        }
-                        else {
-                            if(!array_key_exists($r->term[0], $termsWithoutId)) {
-                                $termsWithoutId[$r->term[0]] = '';
                             }
                         }
                     }
@@ -310,7 +390,7 @@ class ReportController extends Controller
             $barChart->max = $totalTerms;
         }
 
-        $lineChart = $this->generateLineGraph('terms_with_ids', $field, 'Termen met ID');
+        $lineChart = $this->generateFieldTrendGraph($field, 'Termen met ID');
 
         $title = 'Ondubbelzinnigheid ' . RecordUtil::getFieldLabel($field, $this->dataDef);
         return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart, $barChart, $lineChart));
@@ -363,15 +443,18 @@ class ReportController extends Controller
 
     private function richRecs($field)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $allRecords = $this->getAllRecords();
         $counts = array();
-        foreach ($data as $record) {
-            if($record->{$field} && count($record->{$field}) > 0) {
-                $count = count($record->{$field});
-                if(array_key_exists($count, $counts)) {
-                    $counts[$count]++;
-                } else {
-                    $counts[$count] = 1;
+        if($allRecords) {
+            foreach ($allRecords as $record) {
+                $data = $record->getData();
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $count = count($data[$field]);
+                    if (array_key_exists($count, $counts)) {
+                        $counts[$count]++;
+                    } else {
+                        $counts[$count] = 1;
+                    }
                 }
             }
         }
@@ -464,28 +547,28 @@ class ReportController extends Controller
 
     private function richTerms($field)
     {
-        $data = DatahubData::getAllData($this->provider);
+        $allRecords = $this->getAllRecords();
         $counts = array();
-        foreach ($data as $record) {
-            if ($record->{$field} && count($record->{$field}) > 0) {
-                $rec = $record->{$field};
-                foreach ($rec as $r) {
-                    if ($r->term && count($r->term) > 0) {
-                        foreach($r->term as $term) {
-                            if (array_key_exists($term, $counts)) {
-                                $counts[$term]++;
+        if($allRecords) {
+            foreach ($allRecords as $record) {
+                $data = $record->getData();
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $rec = $data[$field];
+                    foreach ($rec as $r) {
+                        if ($r['term'] && count($r['term']) > 0) {
+                            foreach ($r['term'] as $term) {
+                                if (array_key_exists($term, $counts)) {
+                                    $counts[$term]++;
+                                } else {
+                                    $counts[$term] = 1;
+                                }
                             }
-                            else {
-                                $counts[$term] = 1;
+                        } else {
+                            if (array_key_exists($rec, $counts)) {
+                                $counts[$rec]++;
+                            } else {
+                                $counts[$rec] = 1;
                             }
-                        }
-                    }
-                    else {
-                        if (array_key_exists($rec, $counts)) {
-                            $counts[$rec]++;
-                        }
-                        else {
-                            $counts[$rec] = 1;
                         }
                     }
                 }
