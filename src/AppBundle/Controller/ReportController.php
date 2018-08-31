@@ -34,8 +34,8 @@ class ReportController extends Controller
             }
         }
 
-        $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
-        $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
+        $route = $this->generateUrl('report', array('provider' => $this->provider));
+        $download = $this->generateUrl('download', array('provider' => $this->provider));
 
         $functionCall = null;
         $parameters = $leftMenu[ucfirst($aspect)];
