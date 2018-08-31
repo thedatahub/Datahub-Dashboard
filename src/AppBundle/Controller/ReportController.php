@@ -63,7 +63,7 @@ class ReportController extends Controller
             'provider_name' => $providerName,
             'providers' => $providers,
             'left_menu' => $leftMenu,
-            'active_aspect' => strtolower($aspect),
+            'active_aspect' => $aspect,
             'active_parameter' => $parameter,
             'active_question' => $question,
             'report' => $report
