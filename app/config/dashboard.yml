@@ -18,21 +18,26 @@ parameters:
         provider:
             class: 'minimum'
             label: 'Naam bewaarinstelling'
+            url: 'bewaarinstelling'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/repositoryName/legalBodyName/appellationValue'
         object_number:
             class: 'minimum'
             label: 'Waarde objectnummer'
+            url: 'objectnummer'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="objectnummer"]'
         title:
             class: 'minimum'
             label: 'Titel'
+            url: 'titel'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/appellationValue'
         short_description:
             class: 'minimum'
             label: 'Korte beschrijving'
+            url: 'beschrijving'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap/objectDescriptionSet/descriptiveNoteValue'
         object_name:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/objectWorkType'
+            url: 'objectnaam'
             term:
                 class: 'minimum'
                 label: 'Term objectnaam'
@@ -43,6 +48,7 @@ parameters:
                 xpath: 'conceptID[@pref="alternate"]'
         acquisition:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventMethod'
+            url: 'verwervingsmethode'
             term:
                 class: 'minimum'
                 label: 'Term verwervingsmethode'
@@ -53,14 +59,17 @@ parameters:
                 xpath: 'conceptID'
         acquisition_source:
             class: 'minimum'
+            url: 'verwervingsbron'
             label: 'Naam verwervingsbron'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appelationValue'
         acquisition_date:
             class: 'minimum'
+            url: 'verwervingsdatum'
             label: 'Waarde verwervingsdatum'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventDate/displayDate'
         main_motif:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="hoofdmotief"]'
+            url: 'hoofdmotief'
             term:
                 class: 'basic'
                 label: 'Term hoofdmotief'
@@ -71,6 +80,7 @@ parameters:
                 xpath: 'conceptID'
         creator:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole'
+            url: 'vervaardiger'
             term:
                 class: 'basic'
                 label: 'Naam vervaardiger'
@@ -89,6 +99,7 @@ parameters:
                 xpath: 'attributionQualifierActor'
         date:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventDate/date'
+            url: 'datum'
             start:
                 class: 'basic'
                 label: 'Begindatum'
@@ -99,6 +110,7 @@ parameters:
                 xpath: 'latestDate'
         material:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech'
+            url: 'materiaal'
             term:
                 class: 'basic'
                 label: 'Term materiaal'
@@ -109,14 +121,17 @@ parameters:
                 xpath: 'conceptID'
         condition:
             class: 'basic'
+            url: 'conditie'
             label: 'Term conditie'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDescriptionSet/descriptiveNoteValue'
         condition_assessor:
             class: 'extended'
+            url: 'conditie_assessor'
             label: 'Assessor conditie'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventActor/actorInRole/actor/nameActorSet/appelationValue'
         condition_date:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDate/date'
+            url: 'conditiedatum'
             start:
                 class: 'extended'
                 label: 'Begindatum conditie'
@@ -127,6 +142,7 @@ parameters:
                 xpath: 'latestDate'
         measurement:
             parent_xpath: 'descriptiveMetadata/objectIdentificationWrap/objectMeasurementsWrap/objectMeasurementsSet/objectMeasurements'
+            url: 'afmetingen'
             extent:
                 class: 'basic'
                 label: 'Onderdeel afmeting'
@@ -145,6 +161,7 @@ parameters:
                 xpath: 'measurementsSet/measurementUnit'
         displayed_concept:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@label="concept"]/subjectConcept'
+            url: 'afgebeeld_concept'
             term:
                 class: 'basic'
                 label: 'Term afgebeeld concept'
@@ -155,6 +172,7 @@ parameters:
                 xpath: 'conceptID'
         displayed_subject:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectActor/actor'
+            url: 'afgebeelde_persoon_of_instelling'
             term:
                 class: 'basic'
                 label: 'Naam afgebeelde persoon of instelling'
@@ -165,6 +183,7 @@ parameters:
                 xpath: 'actorID'
         displayed_location:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace/place'
+            url: 'afgebeelde_locatie'
             term:
                 class: 'basic'
                 label: 'Naam afgebeelde locatie'
@@ -175,6 +194,7 @@ parameters:
                 xpath: 'placeID'
         displayed_event:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectEvent/event'
+            url: 'afgebeelde_gebeurtenis'
             term:
                 class: 'basic'
                 label: 'Naam afgebeelde gebeurtenis'
@@ -185,22 +205,27 @@ parameters:
                 xpath: 'eventID'
         work_pid:
             class: 'extended'
+            url: 'objectnummer'
             label: 'Waarde objectnummer'
             xpath: 'objectPublishedID'
         database_id:
             class: 'minimum'
+            url: 'databank_id'
             label: 'Databank ID (priref, tmsid,..)'
             xpath: 'administrativeMetadata/recordWrap/recordID[@type="local"]'
         data_pid:
             class: 'minimum'
+            url: 'data_pid'
             label: 'Data PID'
             xpath: 'lidoRecID[@pref="alternate"]'
         application_id:
             class: 'minimum'
+            url: 'record_id'
             label: 'Online record ID'
             xpath: 'lidoRecID[@pref="preferred"]'
         classification:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]'
+            url: 'classificatie'
             term:
                 class: 'extended'
                 label: 'Term classificatie'
@@ -211,6 +236,7 @@ parameters:
                 xpath: 'conceptID'
         rights:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
+            url: 'rechten_status'
             status:
                 class: 'extended'
                 label: 'Term rechten status'
@@ -221,6 +247,7 @@ parameters:
                 xpath: 'conceptID'
         rights_work:
             parent_xpath: 'administrativeMetadata/rightsWorkWrap/rightsWorkSet/rightsType'
+            url: 'rechten_werk'
             term:
                 class: 'extended'
                 label: 'Term rechten werk'
@@ -231,6 +258,7 @@ parameters:
                 xpath: 'conceptID'
         rights_digital_representation:
             parent_xpath: 'administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType'
+            url: 'rechten_digitale_representatie'
             term:
                 class: 'extended'
                 label: 'Term rechten digitale representatie'
@@ -241,6 +269,7 @@ parameters:
                 xpath: 'conceptID'
         data_provider:
             parent_xpath: 'administrativeMetadata/recordWrap/recordSource'
+            url: 'data_provider'
             name:
                 class: 'extended'
                 label: 'Naam data provider'
@@ -266,61 +295,173 @@ parameters:
     left_menu:
         Volledigheid:
             Minimale registratie:
-                Overzicht van alle velden: 'minFieldOverview'
-                Aantal volledig ingevulde records: 'minFullRecords'
-                Historische trend volledig ingevulde records: 'minTrend'
+                url: 'minimaal'
+                list:
+                    Overzicht van alle velden:
+                        url: 'overzicht'
+                        function: 'minFieldOverview'
+                    Aantal volledig ingevulde records:
+                        url: 'ingevuld'
+                        function: 'minFullRecords'
+                    Historische trend volledig ingevulde records:
+                        url: 'trend'
+                        function: 'minTrend'
             Basisregistratie:
-                Overzicht van alle velden: 'basicFieldOverview'
-                Aantal volledig ingevulde records: 'basicFullRecords'
-                Historische trend volledig ingevulde records: 'basicTrend'
+                url: 'basis'
+                list:
+                    Overzicht van alle velden:
+                        url: 'overzicht'
+                        function: 'basicFieldOverview'
+                    Aantal volledig ingevulde records:
+                        url: 'ingevuld'
+                        function: 'basicFullRecords'
+                    Historische trend volledig ingevulde records:
+                        url: 'trend'
+                        function: 'basicTrend'
             Uitgebreide set:
-                Overzicht van alle velden: 'extendedFieldOverview'
+                url: 'uitgebreid'
+                list:
+                    Overzicht van alle velden:
+                        url: 'overzicht'
+                        function: 'extendedFieldOverview'
         Ondubbelzinnigheid:
             Records:
-                Verdeling van work PID's over de records: 'ambigWorkPids'
-                Verdeling van data PID's over de records: 'ambigDataPids'
+                url: 'records'
+                list:
+                    Verdeling van work PID's over de records:
+                        url: 'work_pids'
+                        function: 'ambigWorkPids'
+                    Verdeling van data PID's over de records:
+                        url: 'data_pids'
+                        function: 'ambigDataPids'
             Termen:
-                Objectnaam: 'ambigObjectName'
-                Objectcategorie: 'ambigCategory'
-                Hoofdmotief: 'ambigMainMotif'
-                Vervaardiger: 'ambigCreator'
-                Materiaal: 'ambigMaterial'
-                Afgebeeld concept: 'ambigConcept'
-                Afgebeelde persoon of instelling: 'ambigSubject'
-                Afgebeelde locatie: 'ambigLocation'
-                Afgebeelde gebeurtenis: 'ambigEvent'
+                url: 'termen'
+                list:
+                    Objectnaam:
+                        url: 'objectnaam'
+                        function: 'ambigObjectName'
+                    Objectcategorie:
+                        url: 'categorie'
+                        function: 'ambigCategory'
+                    Hoofdmotief:
+                        url: 'hoofdmotief'
+                        function: 'ambigMainMotif'
+                    Vervaardiger:
+                        url: 'vervaardiger'
+                        function: 'ambigCreator'
+                    Materiaal:
+                        url: 'materiaal'
+                        function: 'ambigMaterial'
+                    Afgebeeld concept:
+                        url: 'afgebeeld_concept'
+                        function: 'ambigConcept'
+                    Afgebeelde persoon of instelling:
+                        url: 'afgebeelde_persoon_of_instelling'
+                        function: 'ambigSubject'
+                    Afgebeelde locatie:
+                        url: 'afgebeelde_locatie'
+                        function: 'ambigLocation'
+                    Afgebeelde gebeurtenis:
+                        url: 'afgebeelde_gebeurtenis'
+                        function: 'ambigEvent'
         Rijkheid:
             Records:
-                Naam bewaarinstelling: 'richRecProviderName'
-                Objectnummer / Inventarisnummer: 'richRecObjectId'
-                Objectnummer / Data PID: 'richRecDataPid'
-                Titel: 'richRecTitle'
-                Korte beschrijving: 'richRecShortDesc'
-                Objectnaam: 'richRecObjectName'
-                Objectcategorie: 'richRecObjectCat'
-                Hoofdmotief: 'richRecMainMotif'
-                Vervaardiger: 'richRecCreator'
-                Materiaal: 'richRecMaterial'
-                Afgebeeld concept: 'richRecConcept'
-                Afgebeelde persoon of instelling: 'richRecSubject'
-                Afgebeelde locatie: 'richRecLocation'
-                Afgebeelde gebeurtenis: 'richRecEvent'
+              url: 'records'
+              list:
+                  Naam bewaarinstelling:
+                      url: 'bewaarinstelling'
+                      function: 'richRecProviderName'
+                  Objectnummer / Inventarisnummer:
+                      url: 'inventarisnummer'
+                      function: 'richRecObjectId'
+                  Objectnummer / Data PID:
+                      url: 'data_pid'
+                      function: 'richRecDataPid'
+                  Titel:
+                      url: 'titel'
+                      function: 'richRecTitle'
+                  Korte beschrijving:
+                      url: 'beschrijving'
+                      function: 'richRecShortDesc'
+                  Objectnaam:
+                      url: 'objectnaam'
+                      function: 'richRecObjectName'
+                  Objectcategorie:
+                      url: 'categorie'
+                      function: 'richRecObjectCat'
+                  Hoofdmotief:
+                      url: 'hoofdmotief'
+                      function: 'richRecMainMotif'
+                  Vervaardiger:
+                      url: 'vervaardiger'
+                      function: 'richRecCreator'
+                  Materiaal:
+                      url: 'materiaal'
+                      function: 'richRecMaterial'
+                  Afgebeeld concept:
+                      url: 'afgebeeld_concept'
+                      function: 'richRecConcept'
+                  Afgebeelde persoon of instelling:
+                      url: 'afgebeelde_persoon_of_instelling'
+                      function: 'richRecSubject'
+                  Afgebeelde locatie:
+                      url: 'afgebeelde_locatie'
+                      function: 'richRecLocation'
+                  Afgebeelde gebeurtenis:
+                      url: 'afgebeelde_gebeurtenis'
+                      function: 'richRecEvent'
             Termen:
-                Objectnaam: 'richTermObjectName'
-                Hoofdmotief: 'richTermMainMotif'
-                Vervaardiger: 'richTermCreator'
-                Materiaal: 'richTermMaterial'
-                Afgebeeld concept: 'richTermConcept'
-                Afgebeelde persoon of instelling: 'richTermSubject'
-                Afgebeelde locatie: 'richTermLocation'
-                Afgebeelde gebeurtenis: 'richTermEvent'
+                url: 'termen'
+                list:
+                  Objectnaam:
+                      url: 'objectnaam'
+                      function: 'richTermObjectName'
+                  Hoofdmotief:
+                      url: 'hoofdmotief'
+                      function: 'richTermMainMotif'
+                  Vervaardiger:
+                      url: 'vervaardiger'
+                      function: 'richTermCreator'
+                  Materiaal:
+                      url: 'materiaal'
+                      function: 'richTermMaterial'
+                  Afgebeeld concept:
+                      url: 'afgebeeld_concept'
+                      function: 'richTermConcept'
+                  Afgebeelde persoon of instelling:
+                      url: 'afgebeelde_persoon_of_instelling'
+                      function: 'richTermSubject'
+                  Afgebeelde locatie:
+                      url: 'afgebeelde_locatie'
+                      function: 'richTermLocation'
+                  Afgebeelde gebeurtenis:
+                      url: 'afgebeelde_gebeurtenis'
+                      function: 'richTermEvent'
         Openheid:
             Werk:
-                Records: 'openWorkRecords'
-                Termen: 'openWorkTerms'
+                url: 'werk'
+                list:
+                    Records:
+                        url: 'records'
+                        function: 'openWorkRecords'
+                    Termen:
+                        url: 'termen'
+                        function: 'openWorkTerms'
             Digitale representatie:
-                Records: 'openDigRepRecords'
-                Termen: 'openDigRepTerms'
+                url: 'digitale_rep'
+                list:
+                    Records:
+                        url: 'records'
+                        function: 'openDigRepRecords'
+                    Termen:
+                        url: 'termen'
+                        function: 'openDigRepTerms'
             Record:
-                Records: 'openRecordRecords'
-                Termen: 'openRecordTerms'
+                url: 'record'
+                list:
+                    Records:
+                        url: 'records'
+                        function: 'openRecordRecords'
+                    Termen:
+                        url: 'termen'
+                        function: 'openRecordTerms'

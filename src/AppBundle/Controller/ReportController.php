@@ -3,12 +3,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Graph;
 use AppBundle\Entity\Report;
-use AppBundle\ProviderBundle\DatahubData;
 use AppBundle\Util\RecordUtil;
 use MongoDB\BSON\UTCDateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ReportController extends Controller
 {
@@ -16,19 +15,15 @@ class ReportController extends Controller
     private $provider;
 
     /**
-     * @Route("/report", name="report")
+     * @Route("/report/{provider}/{aspect}/{parameter}/{question}", name="report", requirements={"provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+"})
      */
-    public function reports(Request $request)
+    public function report($provider = '', $aspect = 'volledigheid', $parameter = 'minimaal', $question = 'overzicht')
     {
-        $this->provider = urldecode($request->query->get('provider'));
-        $aspect = urldecode($request->query->get('aspect'));
-        $parameter = urldecode($request->query->get('parameter'));
-        $question = urldecode($request->query->get('question'));
-        if(!$aspect || !$parameter || !$question) {
-            $aspect = 'Volledigheid';
-            $parameter = 'Minimale registratie';
-            $question = 'Overzicht van alle velden';
-        }
+        $this->provider = urldecode($provider);
+        $aspect = ucfirst(urldecode($aspect));
+        $parameter = urldecode($parameter);
+        $question = urldecode($question);
+
         $title = $this->getParameter('title');
         $email = $this->getParameter('email');
         $leftMenu = $this->getParameter('left_menu');
@@ -44,7 +39,23 @@ class ReportController extends Controller
 
         $route = str_replace('%20', '+', $this->generateUrl('report', array('provider' => $this->provider)));
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
-        $functionCall = $leftMenu[$aspect][$parameter][$question];
+
+        $functionCall = null;
+        $parameters = $leftMenu[$aspect];
+        foreach($parameters as $param) {
+            if($param['url'] === $parameter) {
+                foreach ($param['list'] as $quest) {
+                    if($quest['url'] === $question) {
+                        $functionCall = $quest['function'];
+                        break;
+                    }
+                }
+            }
+        }
+        if(!$functionCall) {
+            throw new NotFoundHttpException('Deze pagina bestaat niet.');
+        }
+
         $report = $this->$functionCall();
         $data = array(
             'title' => $title,
@@ -55,7 +66,7 @@ class ReportController extends Controller
             'provider_name' => $providerName,
             'providers' => $providers,
             'left_menu' => $leftMenu,
-            'active_aspect' => $aspect,
+            'active_aspect' => strtolower($aspect),
             'active_parameter' => $parameter,
             'active_question' => $question,
             'report' => $report

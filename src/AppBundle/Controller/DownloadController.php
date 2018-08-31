@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\ProviderBundle\DatahubData;
 use AppBundle\Util\RecordUtil;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
