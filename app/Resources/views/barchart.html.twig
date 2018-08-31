@@ -130,7 +130,7 @@
 
         if(canDownload) {
             bars.selectAll(".bar").on("click", function (d) {
-                location.assign("{{ route | raw }}&aspect={{ active_aspect | raw }}&parameter={{ active_parameter | raw }}&question={{ active_question | raw }}&graph={{ graph.type | raw }}&field=" + d.field);
+                location.assign("{{ route | raw }}/{{ active_aspect | raw }}/{{ active_parameter | raw }}/{{ active_question | raw }}/{{ graph.type | raw }}/" + d.field);
             });
         }
 

@@ -168,7 +168,7 @@ class ReportController extends Controller
                 } else {
                     $label = $this->dataDef[$key]['label'];
                 }
-                $csvData .= PHP_EOL . "'" . $key . '","' . $label . '","' . count($value) . '"';
+                $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '"';
             }
         }
         $barChart = $this->generateBarChart($csvData, 'Ingevulde records');

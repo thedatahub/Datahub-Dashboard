@@ -2,10 +2,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Util\RecordUtil;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class DownloadController extends Controller
@@ -15,44 +13,55 @@ class DownloadController extends Controller
     private $field = null;
 
     /**
-     * @Route("/download", name="download")
+     * @Route("/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
      */
-    public function download(Request $request)
+    public function download($provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
     {
-        $this->provider = urldecode($request->query->get('provider'));
-        $aspect = urldecode($request->query->get('aspect'));
-        $parameter = urldecode($request->query->get('parameter'));
-        $question = urldecode($request->query->get('question'));
-        $graph = urldecode($request->query->get('graph'));
-        if($request->query->get('field'))
-            $this->field = urldecode($request->query->get('field'));
+        $this->provider = $provider;
+        if($field !== '')
+            $this->field = $field;
 
         $this->dataDef = $this->getParameter('data_definition');
         $leftMenu = $this->getParameter('left_menu');
 
-        try {
-            $functionCall = $leftMenu[$aspect][$parameter][$question] . ucfirst($graph);
-            $csvData = $this->$functionCall();
-
-            // Generate response
-            $response = new Response();
-            $filename = $aspect . '_' . $parameter . '_' . $question . '.csv';
-
-            // Set headers
-            $response->headers->set('Cache-Control', 'private');
-            $response->headers->set('Content-type', 'text/csv');
-            $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '";');
-            $response->headers->set('Content-length', strlen($csvData));
-            $response->sendHeaders();
-
-            $response->setContent($csvData);
-
-            return $response;
+        $functionCall = null;
+        $parameters = $leftMenu[ucfirst($aspect)];
+        foreach($parameters as $param) {
+            if($param['url'] === $parameter) {
+                foreach ($param['list'] as $quest) {
+                    if($quest['url'] === $question) {
+                        $functionCall = $quest['function'];
+                        break;
+                    }
+                }
+            }
         }
-        catch(Exception $e) {
-            throw $e;
-//            throw $this->createNotFoundException('Ongeldige URL voor CSV-data: ');
+        if(!$functionCall) {
+            throw new NotFoundHttpException('Deze downloadpagina bestaat niet.');
         }
+
+        $functionCall .= ucfirst($graph);
+        $csvData = $this->$functionCall();
+
+        // Generate response
+        $response = new Response();
+        if($this->field) {
+            $label = $this->dataDef[$field]['csv'];
+            $filename = $provider . '_' . $aspect . '_' . $label . '.csv';
+        } else {
+            $filename = $provider . '_' . $aspect . '.csv';
+        }
+
+        // Set headers
+        $response->headers->set('Cache-Control', 'private');
+        $response->headers->set('Content-type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '";');
+        $response->headers->set('Content-length', strlen($csvData));
+        $response->sendHeaders();
+
+        $response->setContent($csvData);
+
+        return $response;
     }
 
     private function getDocumentManager()
@@ -69,16 +78,16 @@ class DownloadController extends Controller
     {
         if(strpos($field, '/')) {
             $parts = explode('/', $field);
-            if($record->{$parts[0]} && count($record->{$parts[0]}) > 0) {
-                foreach($record->{$parts[0]} as $part) {
-                    if($part->{$parts[1]} && count($part->{$parts[1]})) {
-                        return $part->{$parts[1]};
+            if($record[$parts[0]] && count($record[$parts[0]]) > 0) {
+                foreach($record[$parts[0]] as $part) {
+                    if($part[$parts[1]] && count($part[$parts[1]])) {
+                        return $part[$parts[1]];
                     }
                 }
             }
         }
-        elseif($record->{$field} && count($record->{$field})) {
-            return $record->{$field};
+        elseif($record[$field] && count($record[$field])) {
+            return $record[$field];
         }
         return null;
     }
@@ -86,12 +95,12 @@ class DownloadController extends Controller
     private function getRecordIds($record)
     {
         $applicationId = '';
-        if ($record->application_id && count($record->application_id) > 0) {
-            $applicationId = $record->application_id[0];
+        if ($record['application_id'] && count($record['application_id']) > 0) {
+            $applicationId = $record['application_id'][0];
         }
         $objectNumber = '';
-        if ($record->object_number && count($record->object_number) > 0) {
-            $objectNumber = $record->object_number[0];
+        if ($record['object_number'] && count($record['object_number']) > 0) {
+            $objectNumber = $record['object_number'][0];
         }
         return array($applicationId, $objectNumber);
     }
