@@ -19,10 +19,7 @@ class ReportController extends Controller
      */
     public function report($provider = '', $aspect = 'volledigheid', $parameter = 'minimaal', $question = 'overzicht')
     {
-        $this->provider = urldecode($provider);
-        $aspect = ucfirst(urldecode($aspect));
-        $parameter = urldecode($parameter);
-        $question = urldecode($question);
+        $this->provider = $provider;
 
         $title = $this->getParameter('title');
         $email = $this->getParameter('email');
@@ -41,7 +38,7 @@ class ReportController extends Controller
         $download = str_replace('%20', '+', $this->generateUrl('download', array('provider' => $this->provider)));
 
         $functionCall = null;
-        $parameters = $leftMenu[$aspect];
+        $parameters = $leftMenu[ucfirst($aspect)];
         foreach($parameters as $param) {
             if($param['url'] === $parameter) {
                 foreach ($param['list'] as $quest) {
