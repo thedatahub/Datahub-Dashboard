@@ -1,5 +1,3 @@
-<div class="csv-icon">
-    <a href="{{ route ~ "/" ~ active_aspect ~ "/" ~ active_parameter ~ "/" ~ active_question ~ "/" ~ graph.type }}">
-        <img src="{{ asset('images/csv_icon.png') }}" alt="Download CSV">
-    </a>
-</div>
+<form class="download-button" action="{{ route ~ "/" ~ active_aspect ~ "/" ~ active_parameter ~ "/" ~ active_question ~ "/" ~ graph.type }}">
+    <input type="submit" value="Download" title="Download achterliggende gegevens in CSV"/>
+</form>

@@ -49,7 +49,7 @@ class DownloadController extends Controller
             $label = $this->dataDef[$field]['csv'];
             $filename = $provider . '_' . $aspect . '_' . $label . '.csv';
         } else {
-            $filename = $provider . '_' . $aspect . '.csv';
+            $filename = $provider . '_' . $aspect . '_' . $question . '.csv';
         }
 
         // Set headers
@@ -160,8 +160,8 @@ class DownloadController extends Controller
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                if ($data->{$field} && count($data->{$field}) > 0) {
-                    $id = $data->{$field}[0];
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $id = $data[$field][0];
                     if (!array_key_exists($id, $ids)) {
                         $ids[$id] = 1;
                     } else {
@@ -170,9 +170,10 @@ class DownloadController extends Controller
                 }
             }
 
-            foreach ($records as $data) {
-                if($data->{$field} && count($data->{$field}) > 0) {
-                    $id = $data->{$field}[0];
+            foreach ($records as $record) {
+                $data = $record->getData();
+                if($data[$field] && count($data[$field]) > 0) {
+                    $id = $data[$field][0];
                     $count = $ids[$id];
                 }
                 else {
@@ -215,15 +216,15 @@ class DownloadController extends Controller
                 $part = $this->extractFieldFromRecord($data, $field);
                 if ($part) {
                     foreach ($part as $r) {
-                        if ($r->term && count($r->term) > 0) {
-                            if ($r->id && count($r->id) > 0) {
-                                $id = $r->id[0];
-                                if (!array_key_exists($r->term[0], $termsWithId)) {
-                                    $termsWithId[$r->term[0]] = $id;
+                        if ($r['term'] && count($r['term']) > 0) {
+                            if ($r['id'] && count($r['id']) > 0) {
+                                $id = $r['id'][0];
+                                if (!array_key_exists($r['term'][0], $termsWithId)) {
+                                    $termsWithId[$r['term'][0]] = $id;
                                 }
                             } else {
-                                if (!array_key_exists($r->term[0], $termsWithoutId)) {
-                                    $termsWithoutId[$r->term[0]] = '';
+                                if (!array_key_exists($r['term'][0], $termsWithoutId)) {
+                                    $termsWithoutId[$r['term'][0]] = '';
                                 }
                             }
                         }
@@ -259,10 +260,12 @@ class DownloadController extends Controller
                         if ($r['term'] && count($r['term']) > 0) {
                             if ($r['id'] && count($r['id']) > 0) {
                                 $id = $r['id'];
-                                if (!array_key_exists($r['term'][0], $termsWithId)) {
-                                    $termsWithId[$r['term'][0]] = array($id);
-                                } elseif (!in_array($id, $termsWithId[$r['term'][0]])) {
-                                    $termsWithId[$r['term'][0]][] = $id;
+                                foreach($id as $i) {
+                                    if (!array_key_exists($r['term'][0], $termsWithId)) {
+                                        $termsWithId[$r['term'][0]] = array($i);
+                                    } elseif (!in_array($i, $termsWithId[$r['term'][0]])) {
+                                        $termsWithId[$r['term'][0]][] = $i;
+                                    }
                                 }
                             }
                         }
