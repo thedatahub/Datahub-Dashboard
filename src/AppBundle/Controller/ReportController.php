@@ -342,28 +342,33 @@ class ReportController extends Controller
             foreach ($allRecords as $record) {
                 $data = $record->getData();
                 if ($data[$field] && count($data[$field]) > 0) {
-                    $rec = $data[$field];
-                    foreach ($rec as $r) {
-                        if ($r['term'] && count($r['term']) > 0) {
-                            if ($r['id'] && count($r['id']) > 0) {
-                                $id = $r['id'][0];
-                                if (!array_key_exists($r['term'][0], $termsWithId)) {
-                                    $termsWithId[$r['term'][0]] = $id;
-                                }
-
-                                if ($r['source'] && count($r['source']) > 0) {
-                                    $authority = $r['source'][0];
-                                    if (array_key_exists($authority, $authorities)) {
-                                        if (!in_array($id, $authorities[$authority])) {
-                                            $authorities[$authority][] = $id;
+                    $fieldValues = $data[$field];
+                    foreach ($fieldValues as $fieldValue) {
+                        if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
+                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                $localId = null;
+                                foreach($fieldValue['id'] as $termId) {
+                                    if(array_key_exists('source', $termId)) {
+                                        $id = $termId['id'];
+                                        $authority = $termId['source'];
+                                        if($termId['type'] === 'local') {
+                                            $localId = $id;
                                         }
-                                    } else {
-                                        $authorities[$authority] = array($id);
+                                        if (array_key_exists($authority, $authorities)) {
+                                            if (!in_array($id, $authorities[$authority])) {
+                                                $authorities[$authority][] = $id;
+                                            }
+                                        } else {
+                                            $authorities[$authority] = array($id);
+                                        }
                                     }
                                 }
+                                if ($localId && !array_key_exists($fieldValue['term'][0], $termsWithId)) {
+                                    $termsWithId[$fieldValue['term'][0]] = $localId;
+                                }
                             } else {
-                                if (!array_key_exists($r['term'][0], $termsWithoutId)) {
-                                    $termsWithoutId[$r['term'][0]] = '';
+                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
+                                    $termsWithoutId[$fieldValue['term'][0]] = '';
                                 }
                             }
                         }
@@ -385,17 +390,15 @@ class ReportController extends Controller
         }
 
         $csvData = '';
-        $totalTerms = 0;
         foreach($authorities as $key => $value) {
             $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . count($value) . '"';
-            $totalTerms += count($value);
         }
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         $barChart->canDownload = true;
         if(count($authorities) == 0) {
             $barChart->isEmpty = true;
         } else {
-            $barChart->max = $totalTerms;
+            $barChart->max = count($termsWithId);
         }
 
         $lineChart = $this->generateFieldTrendGraph($field, 'Termen met ID');
