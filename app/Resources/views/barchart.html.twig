@@ -71,23 +71,13 @@
 
         //Calculate the bottom margin
 
-        //Only calculate size of x axis if there is one
+        //Ticks are 6 heigh by default, tick padding is 3 by default
+        var xTickWidth = 6;
+        var xTickPadding = 3;
 
-        var xTickWidth = 0;
-        var xTickPadding = 0;
-        var xTickTextHeight = 0;
-
-        if(max > 0) {
-
-            //Ticks are 6 heigh by default, tick padding is 3 by default
-            xTickWidth = 6;
-            xTickPadding = 3;
-
-            //Calculate possible height of text of tick for x axis
-            var xTickText = textSize("0123456789", smallFontSize);
-            xTickTextHeight = xTickText.height;
-
-        }
+        //Calculate possible height of text of tick for x axis
+        var xTickText = textSize("0123456789", smallFontSize);
+        var xTickTextHeight = xTickText.height;
 
         //Size of the margin beneath the svg
         var marginBottom = marginSize + xTickTextHeight + xTickPadding + xTickWidth;
@@ -147,7 +137,7 @@
             var xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
-                .tickValues(xScale.ticks(1).concat([0, max]))
+                .tickValues(xScale.ticks(0).concat([0, max]))
                 .tickFormat(d3.format("f"));
 
             svg.append("g")
@@ -188,7 +178,8 @@
             .attr("height", y.rangeBand())
             .attr("x", 0)
             .attr("width", function (d) {
-                return x(d.value);
+                var w = x(d.value);
+                return d.value > 0 && w < 1 ? 1 : w;
             });
 
         //add a value label to the right of each bar
