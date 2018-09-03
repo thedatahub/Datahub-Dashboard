@@ -1,6 +1,7 @@
 /.web-server-pid
 /.idea/
 /app/config/parameters.yml
+/app/config/.fuse_hidden*
 /build/
 /node_modules/
 /phpunit.xml
