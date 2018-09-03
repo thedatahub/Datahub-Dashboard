@@ -89,7 +89,7 @@ class FetchDataCommand extends ContainerAwareCommand
     private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef) {
         $result = array();
         foreach ($dataDef as $key => $value) {
-            if($key === 'parent_xpath') {
+            if($key === 'parent_xpath' || $key === 'csv') {
                 continue;
             }
             if(array_key_exists('xpath', $value)) {
@@ -218,7 +218,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
                 elseif (array_key_exists('parent_xpath', $value)) {
                     foreach ($value as $k => $v) {
-                        if ($k === 'parent_xpath') {
+                        if ($k === 'parent_xpath' || $k == 'csv') {
                             continue;
                         }
                         if (array_key_exists('xpath', $v)) {
@@ -253,7 +253,7 @@ class FetchDataCommand extends ContainerAwareCommand
                         }
                     } elseif (array_key_exists('parent_xpath', $value)) {
                         foreach ($value as $k => $v) {
-                            if ($k === 'parent_xpath') {
+                            if ($k === 'parent_xpath' || $k === 'csv') {
                                 continue;
                             }
                             if (array_key_exists('xpath', $v)) {

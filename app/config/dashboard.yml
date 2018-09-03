@@ -84,7 +84,7 @@ parameters:
             term:
                 class: 'basic'
                 label: 'Naam vervaardiger'
-                xpath: 'actor/nameActorSet/appellationValue'
+                xpath: 'actor/nameActorSet/appellationValue[@pref="preferred"]'
             id:
                 class: 'extended'
                 label: 'Identificatie vervaardiger'
