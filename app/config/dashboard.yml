@@ -1,8 +1,5 @@
 parameters:
     locale: 'nl'
-    title: 'Datahub Dashboard'
-    email: 'info@vlaamsekunstcollectie.be'
-    datahub.url: 'http://datahub.vlaamsekunstcollectie.be/oai'
     datahub.namespace: 'lido'
     datahub.metadataprefix: 'oai_lido'
     trends.max_history_months: 2
