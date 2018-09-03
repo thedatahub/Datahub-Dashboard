@@ -14,8 +14,8 @@ parameters:
     # MongoDB connection string & database
     mongodb_server: mongodb://127.0.0.1:27017/datahub_dashboard
     mongodb_database: datahub_dashboard
-    mongodb_user: datahubuser
-    mongodb_password: datahubpassword
+    mongodb_user: datahubdashboarduser
+    mongodb_password: datahubdashboardpass
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
