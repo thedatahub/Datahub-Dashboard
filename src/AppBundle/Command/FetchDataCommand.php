@@ -73,7 +73,6 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
                 if($i % 1000 === 0) {
                     echo 'At ' . $i . PHP_EOL;
-                    $dm->flush();
                 }
             }
             $dm->flush();
@@ -97,28 +96,29 @@ class FetchDataCommand extends ContainerAwareCommand
                 $res = $data->xpath($xpath);
                 if ($res) {
                     $arr = array();
-                    $sourceArr = array();
                     foreach ($res as $resChild) {
-                        if($key === 'id') {
-                            $attributes = $resChild->attributes($namespace, true);
-                            if ($attributes && $attributes->source) {
-                                $sourceArr[] = (string)$attributes->source;
-                            }
-                        }
-
                         $child = (string)$resChild;
-                        if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
-                            if ($key === 'provider') {
-                                $arr[] = $this->addToProviders($child, $providers, $providerDef);
-                            } else {
-                                $arr[] = $child;
+                        if($key === 'id') {
+                            $idArr = array('id' => $child);
+                            $attributes = $resChild->attributes($namespace, true);
+                            if ($attributes) {
+                                foreach ($attributes as $attributeKey => $attributeValue) {
+                                    $idArr[(string)$attributeKey] = (string)$attributeValue;
+                                }
+                            }
+                            $arr[] = $idArr;
+                        }
+                        else {
+                            if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
+                                if ($key === 'provider') {
+                                    $arr[] = $this->addToProviders($child, $providers, $providerDef);
+                                } else {
+                                    $arr[] = $child;
+                                }
                             }
                         }
                     }
                     $result[$key] = $arr;
-                    if($key === 'id') {
-                        $result['source'] = $sourceArr;
-                    }
                 } else {
                     $result[$key] = null;
                 }
@@ -258,16 +258,25 @@ class FetchDataCommand extends ContainerAwareCommand
                             }
                             if (array_key_exists('xpath', $v)) {
                                 $found = false;
-                                foreach ($data as $recKey => $reco) {
-                                    if($recKey === $key && $reco) {
-                                        foreach ($reco as $rec) {
-                                            if ($rec) {
-                                                if (array_key_exists($k, $rec) && count($rec[$k]) > 0) {
+                                foreach ($data as $fieldName => $fieldValues) {
+                                    if($fieldName === $key && $fieldValues) {
+                                        foreach ($fieldValues as $fieldValue) {
+                                            if ($fieldValue) {
+                                                if (array_key_exists($k, $fieldValue) && count($fieldValue[$k]) > 0) {
                                                     $found = true;
                                                     if($k == 'term') {
-                                                        if(array_key_exists('id', $rec) && count($rec['id']) > 0) {
-                                                            if(!array_key_exists($rec['term'][0], $termIds[$key])) {
-                                                                $termIds[$key][$rec['term'][0]] = $rec['id'][0];
+                                                        if(array_key_exists('id', $fieldValue) && count($fieldValue['id']) > 0) {
+                                                            if(!array_key_exists($fieldValue['term'][0], $termIds[$key])) {
+                                                                $localId = null;
+                                                                foreach($fieldValue['id'] as $termId) {
+                                                                    if($termId['type'] === 'local') {
+                                                                        $localId = $termId['id'];
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                if($localId) {
+                                                                    $termIds[$key][$fieldValue['term'][0]] = $localId;
+                                                                }
                                                             }
                                                         }
                                                     }
