@@ -1,9 +1,16 @@
 
-<div id="piechart"></div>
-{% if graph.canDownload %}
-    {% include 'download.html.twig' %}
-{% endif %}
+<div><div id="piechart">
+</div>
+    {% if graph.canDownload %}
+        {% include 'download.html.twig' %}
+    {% endif %}
+</div>
 <script>
+
+    //Set font-sizes of labels
+
+    var bigFontSize = "16px";
+    var smallFontSize = "13px";
 
     if({{ graph.isEmpty | json_encode | raw }}) {
         var para = document.createElement("p");
@@ -15,11 +22,10 @@
         pieChart.appendChild(para);
     }
     else {
-        var w = 820;
-        var h = 430;
-        var r = 200;
-        var right = 210;
-        var down = 25;
+        var w = 758;
+        var r = 150;
+        var marginSize = 20;
+        var h = r * 2 + marginSize * 2;
         var cols = ["#00BCE4", "#FFFFFF", "#5F585D"];
 
         var data = {{ graph.data | raw }};
@@ -28,9 +34,8 @@
             .data([data])
             .attr("width", w)
             .attr("height", h)
-            .attr("margin-bottom", 70)
             .append("svg:g")
-            .attr("transform", "translate(" + (r + right) + "," + (r + down) + ")");
+            .attr("transform", "translate(" + (w / 2) + "," + (r + marginSize) + ")");
 
         var pie = d3.layout.pie().value(function (d) {
             return d.value;
@@ -57,6 +62,8 @@
                 return "translate(" + arc.centroid(d) + ")";
             })
             .attr("text-anchor", "middle")
+            .style("font-size", smallFontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
             .text(function (d, i) {
                 return data[i].value > 0 ? data[i].label : "";
             });

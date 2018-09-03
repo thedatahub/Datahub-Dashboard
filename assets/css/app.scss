@@ -12,6 +12,9 @@ html {
 
 body {
   margin-bottom: 70px;
+  font-family: "Gotham", Helvetica, Arial, sans-serif;
+  font-weight: lighter;
+  background-color: #fafafa;
 }
 
 .footer {
@@ -26,6 +29,7 @@ body {
 .navbar {
   margin-bottom: 0;
   border-style: hidden;
+  height: 50px;
 }
 
 .container-fluid {
@@ -39,12 +43,12 @@ body {
 }
 
 .navbar-default .navbar-nav > li > a {
-  color: black;
+  color: white;
   font-size: 1.25em;
 }
 
 .navbar-default .navbar-nav > li.active > a {
-  color: white;
+  color: #5F585D;
   background-color: transparent;
 }
 
@@ -52,21 +56,22 @@ body {
   background-color: transparent;
 }
 
+.navbar-default .navbar-nav > li > a:hover {
+  color: #5F585D;
+}
+
 .navbar-default .navbar-brand {
   padding: 0;
   margin-left: 10px;
-  width: 182px;
-  height: 51px;
-  background: url(../dashboard.png);
+  width: 150px;
+  height: 50px;
+  background: url(../dashboard.png) no-repeat;
+  background-size: auto 40px;
+  background-position: left center; 
 }
 
 .main-nav {
   margin-left: 30px;
-}
-
-.navbar > .container-fluid {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 h1 {
@@ -110,6 +115,7 @@ h1 {
 }
 
 #main-container {
+  font-size: 120%;
   width: 1140px;
   margin-top: 30px;
   margin-left: auto;
@@ -200,10 +206,20 @@ h1 {
 #graphs {
   float: right;
   width: 800px;
+  border: solid 1px rgb(220, 220, 220);
+  background-color: white;
 }
 
 .graph {
-  margin-bottom: 80px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background-color: #fafafa;
+}
+
+.graph p {
+  padding-top: -20px;
+  padding-bottom: 20px;
 }
 
 .title-div {
@@ -228,22 +244,20 @@ h1 {
 }
 
 .description {
-  margin-left: 40px;
-  margin-bottom: 40px;
+  margin-left: 20px;
+  margin-bottom: 20px;
 }
 
 .print-icon {
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.single-barchart {
-  float: right;
+  padding-right: 20px;
 }
 
 .bar {
   fill: #00BCE4;
+  shape-rendering: crispEdges;
 }
 
 .clickable-bar:hover {
@@ -308,22 +322,32 @@ div.tooltip {
 
 .download-button {
   float: right;
+  margin-top: -52px;
+  margin-right: 8px;
 }
 
+ /* Is this one used?
 .glyphicon.glyphicon-print {
   font-size: 30px;
 }
+ */
 
 
 
 
 
 @media print {
+  body {
+    transform: scale(.8);
+  }
   a[href]:after {
     content: none !important;
   }
-  .left-menu, .csv-icon, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
+  .left-menu, .download-button, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
     display: none !important;
+  }
+  .print-provider {
+    transform: translateX(50px);
   }
   .print-provider, .print-title {
     display: block !important;
@@ -333,6 +357,10 @@ div.tooltip {
     margin: 0;  /* this affects the margin in the printer settings */
   }
   #graphs {
-    transform: translateX(-200px);
+    transform: translateX(-340px);
+    border: none;
+  }
+  .graph {
+    border: solid 1px rgb(220, 220, 220);
   }
 }

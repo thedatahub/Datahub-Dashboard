@@ -2,6 +2,15 @@
 <div id="barchart"></div>
 <script>
 
+    //Set font-sizes of labels
+
+    var bigFontSize = "16px";
+    var smallFontSize = "13px";
+
+    //Set margin outside the chart
+
+    var marginSize = 20;
+
     if({{ graph.isEmpty | json_encode | raw }}) {
         if("{{ graph.emptyText | raw }}".length > 0) {
             var para = document.createElement("p");
@@ -23,37 +32,100 @@
             };
         });
         data.reverse();
-        var maxWidthL = 0;
-        var maxWidthR = 0;
         var dataRange = 0;
         for (var i = 0; i < data.length; i++) {
-            if (data[i].name.length > maxWidthL)
-                maxWidthL = data[i].name.length;
-            if (data[i].value.toString().length > maxWidthR)
-                maxWidthR = data[i].value.toString().length;
-            if(data[i].value > dataRange)
+            if (data[i].value > dataRange)
                 dataRange = data[i].value;
         }
 
-        //set up svg using margin conventions - we'll need plenty of room on the left for labels
+        var max = {{ graph.max | json_encode | raw }};
+
+        //Calculate the top margin
+
+        //Height of chart title
+        var title = textSize("{{ graph.header | raw }}", bigFontSize);
+        var titleHeight = title.height;
+
+        //Set padding for title to 16
+        var titlePadding = 16;
+
+        //Size of the margin above the svg
+        var marginTop = marginSize + titleHeight + titlePadding;
+
+        //Calculate the right margin
+
+        //Width of the largest value among the imported data (label to the right of the largest bar)
+        var maxValue = 0;
+        for (var i = 0; i < data.length; i++) {
+            if(data[i].value > maxValue)
+                maxValue = data[i].value;
+        }
+        var widthValue = textSize(maxValue, smallFontSize);
+        var rightLabelWidth = widthValue.width;
+
+        //Set padding for label to the right of the bars to 6
+        var rightLabelPadding = 6;
+
+        //Size of the margin right of the svg
+        var marginRight = marginSize + rightLabelWidth + rightLabelPadding;
+
+        //Calculate the bottom margin
+
+        //Only calculate size of x axis if there is one
+
+        var xTickWidth = 0;
+        var xTickPadding = 0;
+        var xTickTextHeight = 0;
+
+        if(max > 0) {
+
+            //Ticks are 6 heigh by default, tick padding is 3 by default
+            xTickWidth = 6;
+            xTickPadding = 3;
+
+            //Calculate possible height of text of tick for x axis
+            var xTickText = textSize("0123456789", smallFontSize);
+            xTickTextHeight = xTickText.height;
+
+        }
+
+        //Size of the margin beneath the svg
+        var marginBottom = marginSize + xTickTextHeight + xTickPadding + xTickWidth;
+
+        //Calculate the left margin
+
+        //Width of the largest name among the imported data (largest label to the left of the bars)
+        var leftLabelWidth = 0;
+        var widthName = 0;
+        for (var i = 0; i < data.length; i++) {
+            widthName = textSize(data[i].name, smallFontSize);
+            widthName = widthName.width;
+            if(widthName > leftLabelWidth)
+                leftLabelWidth = widthName;
+        }
+
+        //Set padding for label to the left of the bars to 6
+        var leftLabelPadding = 6;
+
+        //Size of the margin left of the svg
+        var marginLeft = marginSize + leftLabelWidth + leftLabelPadding;
+
+        //Set margins
         var margin = {
-            top: 25,
-            right: maxWidthR * 9 + 30,
-            bottom: 25,
-            left: maxWidthL * 9 + 30
+            top: marginTop,
+            right: marginRight,
+            bottom: marginBottom,
+            left: marginLeft
         };
 
-        var width = 820 - margin.left - margin.right,
+        var width = 758 - margin.left - margin.right,
             height = data.length * 26;
 
         var svg = d3.select("#barchart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-            .attr("class", "single-barchart")
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        var max = {{ graph.max | json_encode | raw }};
 
         var x = d3.scale.linear()
             .range([0, max > 0 ? dataRange / max * width : width ])
@@ -66,7 +138,7 @@
             .domain([0, max]);
 
         var y = d3.scale.ordinal()
-            .rangeRoundBands([height, 0], .1)
+            .rangeBands([height, 0], .1)
             .domain(data.map(function (d) {
                 return d.name;
             }));
@@ -81,7 +153,10 @@
             svg.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+                .call(xAxis)
+                .selectAll(".tick text")
+                .style("font-size", smallFontSize)
+                .style("font-family", "'Gotham', Helvetica, Arial, sans-serif");
         }
 
         //make y axis to show bar names
@@ -93,8 +168,11 @@
 
         var gy = svg.append("g")
             .attr("class", "y axis y-axis")
-            .attr("transform", "translate(-10, 0)")
-            .call(yAxis);
+            .attr("transform", "translate(" + (-leftLabelPadding) + "," + 0 + ")")
+            .call(yAxis)
+            .selectAll(".tick text")
+            .style("font-size", smallFontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif");
 
         var bars = svg.selectAll(".bar")
             .data(data)
@@ -115,6 +193,8 @@
 
         //add a value label to the right of each bar
         bars.append("text")
+            .style("font-size", smallFontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
             .attr("class", "graph-label")
             //y position of the label is halfway down the bar
             .attr("y", function (d) {
@@ -122,7 +202,7 @@
             })
             //x position is 6 pixels to the right of the bar
             .attr("x", function (d) {
-                return x(d.value) + 6;
+                return x(d.value) + rightLabelPadding;
             })
             .text(function (d) {
                 return d.value;
@@ -136,8 +216,28 @@
 
         svg.append("text")
             .attr("x", 0)
-            .attr("y", -10)
+            .attr("y", -titlePadding)
+            .style("font-size", bigFontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
             .style("text-anchor", "right")
             .text("{{ graph.header | raw }}");
     }
+
+//https://gist.github.com/huytd/327e453c95ca3edadb32d0c867e2561b
+//This function measures text size in pixels
+    function textSize(text, fontSize) {
+        if (!d3) return;
+        var container = d3.select("body").append("svg");
+        
+        container.append("text")
+            .attr({ x: -99999, y: -99999 })
+            .style("font-size", fontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
+            .text(text);
+        
+        var size = container.node().getBBox();
+        container.remove();
+        return { width: size.width, height: size.height };
+    }
+
 </script>

@@ -1,9 +1,112 @@
 
 <div id="linegraph"></div>
 <script>
-    //I increased the bottom margin a little bit because the x label is tied to it; so I could lower the x label a little bit
-    var margin = {top: 35, right: 20, bottom: 70, left: 90},
-        width = 960 - margin.left - margin.right,
+
+    //Set font-sizes of labels
+
+    var bigFontSize = "16px";
+    var smallFontSize = "13px";
+
+    //Set margin outside the chart
+
+    var marginSize = 20;
+
+    //The format in the CSV, which d3 will read
+    data = d3.csv.parse("{{ graph.data | raw }}", function(d) {
+        return {
+            date:d.date,
+            value:+d.value
+        };
+    });
+
+    var parseDate = d3.time.format("%Y-%m-%d %X");
+    data.forEach(function(d) {
+        d.date = parseDate.parse(d.date);
+        d.value = +d.value;
+    });
+
+    //Calculate a maximum value for the y axis based on the largest value among the imported data
+        
+    //Search the largest value among the imported data
+    var maxValue = 0;
+    for (var i = 0; i < data.length; i++) {
+        if(data[i].value > maxValue)
+            maxValue = data[i].value;
+    }
+    if(maxValue < 9) {
+        maxValue = 9;
+    }
+
+    /*
+    To make sure the maximum value for the y axis is larger than the largest value among the imported data and is a 'nice' value:
+    increment the first digit of the largest value with one (0 => 1, 1 => 2 ... 9 => 10) and add zeros for the other digits (e.g. 731 => 800)
+    */
+    var yMaxValueLength = maxValue.toString().length;
+    var yMaxValueFirstChar = maxValue.toString()[0];
+    var yMaxValueFirstDigit = parseInt(yMaxValueFirstChar);
+    var yMaxValue = (yMaxValueFirstDigit + 1) * Math.pow(10,(yMaxValueLength - 1));
+
+    //Calculate the top margin
+
+    //Height of text of tick
+    var yTickText = textSize(yMaxValue, smallFontSize);
+    var yTickTextHeight = yTickText.height;
+
+    //Size of the margin above the svg
+    var marginTop = marginSize + yTickTextHeight / 2;
+
+    //Calculate the right margin
+
+    //Set the circle radius of the markers on 4.5
+    var circleRadius = 4.5;
+
+    //Size of the margin right of the svg
+    var marginRight = marginSize + circleRadius;
+
+    //Calculate the bottom margin
+
+    //Height of the x axis title
+    var xTitle = textSize("Datum", bigFontSize);
+    var xTitleHeight = xTitle.height;
+
+    //Set padding for x axis title to 16
+    var xTitlePadding = 16;
+
+    //There are two sorts of ticks for the x axis: minor and major ticks
+    //Ticks are 6 heigh by default, tick padding is 3 by default; make the major ticks a little longer than the minor ticks
+    var xMajorTickHeight = 12;
+    var xTickPadding = 3;
+
+    //Calculate possible height of text of tick for x axis
+    var xTickText = textSize("01 Jan Feb Mar Apr May Jun Jul Aug Sep Okt Nov Dec\n2000", smallFontSize);
+    var xTickTextHeight = xTickText.height;
+
+    //Size of the margin beneath the svg
+    var marginBottom = marginSize + xTitleHeight + xTitlePadding + xTickTextHeight + xTickPadding + xMajorTickHeight;
+
+    //Calculate the left margin
+
+    //Width of the y axis title is in this case the height of the text (vertical text)
+    var yTitle = textSize("{{ graph.header | raw }}", bigFontSize);
+    var yTitleWidth = yTitle.height;
+
+    //Set padding for y axis title to 16
+    var yTitlePadding = 16;
+
+    //Width of text of tick is approximately the width of the maximum value on the y axis (approximately, because the width of the characters vary, but there is enough space with the yTitlePadding to cover that)
+    var yTickTextWidth = yTickText.width;
+
+    //Ticks are 6 heigh by default, tick padding is 3 by default
+    var yTickWidth = 6;
+    var yTickPadding = xTickPadding;
+
+    //Size of the margin left of the svg
+    var marginLeft = marginSize + yTitleWidth + yTitlePadding + yTickTextWidth + yTickPadding + yTickWidth;
+
+    //Set margins, width and height of svg
+       
+    var margin = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft},
+        width = 758 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
     var x = d3.time.scale()
@@ -15,8 +118,7 @@
     var xAxis = d3.svg.axis()
         .scale(x)
         .ticks(d3.time.months,1)
-        //makes the xAxis ticks a little longer than the xMinorAxis ticks
-        .tickSize(15)
+        .tickSize(xMajorTickHeight)
         .orient("bottom")
         .tickFormat(d3.time.format("%d %b %Y"));
 
@@ -28,7 +130,7 @@
     var xMajorAxis = d3.svg.axis()
         .scale(x)
         .ticks(d3.time.months,1)
-        .tickSize(15)
+        .tickSize(xMajorTickHeight)
         .orient("bottom");
 
     var yAxis = d3.svg.axis()
@@ -50,7 +152,6 @@
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
     //format for tooltip
     //https://github.com/mbostock/d3/wiki/Time-Formatting
     //var formatTime = d3.time.format("%e %b");
@@ -63,28 +164,9 @@
             .orient("left")
     }
 
-    //The format in the CSV, which d3 will read
-    data = d3.csv.parse("{{ graph.data | raw }}", function(d) {
-        return {
-            date:d.date,
-            value:+d.value
-        };
-    });
-
-    var parseDate = d3.time.format("%Y-%m-%d %X");
-    data.forEach(function(d) {
-        d.date = parseDate.parse(d.date);
-        d.value = +d.value;
-    });
-    var maxValue = 0;
-    for (var i = 0; i < data.length; i++) {
-        if(data[i].value > maxValue)
-            maxValue = data[i].value;
-    }
-
     //using imported data to define extent of x and y domains
     x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain([0, (maxValue + 100) * 12 / 10]);
+    y.domain([0, yMaxValue]);
 
 // Draw the y Grid lines
     svg.append("g")
@@ -108,7 +190,7 @@
     //The markers on the line
     g.append("circle")
     //circle radius is increased
-        .attr("r", 4.5)
+        .attr("r", circleRadius)
         .attr("cx", function(d) { return x(d.date); })
         .attr("cy", function(d) { return y(d.value); });
 
@@ -174,7 +256,10 @@
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
         .selectAll(".tick text")
-        .call(wrap, 50);
+        .call(wrap, 50)
+        .selectAll(".tick text tspan")
+        .style("font-size", smallFontSize)
+        .style("font-family", "'Gotham', Helvetica, Arial, sans-serif");
 
     svg.append("g")
         .attr("class","xMinorAxis")
@@ -191,31 +276,38 @@
         .selectAll("text").remove();
 
 //http://www.d3noob.org/2012/12/adding-axis-labels-to-d3js-graph.html
-    svg.append("text")      // text label for the x-axis
+    svg.append("text")      // title for the x-axis
         .attr("x", width / 2 )
-        .attr("y",  height + margin.bottom)
+        .attr("y", height + xMajorTickHeight + xTickPadding + xTickTextHeight + xTitlePadding + xTitleHeight)
         .style("text-anchor", "middle")
+        .style("font-size", bigFontSize)
+        .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
         .text("Datum");
 
-    svg.append("text")      // text label for the y-axis
-        .attr("y",30 - margin.left)
-        .attr("x",50 - (height / 2))
+    svg.append("text")      // title for the y-axis
+        .attr("y", -yTickTextWidth - yTickWidth - yTickPadding - yTitlePadding)
+        .attr("x", yTitle.width/2 - (height / 2))
         .attr("transform", "rotate(-90)")
         .style("text-anchor", "end")
-        .style("font-size", "16px")
+        .style("font-size", bigFontSize)
+        .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
         .text("{{ graph.header | raw }}");
 
     svg.append("g")
         .attr("class", "y axis")
-        .call(yAxis);
-    //text label for the y-axis inside chart
+        .call(yAxis)
+        .selectAll(".tick text")
+        .style("font-size", smallFontSize)
+        .style("font-family", "'Gotham', Helvetica, Arial, sans-serif");
+        
+    //title for the y-axis inside chart
     /*
     .append("text")
       .attr("transform", "rotate(-90)")
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .style("font-size", "16px")
+      .style("font-size", bigFontSize)
       .style("background-color","red")
       .text("road length (km)");
     */
@@ -244,6 +336,23 @@
                 }
             }
         });
+    }
+
+//https://gist.github.com/huytd/327e453c95ca3edadb32d0c867e2561b
+//This function measures text size in pixels
+    function textSize(text, fontSize) {
+        if (!d3) return;
+        var container = d3.select("body").append("svg");
+        
+        container.append("text")
+            .attr({ x: -99999, y: -99999 })
+            .style("font-size", fontSize)
+            .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
+            .text(text);
+        
+        var size = container.node().getBBox();
+        container.remove();
+        return { width: size.width, height: size.height };
     }
 
 //    });
