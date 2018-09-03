@@ -8,7 +8,7 @@ class IndexController extends Controller
 {
     private function getBasicData()
     {
-        return array('title' => $this->getParameter('title'), 'email' => $this->getParameter('email'));
+        return array('service_name' => $this->getParameter('service_name'), 'service_address' => $this->getParameter('service_address'));
     }
 
     /**

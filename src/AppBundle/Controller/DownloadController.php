@@ -257,6 +257,7 @@ class DownloadController extends Controller
                 $part = $this->extractFieldFromRecord($data, $field);
                 if ($part) {
                     foreach ($part as $r) {
+                        //TODO TODO TODO TODO
                         if ($r['term'] && count($r['term']) > 0) {
                             if ($r['id'] && count($r['id']) > 0) {
                                 $id = $r['id'];

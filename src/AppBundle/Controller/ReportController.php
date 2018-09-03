@@ -21,8 +21,8 @@ class ReportController extends Controller
     {
         $this->provider = $provider;
 
-        $title = $this->getParameter('title');
-        $email = $this->getParameter('email');
+        $serviceName = $this->getParameter('service_name');
+        $serviceAddress = $this->getParameter('service_address');
         $leftMenu = $this->getParameter('left_menu');
         $this->dataDef = $this->getParameter('data_definition');
 
@@ -55,8 +55,8 @@ class ReportController extends Controller
 
         $report = $this->$functionCall();
         $data = array(
-            'title' => $title,
-            'email' => $email,
+            'service_name' => $serviceName,
+            'service_address' => $serviceAddress,
             'route' => $route,
             'download' => $download,
             'provider_id' => $this->provider,

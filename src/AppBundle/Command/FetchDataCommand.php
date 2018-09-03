@@ -41,7 +41,7 @@ class FetchDataCommand extends ContainerAwareCommand
         $url = $input->getArgument("url");
         $skip = false;
         if(!$url) {
-            $url = $this->getContainer()->getParameter('datahub.url');
+            $url = $this->getContainer()->getParameter('datahub_url');
         } elseif($url === 'skip') {
             $skip = true;
         }
