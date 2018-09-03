@@ -21,6 +21,7 @@
     },
     "require": {
         "php": ">=5.5.9",
+        "alcaeus/mongo-php-adapter": "^1.1",
         "caseyamcl/phpoaipmh": "^2.6",
         "doctrine/mongodb-odm": "^1.2",
         "doctrine/mongodb-odm-bundle": "^3.4",
