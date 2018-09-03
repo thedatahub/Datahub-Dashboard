@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>
         {% block title %}
-            {{ title }}
+            {{ service_name }}
         {% endblock %}
     </title>
     {% block stylesheets %}
@@ -29,7 +29,7 @@
 </div>
 <footer class="footer">
     <div class="container">
-        <span class="text-muted">Contact: <a href="mailto:{{ email }}?Subject={{ title }}" target="_top">{{ email }}</a></span>
+        <span class="text-muted">Contact: <a href="mailto:{{ service_address }}?Subject={{ service_name }}" target="_top">{{ service_address }}</a></span>
     </div>
 </footer>
 {% block javascripts %}
