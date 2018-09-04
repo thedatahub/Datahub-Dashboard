@@ -240,8 +240,10 @@ class FetchDataCommand extends ContainerAwareCommand
                 $basicComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
-                        if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key]) && count($data[$key]) > 0) {
-                            $fields[$value['class']][$key][] = $record->getId();
+                        if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key])) {
+                            if(count($data[$key]) > 0) {
+                                $fields[$value['class']][$key][] = $record->getId();
+                            }
                         }
                         else {
                             if ($value['class'] == 'minimum') {
