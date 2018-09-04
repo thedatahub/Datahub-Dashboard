@@ -264,20 +264,22 @@ class FetchDataCommand extends ContainerAwareCommand
                                     if($fieldName === $key && $fieldValues) {
                                         foreach ($fieldValues as $fieldValue) {
                                             if ($fieldValue) {
-                                                if (array_key_exists($k, $fieldValue) && count($fieldValue[$k]) > 0) {
-                                                    $found = true;
-                                                    if($k == 'term') {
-                                                        if(array_key_exists('id', $fieldValue) && count($fieldValue['id']) > 0) {
-                                                            if(!array_key_exists($fieldValue['term'][0], $termIds[$key])) {
-                                                                $localId = null;
-                                                                foreach($fieldValue['id'] as $termId) {
-                                                                    if($termId['type'] === 'local') {
-                                                                        $localId = $termId['id'];
-                                                                        break;
+                                                if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
+                                                    if(count($fieldValue[$k]) > 0) {
+                                                        $found = true;
+                                                        if ($k == 'term') {
+                                                            if (array_key_exists('id', $fieldValue) && count($fieldValue['id']) > 0) {
+                                                                if (!array_key_exists($fieldValue['term'][0], $termIds[$key])) {
+                                                                    $localId = null;
+                                                                    foreach ($fieldValue['id'] as $termId) {
+                                                                        if ($termId['type'] === 'local') {
+                                                                            $localId = $termId['id'];
+                                                                            break;
+                                                                        }
                                                                     }
-                                                                }
-                                                                if($localId) {
-                                                                    $termIds[$key][$fieldValue['term'][0]] = $localId;
+                                                                    if ($localId) {
+                                                                        $termIds[$key][$fieldValue['term'][0]] = $localId;
+                                                                    }
                                                                 }
                                                             }
                                                         }
