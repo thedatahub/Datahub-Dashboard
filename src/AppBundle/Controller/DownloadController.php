@@ -306,11 +306,8 @@ class DownloadController extends Controller
             $authority = $id['source'];
         } else {
             $parsedUrl = parse_url($id['id']);
-            if(array_key_exists('scheme', $parsedUrl) && strlen($parsedUrl['scheme']) > 0) {
-                $authority = $parsedUrl['scheme'] . '://';
-            }
             if(array_key_exists('host', $parsedUrl) && strlen($parsedUrl['host']) > 0) {
-                $authority .= $parsedUrl['host'];
+                $authority = $parsedUrl['host'];
             } else {
                 $authority = $id['source'];
             }
