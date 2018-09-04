@@ -7,7 +7,6 @@ imports:
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
-    mongodb_server: "mongodb://localhost:27017"
 
 framework:
     #esi: ~
@@ -37,7 +36,6 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
 
-# app/config/config.yml
 doctrine_mongodb:
     default_database: %mongodb_database%
     connections:

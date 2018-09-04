@@ -36,7 +36,21 @@ will need to provide these details (but can currently be skipped due to still be
 * The password of the user
 * The database where your data will persist (i.e. datahub_dashboard)
 
-Before you install, ensure that you have a running MongoDB instance. A mongodb user is not required at this point.
+Before you install, ensure that you have a running MongoDB instance, and you 
+have created a user with the right permissions. From the 
+[Mongo shell]https://docs.mongodb.com/getting-started/shell/client/) run these
+commands to create the required artefacts in MongoDB:
+
+```
+> use datahub_dashboard
+> db.createUser(
+   {
+     user: "datahubdashboarduser",
+     pwd: "datahubdashboardpass",
+     roles: [ "readWrite", "dbAdmin" ]
+   }
+)
+```
 
 If you want to run the dashboard for testing or development purposes, execute this command:
 
