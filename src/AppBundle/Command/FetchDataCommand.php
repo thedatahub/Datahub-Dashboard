@@ -268,8 +268,8 @@ class FetchDataCommand extends ContainerAwareCommand
                                                     if(count($fieldValue[$k]) > 0) {
                                                         $found = true;
                                                         if ($k == 'term') {
-                                                            if (array_key_exists('id', $fieldValue) && count($fieldValue['id']) > 0) {
-                                                                if (!array_key_exists($fieldValue['term'][0], $termIds[$key])) {
+                                                            if (array_key_exists('id', $fieldValue)) {
+                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($fieldValue['term'][0], $termIds[$key])) {
                                                                     $localId = null;
                                                                     foreach ($fieldValue['id'] as $termId) {
                                                                         if ($termId['type'] === 'local') {
