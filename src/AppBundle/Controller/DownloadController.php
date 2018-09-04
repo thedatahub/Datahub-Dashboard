@@ -10,6 +10,7 @@ class DownloadController extends Controller
 {
     private $provider = null;
     private $dataDef = null;
+    private $question = null;
     private $field = null;
 
     /**
@@ -18,6 +19,7 @@ class DownloadController extends Controller
     public function download($provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
     {
         $this->provider = $provider;
+        $this->question = $question;
         if($field !== '')
             $this->field = $field;
 
@@ -46,7 +48,12 @@ class DownloadController extends Controller
         // Generate response
         $response = new Response();
         if($this->field) {
-            $label = $this->dataDef[$field]['csv'];
+            if(array_key_exists($field, $this->dataDef) && array_key_exists('csv', $this->dataDef[$field])) {
+                $label = $this->dataDef[$field]['csv'];
+            }
+            else {
+                $label = $question . '_' . $field;
+            }
             $filename = $provider . '_' . $aspect . '_' . $label . '.csv';
         } else {
             $filename = $provider . '_' . $aspect . '_' . $question . '.csv';
@@ -210,21 +217,62 @@ class DownloadController extends Controller
 
         $termsWithId = array();
         $termsWithoutId = array();
+        $localAuthority = null;
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                $part = $this->extractFieldFromRecord($data, $field);
-                if ($part) {
-                    foreach ($part as $r) {
-                        if ($r['term'] && count($r['term']) > 0) {
-                            if ($r['id'] && count($r['id']) > 0) {
-                                $id = $r['id'][0];
-                                if (!array_key_exists($r['term'][0], $termsWithId)) {
-                                    $termsWithId[$r['term'][0]] = $id;
+                $fieldValues = $this->extractFieldFromRecord($data, $field);
+                if ($fieldValues) {
+                    foreach ($fieldValues as $fieldValue) {
+                        if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
+                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                $ids = $fieldValue['id'];
+                                $localId = '';
+                                $localAuthority_ = '';
+                                foreach($ids as $id) {
+                                    if($id['type'] === 'local') {
+                                        $localId = $id['id'];
+                                        $localAuthority_ = $id['source'];
+                                        if($localAuthority) {
+                                            if($localAuthority_ !== $localAuthority) {
+                                                $localAuthority = '';
+                                            }
+                                        } else {
+                                            $localAuthority = $localAuthority_;
+                                        }
+                                        break;
+                                    }
+                                }
+                                $isEmpty = true;
+                                foreach ($ids as $id) {
+                                    if ($id['type'] === 'local') {
+                                        continue;
+                                    }
+                                    $isEmpty = false;
+                                    $authority = $this->getAuthority($id);
+                                    if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
+                                        $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
+                                    } else {
+                                        $isIn = false;
+                                        foreach ($termsWithId[$fieldValue['term'][0]] as $knownId) {
+                                            if ($knownId['concept_id'] === $id['id']) {
+                                                $isIn = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!$isIn) {
+                                            $termsWithId[$fieldValue['term'][0]][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
+                                        }
+                                    }
+                                }
+                                if($isEmpty) {
+                                    if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
+                                        $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
+                                    }
                                 }
                             } else {
-                                if (!array_key_exists($r['term'][0], $termsWithoutId)) {
-                                    $termsWithoutId[$r['term'][0]] = '';
+                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
+                                    $termsWithoutId[$fieldValue['term'][0]] = '';
                                 }
                             }
                         }
@@ -234,16 +282,42 @@ class DownloadController extends Controller
         }
 
         $csvData = '';
-        foreach($termsWithId as $term => $id) {
-            $csvData .= PHP_EOL . '"' . $term . '","' . $id . '",ingevuld';
-        }
         foreach($termsWithoutId as $term => $id) {
-            $csvData .= PHP_EOL . '"' . $term . '",,niet ingevuld';
+            $csvData .= PHP_EOL . '"","' . $term . '",""';
+        }
+        foreach($termsWithId as $term => $ids) {
+            foreach($ids as $id) {
+                $csvData .= PHP_EOL . '"' . $id['local_id'] . '","' . $term . '","' . $id['concept_id'] . '","' . $id['authority'] . '"';
+            }
         }
 
         $label = RecordUtil::getFieldLabel($field, $this->dataDef);
 
-        return $label . ',Persistente ID,Aanwezig' . $csvData;
+        if(!$localAuthority) {
+            $localAuthority = ' ';
+        } else {
+            $localAuthority .= ' ';
+        }
+
+        return $localAuthority . 'ID,' . $label . ',Concept ID,Authority' . $csvData;
+    }
+
+    private function getAuthority($id)
+    {
+        if($id['type'] === 'local') {
+            $authority = $id['source'];
+        } else {
+            $parsedUrl = parse_url($id['id']);
+            if(array_key_exists('scheme', $parsedUrl) && strlen($parsedUrl['scheme']) > 0) {
+                $authority = $parsedUrl['scheme'] . '://';
+            }
+            if(array_key_exists('host', $parsedUrl) && strlen($parsedUrl['host']) > 0) {
+                $authority .= $parsedUrl['host'];
+            } else {
+                $authority = $id['source'];
+            }
+        }
+        return $authority;
     }
 
     private function ambigtermBar($field)
@@ -251,22 +325,38 @@ class DownloadController extends Controller
         $records = $this->getAllRecords();
 
         $termsWithId = array();
+        $termsWithoutId = array();
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                $part = $this->extractFieldFromRecord($data, $field);
-                if ($part) {
-                    foreach ($part as $r) {
-                        //TODO TODO TODO TODO
-                        if ($r['term'] && count($r['term']) > 0) {
-                            if ($r['id'] && count($r['id']) > 0) {
-                                $id = $r['id'];
-                                foreach($id as $i) {
-                                    if (!array_key_exists($r['term'][0], $termsWithId)) {
-                                        $termsWithId[$r['term'][0]] = array($i);
-                                    } elseif (!in_array($i, $termsWithId[$r['term'][0]])) {
-                                        $termsWithId[$r['term'][0]][] = $i;
+                $fieldValues = $this->extractFieldFromRecord($data, $field);
+                if ($fieldValues) {
+                    foreach ($fieldValues as $fieldValue) {
+                        if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
+                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                $ids = $fieldValue['id'];
+                                foreach($ids as $id) {
+                                    if($id['source'] == $this->field) {
+                                        $authority = $this->getAuthority($id);
+                                        if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
+                                            $termsWithId[$fieldValue['term'][0]] = array(array('id' => $id['id'], 'authority' => $authority));
+                                        } else {
+                                            $isIn = false;
+                                            foreach($termsWithId[$fieldValue['term'][0]] as $knownId) {
+                                                if($knownId['id'] === $id['id']) {
+                                                    $isIn = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!$isIn) {
+                                                $termsWithId[$fieldValue['term'][0]][] = array('id' => $id['id'], 'authority' => $authority);
+                                            }
+                                        }
                                     }
+                                }
+                            } else {
+                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
+                                    $termsWithoutId[$fieldValue['term'][0]] = '';
                                 }
                             }
                         }
@@ -276,15 +366,18 @@ class DownloadController extends Controller
         }
 
         $csvData = '';
-        foreach($termsWithId as $term => $id) {
-            foreach($id as $i) {
-                $csvData .= PHP_EOL . '"' . $term . '","' . $i . '",';
+        foreach($termsWithoutId as $term => $id) {
+            $csvData .= PHP_EOL . '"' . $term . '","","ongekend"';
+        }
+        foreach($termsWithId as $term => $ids) {
+            foreach($ids as $id) {
+                $csvData .= PHP_EOL . '"' . $term . '","' . $id['id'] . '","' . $id['authority'] . '"';
             }
         }
 
         $label = RecordUtil::getFieldLabel($field, $this->dataDef);
 
-        return $label . ',Persistente ID' . $csvData;
+        return $label . ',Persistente ID,Authority' . $csvData;
     }
 
     private function ambigObjectNamePiechart()
