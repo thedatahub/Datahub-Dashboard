@@ -136,7 +136,7 @@ h1 {
 .print-provider {
   display: none;
   position: absolute;
-  top: -10px;
+  top: -20px;
   left: 20px;
 }
 
@@ -350,9 +350,6 @@ div.tooltip {
 
 
 @media print {
-  body {
-    transform: scale(.8);
-  }
   a[href]:after {
     content: none !important;
   }
@@ -364,7 +361,7 @@ div.tooltip {
   }
   @page {
     size: auto;   /* auto is the initial value */
-    margin: 0;  /* this affects the margin in the printer settings */
+    margin: 40px;  /* this affects the margin in the printer settings */
   }
   #graphs {
     transform: translateX(-340px);
