@@ -228,7 +228,6 @@ class DownloadController extends Controller
                             if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                 $ids = $fieldValue['id'];
                                 $localId = '';
-                                $localAuthority_ = '';
                                 foreach($ids as $id) {
                                     if($id['type'] === 'local') {
                                         $localId = $id['id'];
@@ -245,27 +244,26 @@ class DownloadController extends Controller
                                 }
                                 $isEmpty = true;
                                 foreach ($ids as $id) {
-                                    if ($id['type'] === 'local') {
-                                        continue;
-                                    }
-                                    $isEmpty = false;
-                                    $authority = $this->getAuthority($id);
-                                    if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
-                                        $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
-                                    } else {
-                                        $isIn = false;
-                                        foreach ($termsWithId[$fieldValue['term'][0]] as $knownId) {
-                                            if ($knownId['concept_id'] === $id['id']) {
-                                                $isIn = true;
-                                                break;
+                                    if ($id['type'] === 'purl') {
+                                        $isEmpty = false;
+                                        $authority = $this->getAuthority($id);
+                                        if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
+                                            $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
+                                        } else {
+                                            $isIn = false;
+                                            foreach ($termsWithId[$fieldValue['term'][0]] as $knownId) {
+                                                if ($knownId['concept_id'] === $id['id']) {
+                                                    $isIn = true;
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        if (!$isIn) {
-                                            $termsWithId[$fieldValue['term'][0]][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
+                                            if (!$isIn) {
+                                                $termsWithId[$fieldValue['term'][0]][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
+                                            }
                                         }
                                     }
                                 }
-                                if($isEmpty) {
+                                if ($isEmpty) {
                                     if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
                                         $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
                                     }
