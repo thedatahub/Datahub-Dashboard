@@ -558,29 +558,45 @@ class ReportController extends Controller
 
     private function richTerms($field)
     {
+        $undefinedKey = 'niet gedefinieerd';
+
         $allRecords = $this->getAllRecords();
         $counts = array();
         if($allRecords) {
             foreach ($allRecords as $record) {
                 $data = $record->getData();
                 if ($data[$field] && count($data[$field]) > 0) {
-                    $rec = $data[$field];
-                    foreach ($rec as $r) {
-                        if ($r['term'] && count($r['term']) > 0) {
-                            foreach ($r['term'] as $term) {
+                    $fieldValues = $data[$field];
+                    foreach ($fieldValues as $fieldValue) {
+                        if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
+                            foreach ($fieldValue['term'] as $term) {
                                 if (array_key_exists($term, $counts)) {
                                     $counts[$term]++;
                                 } else {
                                     $counts[$term] = 1;
                                 }
                             }
+                        } else if(is_array($fieldValue)) {
+                            foreach($fieldValue as $value) {
+                                if (array_key_exists($value, $counts)) {
+                                    $counts[$value]++;
+                                } else {
+                                    $counts[$value] = 1;
+                                }
+                            }
                         } else {
-                            if (array_key_exists($rec, $counts)) {
-                                $counts[$rec]++;
+                            if (array_key_exists($fieldValue, $counts)) {
+                                $counts[$fieldValue]++;
                             } else {
-                                $counts[$rec] = 1;
+                                $counts[$fieldValue] = 1;
                             }
                         }
+                    }
+                } else {
+                    if (array_key_exists($undefinedKey, $counts)) {
+                        $counts[$undefinedKey]++;
+                    } else {
+                        $counts[$undefinedKey] = 1;
                     }
                 }
             }
