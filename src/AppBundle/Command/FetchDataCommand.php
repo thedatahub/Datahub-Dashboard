@@ -266,29 +266,24 @@ class FetchDataCommand extends ContainerAwareCommand
                                         foreach ($fieldValues as $fieldValue) {
                                             if ($fieldValue) {
                                                 if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
-                                                    try {
-                                                        if (count($fieldValue[$k]) > 0) {
-                                                            $found = true;
-                                                            if ($k == 'term' && is_array($fieldValue)) {
-                                                                if (array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
-                                                                    if (count($fieldValue['id']) > 0 && !array_key_exists($fieldValue['term'][0], $termIds[$key])) {
-                                                                        $localId = null;
-                                                                        foreach ($fieldValue['id'] as $termId) {
-                                                                            if ($termId['type'] === 'local') {
-                                                                                $localId = $termId['id'];
-                                                                                break;
-                                                                            }
+                                                    if (count($fieldValue[$k]) > 0) {
+                                                        $found = true;
+                                                        if ($k == 'term' && is_array($fieldValue)) {
+                                                            if (array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
+                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($fieldValue['term'][0], $termIds[$key])) {
+                                                                    $localId = null;
+                                                                    foreach ($fieldValue['id'] as $termId) {
+                                                                        if ($termId['type'] === 'local') {
+                                                                            $localId = $termId['id'];
+                                                                            break;
                                                                         }
-                                                                        if ($localId) {
-                                                                            $termIds[$key][$fieldValue['term'][0]] = $localId;
-                                                                        }
+                                                                    }
+                                                                    if ($localId) {
+                                                                        $termIds[$key][$fieldValue['term'][0]] = $localId;
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    }
-                                                    catch(Exception $e) {
-
                                                     }
                                                 }
                                             }
