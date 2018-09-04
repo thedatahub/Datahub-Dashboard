@@ -240,6 +240,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 $basicComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
+                        //TODO check why this fails
                         if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key])) {
                             if(count($data[$key]) > 0) {
                                 $fields[$value['class']][$key][] = $record->getId();
@@ -267,7 +268,7 @@ class FetchDataCommand extends ContainerAwareCommand
                                                 if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
                                                     if(count($fieldValue[$k]) > 0) {
                                                         $found = true;
-                                                        if ($k == 'term') {
+                                                        if ($k == 'term' && is_array($fieldValue)) {
                                                             if (array_key_exists('id', $fieldValue)) {
                                                                 if (count($fieldValue['id']) > 0 && !array_key_exists($fieldValue['term'][0], $termIds[$key])) {
                                                                     $localId = null;
