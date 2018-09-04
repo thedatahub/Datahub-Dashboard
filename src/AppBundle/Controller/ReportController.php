@@ -386,12 +386,17 @@ class ReportController extends Controller
         }
         elseif(count($termsWithId) == 0) {
             $pieChart->isEmpty = true;
-            $pieChart->emptyText = 'Er zijn geen termen met een ID.';
+            if(count($termsWithoutId) == 0) {
+                $pieChart->emptyText = 'Er zijn geen records waarvoor dit veld is ingevuld.';
+                $pieChart->canDownload = false;
+            } else {
+                $pieChart->emptyText = 'Er zijn geen termen met een ID.';
+            }
         }
 
         $csvData = '';
         foreach($authorities as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . count($value) . '"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
         $barChart->canDownload = true;
