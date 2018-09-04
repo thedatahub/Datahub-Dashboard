@@ -1,3 +1,6 @@
-<form class="download-button" action="{{ route ~ "/" ~ active_aspect ~ "/" ~ active_parameter ~ "/" ~ active_question ~ "/" ~ graph.type }}">
-    <input type="submit" value="Download" title="Download achterliggende gegevens in CSV"/>
+<form class="download-button" align="right" action="{{ route ~ "/" ~ active_aspect ~ "/" ~ active_parameter ~ "/" ~ active_question ~ "/" ~ graph.type }}">
+    <button type="submit" class="btn" title="Download achterliggende gegevens in CSV">
+    	<i class="fa fa-download"></i>
+    	DOWNLOAD
+    </button>
 </form>

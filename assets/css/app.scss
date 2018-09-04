@@ -13,7 +13,6 @@ html {
 body {
   margin-bottom: 70px;
   font-family: "Gotham", Helvetica, Arial, sans-serif;
-  font-weight: lighter;
   background-color: #fafafa;
 }
 
@@ -137,8 +136,8 @@ h1 {
 .print-provider {
   display: none;
   position: absolute;
-  left: -115px;
-  top: -15px;
+  top: -10px;
+  left: 20px;
 }
 
 .left-menu {
@@ -163,9 +162,14 @@ h1 {
   margin-bottom: -1px;
 }
 
-.parameter,.parameter:focus {
+.parameter, .parameter:focus {
   background-color: rgb(220, 220, 220);
   border-color: #adadad;
+}
+
+.parameter:focus, .question:focus {
+  outline: none !important;
+  box-shadow: none;
 }
 
 .question-active {
@@ -218,8 +222,9 @@ h1 {
 }
 
 .graph p {
-  padding-top: -20px;
+  padding-top: 20px;
   padding-bottom: 20px;
+  margin-bottom: 0px;
 }
 
 .title-div {
@@ -278,10 +283,6 @@ h1 {
   font-size: 13px;
 }
 
-.empty-text {
-  height: 50px;
-}
-
 .axis path,
 .axis line {
   fill: none;
@@ -320,10 +321,23 @@ div.tooltip {
   opacity: 0.7;
 }
 
-.download-button {
-  float: right;
-  margin-top: -52px;
-  margin-right: 8px;
+.download-button .btn {
+  background-color: gainsboro;
+  border: none;
+  color: #333;
+  padding: 6px 8px;
+  font-family: "Gotham", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
+/* Darker background on mouse-over */
+.download-button .btn:hover {
+  background-color: #5F585D;
+  color: white;
 }
 
  /* Is this one used?
@@ -345,9 +359,6 @@ div.tooltip {
   }
   .left-menu, .download-button, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
     display: none !important;
-  }
-  .print-provider {
-    transform: translateX(50px);
   }
   .print-provider, .print-title {
     display: block !important;
