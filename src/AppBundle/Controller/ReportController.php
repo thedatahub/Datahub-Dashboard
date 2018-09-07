@@ -165,6 +165,7 @@ class ReportController extends Controller
                 if (strpos($key, '/')) {
                     $parts = explode('/', $key);
                     $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
+                    $key = $parts[0];
                 } else {
                     $label = $this->dataDef[$key]['label'];
                 }
