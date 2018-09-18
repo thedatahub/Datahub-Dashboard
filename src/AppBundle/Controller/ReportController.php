@@ -365,6 +365,14 @@ class ReportController extends Controller
                                                 } else {
                                                     $authorities[$authority] = array($id);
                                                 }
+                                            } else if($termId['type'] === 'local') {
+                                                if (array_key_exists($authority, $authorities)) {
+                                                    if (!in_array($id, $authorities[$authority])) {
+                                                        $authorities[$authority][] = $id;
+                                                    }
+                                                } else {
+                                                    $authorities[$authority] = array($id);
+                                                }
                                             }
                                         }
                                     }
@@ -418,7 +426,7 @@ class ReportController extends Controller
                 $barChart->emptyText = "Er zijn geen authorities voor deze termen";
             }
         } else {
-            $barChart->max = count($termsWithId);
+            $barChart->max = count($termsWithId) + count($termsWithoutId);
         }
 
         $lineChart = $this->generateFieldTrendGraph($field, 'Termen met ID');
