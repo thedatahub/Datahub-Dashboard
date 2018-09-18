@@ -19,7 +19,7 @@ parameters:
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/repositoryName/legalBodyName/appellationValue'
         object_number:
             class: 'minimum'
-            label: 'Waarde objectnummer'
+            label: 'Work PID'
             csv: 'objectnummer'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="objectnummer"]'
         title:
@@ -57,7 +57,7 @@ parameters:
         acquisition_source:
             class: 'minimum'
             csv: 'verwervingsbron'
-            label: 'Naam verwervingsbron'
+            label: 'Identificatie verwervingsmethode'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appelationValue'
         acquisition_date:
             class: 'minimum'
@@ -225,11 +225,11 @@ parameters:
             csv: 'classificatie'
             term:
                 class: 'extended'
-                label: 'Term classificatie'
+                label: 'Term objectcategorie'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie classificatie'
+                label: 'Identificatie objectcategorie'
                 xpath: 'conceptID'
         rights:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
