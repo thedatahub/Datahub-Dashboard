@@ -50,7 +50,7 @@ class ReportController extends Controller
             }
         }
         if(!$functionCall) {
-            throw new NotFoundHttpException('Deze pagina bestaat niet.');
+            throw $this->createNotFoundException('Deze pagina bestaat niet.');
         }
 
         $report = $this->$functionCall();
@@ -403,6 +403,9 @@ class ReportController extends Controller
         $barChart->canDownload = true;
         if(count($authorities) == 0) {
             $barChart->isEmpty = true;
+            if(count($termsWithId) > 0 || count($termsWithoutId) > 0) {
+                $barChart->emptyText = "Er zijn geen authorities voor deze termen";
+            }
         } else {
             $barChart->max = count($termsWithId);
         }

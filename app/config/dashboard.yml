@@ -362,7 +362,7 @@ parameters:
                         url: 'afgebeelde_gebeurtenis'
                         function: 'ambigEvent'
         Rijkheid:
-            Records:
+            Occurrences:
               url: 'records'
               list:
                   Naam bewaarinstelling:
