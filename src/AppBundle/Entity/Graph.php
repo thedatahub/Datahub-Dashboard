@@ -15,6 +15,7 @@ class Graph
     public $isFull = false;
     public $fullText = '';
     public $canDownload = false;
+    public $legendText = '';
 
     public function __construct($type, $data, $header = '')
     {

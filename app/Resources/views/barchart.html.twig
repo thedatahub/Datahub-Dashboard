@@ -23,6 +23,7 @@
         }
     }
     else {
+        var hasLegend = "{{ graph.legendText | raw }}".length > 0;
         var canDownload = {{ graph.canDownload | json_encode | raw }};
         data = d3.csv.parse({{ graph.data | json_encode | raw }}, function(d) {
             return {
@@ -92,6 +93,12 @@
             widthName = widthName.width;
             if(widthName > leftLabelWidth)
                 leftLabelWidth = widthName;
+        }
+        if(hasLegend) {
+            leftLabelWidth += 10;
+            if(marginBottom < 120) {
+                marginBottom = 120;
+            }
         }
 
         //Set padding for label to the left of the bars to 6
@@ -212,6 +219,18 @@
             .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
             .style("text-anchor", "right")
             .text("{{ graph.header | raw }}");
+
+
+        if(hasLegend) {
+            svg.append("text")      // title for the y-axis
+                .attr("y", -margin.left + 15)
+                .attr("x", data.length > 4 ? - height / 2 + margin.top + 13 : 0)
+                .attr("transform", "rotate(-90)")
+                .style("text-anchor", "end")
+                .style("font-size", bigFontSize)
+                .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
+                .text("{{ graph.legendText | raw }}");
+        }
     }
 
 //https://gist.github.com/huytd/327e453c95ca3edadb32d0c867e2561b

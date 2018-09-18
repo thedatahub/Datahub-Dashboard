@@ -479,8 +479,15 @@ class ReportController extends Controller
         if($allRecords) {
             foreach ($allRecords as $record) {
                 $data = $record->getData();
-                if ($data[$field] && count($data[$field]) > 0) {
+                if ($data[$field]) {
                     $count = count($data[$field]);
+                    if (array_key_exists($count, $counts)) {
+                        $counts[$count]++;
+                    } else {
+                        $counts[$count] = 1;
+                    }
+                } else {
+                    $count = 0;
                     if (array_key_exists($count, $counts)) {
                         $counts[$count]++;
                     } else {
@@ -500,6 +507,8 @@ class ReportController extends Controller
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = 'Er zijn geen records waarvoor dit veld werd ingevuld.';
+        } else {
+            $barChart->legendText = 'Aantal occurrences';
         }
 
         $title = 'Rijkheid ' . RecordUtil::getFieldLabel($field, $this->dataDef) . ' in records';
