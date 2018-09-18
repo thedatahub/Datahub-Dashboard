@@ -154,7 +154,15 @@ class DownloadController extends Controller
         } elseif($b['count'] == 0) {
             return -1;
         } elseif ($a['count'] == $b['count']) {
-            return 0;
+            $aLen = strlen($a['id']);
+            $bLen = strlen($b['id']);
+            if($aLen > $bLen) {
+                return 1;
+            } else if($aLen < $bLen) {
+                return -1;
+            } else {
+                return strcmp($a['id'], $b['id']);
+            }
         } else {
             return ($a['count'] < $b['count']) ? 1 : -1;
         }
@@ -231,10 +239,10 @@ class DownloadController extends Controller
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     $ids = $fieldValue['id'];
                                     $localId = '';
-                                    foreach ($ids as $id) {
-                                        if ($id['type'] === 'local') {
-                                            $localId = $id['id'];
-                                            $localAuthority_ = $id['source'];
+                                    foreach ($ids as $termId) {
+                                        if ($termId['type'] === 'local') {
+                                            $localId = $termId['id'];
+                                            $localAuthority_ = $termId['source'];
                                             if ($localAuthority) {
                                                 if ($localAuthority_ !== $localAuthority) {
                                                     $localAuthority = '';
@@ -246,22 +254,22 @@ class DownloadController extends Controller
                                         }
                                     }
                                     $isEmpty = true;
-                                    foreach ($ids as $id) {
-                                        if ($id['type'] === 'purl') {
+                                    foreach ($ids as $termId) {
+                                        if ($termId['type'] === 'purl') {
                                             $isEmpty = false;
-                                            $authority = $this->getAuthority($id);
+                                            $authority = $this->getAuthority($termId);
                                             if (!array_key_exists($preferredTerm, $termsWithId)) {
-                                                $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
+                                                $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority));
                                             } else {
                                                 $isIn = false;
                                                 foreach ($termsWithId[$preferredTerm] as $knownId) {
-                                                    if ($knownId['concept_id'] === $id['id']) {
+                                                    if ($knownId['concept_id'] === $termId['id']) {
                                                         $isIn = true;
                                                         break;
                                                     }
                                                 }
                                                 if (!$isIn) {
-                                                    $termsWithId[$preferredTerm][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
+                                                    $termsWithId[$preferredTerm][] = array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority);
                                                 }
                                             }
                                         }
@@ -288,8 +296,8 @@ class DownloadController extends Controller
             $csvData .= PHP_EOL . '"","' . $term . '",""';
         }
         foreach($termsWithId as $term => $ids) {
-            foreach($ids as $id) {
-                $csvData .= PHP_EOL . '"' . $id['local_id'] . '","' . $term . '","' . $id['concept_id'] . '","' . $id['authority'] . '"';
+            foreach($ids as $termId) {
+                $csvData .= PHP_EOL . '"' . $termId['local_id'] . '","' . $term . '","' . $termId['concept_id'] . '","' . $termId['authority'] . '"';
             }
         }
 
@@ -325,6 +333,7 @@ class DownloadController extends Controller
 
         $termsWithId = array();
         $termsWithoutId = array();
+        $idTerms = array();
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
@@ -336,21 +345,56 @@ class DownloadController extends Controller
                             if ($preferredTerm) {
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     $ids = $fieldValue['id'];
-                                    foreach ($ids as $id) {
-                                        if ($id['source'] == $this->field) {
-                                            $authority = $this->getAuthority($id);
+                                    foreach ($ids as $termId) {
+                                        if ($termId['source'] == $this->field) {
+                                            $authority = $this->getAuthority($termId);
+                                            $id = $termId['id'];
                                             if (!array_key_exists($preferredTerm, $termsWithId)) {
-                                                $termsWithId[$preferredTerm] = array(array('id' => $id['id'], 'authority' => $authority));
+                                                $count = 1;
+                                                if(!array_key_exists($id, $idTerms)) {
+                                                    $idTerms[$id] = array($preferredTerm);
+                                                }
+                                                else {
+                                                    $isIn = false;
+                                                    foreach ($idTerms[$id] as $term) {
+                                                        if($term === $preferredTerm) {
+                                                            $isIn = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if(!$isIn) {
+                                                        $idTerms[$id][] = $preferredTerm;
+                                                    }
+                                                    $count = count($idTerms[$id]);
+                                                }
+                                                $termsWithId[$preferredTerm] = array(array('id' => $id, 'authority' => $authority, 'count' => $count));
                                             } else {
                                                 $isIn = false;
                                                 foreach ($termsWithId[$preferredTerm] as $knownId) {
-                                                    if ($knownId['id'] === $id['id']) {
+                                                    if ($knownId['id'] === $id) {
                                                         $isIn = true;
                                                         break;
                                                     }
                                                 }
                                                 if (!$isIn) {
-                                                    $termsWithId[$preferredTerm][] = array('id' => $id['id'], 'authority' => $authority);
+                                                    $count = 1;
+                                                    if(!array_key_exists($id, $idTerms)) {
+                                                        $idTerms[$id] = array($preferredTerm);
+                                                    }
+                                                    else {
+                                                        $isIn = false;
+                                                        foreach ($idTerms[$id] as $term) {
+                                                            if($term === $preferredTerm) {
+                                                                $isIn = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if(!$isIn) {
+                                                            $idTerms[$id][] = $preferredTerm;
+                                                        }
+                                                        $count = count($idTerms['id']);
+                                                    }
+                                                    $termsWithId[$preferredTerm][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
                                                 }
                                             }
                                         }
@@ -367,14 +411,21 @@ class DownloadController extends Controller
             }
         }
 
+
+        $initCsvData = array();
+        foreach($termsWithId as $term => $ids) {
+            foreach($ids as $termId) {
+                $initCsvData[] = array('term' => $term, 'id' => $termId['id'], 'authority' => $termId['authority'], 'count' => count($idTerms[$termId['id']]));
+            }
+        }
+        usort($initCsvData, array('AppBundle\Controller\DownloadController', 'ambigIdsCmp'));
+
         $csvData = '';
-        foreach($termsWithoutId as $term => $id) {
+        foreach($termsWithoutId as $term => $termId) {
             $csvData .= PHP_EOL . '"' . $term . '","","ongekend"';
         }
-        foreach($termsWithId as $term => $ids) {
-            foreach($ids as $id) {
-                $csvData .= PHP_EOL . '"' . $term . '","' . $id['id'] . '","' . $id['authority'] . '"';
-            }
+        foreach($initCsvData as $data) {
+            $csvData .= PHP_EOL . '"' . $data['term'] . '","' . $data['id'] . '","' . $data['authority'] . '"';
         }
 
         $label = RecordUtil::getFieldLabel($field, $this->dataDef);
