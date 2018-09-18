@@ -72,16 +72,23 @@
 
         //Calculate the bottom margin
 
-        //Ticks are 6 heigh by default, tick padding is 3 by default
-        var xTickWidth = 6;
-        var xTickPadding = 3;
+        if(max > 0) {
+            //Ticks are 6 heigh by default, tick padding is 3 by default
+            var xTickWidth = 6;
+            var xTickPadding = 3;
 
-        //Calculate possible height of text of tick for x axis
-        var xTickText = textSize("0123456789", smallFontSize);
-        var xTickTextHeight = xTickText.height;
+            //Calculate possible height of text of tick for x axis
+            var xTickText = textSize("0123456789", smallFontSize);
+            var xTickTextHeight = xTickText.height;
 
-        //Size of the margin beneath the svg
-        var marginBottom = marginSize + xTickTextHeight + xTickPadding + xTickWidth;
+            //Size of the margin beneath the svg
+            var marginBottom = marginSize + xTickTextHeight + xTickPadding + xTickWidth;
+        }
+
+        else {
+            //Size of the margin beneath the svg
+            var marginBottom = marginSize
+        }
 
         //Calculate the left margin
 
