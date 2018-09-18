@@ -415,7 +415,11 @@ class DownloadController extends Controller
         $initCsvData = array();
         foreach($termsWithId as $term => $ids) {
             foreach($ids as $termId) {
-                $initCsvData[] = array('term' => $term, 'id' => $termId['id'], 'authority' => $termId['authority'], 'count' => count($idTerms[$termId['id']]));
+                $initCsvData[] = array(
+                    'term' => $term,
+                    'id' => $termId['id'],
+                    'authority' => $termId['authority'],
+                    'count' => count($idTerms[$termId['id']])*1000000 + count($ids));//hack to sort based on duplicate ID's, then on duplicate terms
             }
         }
         usort($initCsvData, array('AppBundle\Controller\DownloadController', 'ambigIdsCmp'));
