@@ -414,7 +414,7 @@ class ReportController extends Controller
         $barChart->canDownload = true;
         if(count($authorities) == 0) {
             $barChart->isEmpty = true;
-            if(count($termsWithId) > 0 || count($termsWithoutId) > 0) {
+            if(count($termsWithId) > 0) {
                 $barChart->emptyText = "Er zijn geen authorities voor deze termen";
             }
         } else {
