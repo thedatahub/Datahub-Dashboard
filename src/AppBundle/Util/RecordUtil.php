@@ -3,6 +3,16 @@ namespace AppBundle\Util;
 
 class RecordUtil
 {
+    public static function getPreferredTerm($terms)
+    {
+        foreach($terms as $term) {
+            if($term['pref'] === 'preferred') {
+                return $term['term'];
+            }
+        }
+        return null;
+    }
+
     public static function getFieldLabel($field, $dataDef)
     {
         $label = '';

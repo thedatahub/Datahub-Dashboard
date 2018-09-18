@@ -107,6 +107,15 @@ class FetchDataCommand extends ContainerAwareCommand
                                 }
                             }
                             $arr[] = $idArr;
+                        } else if($key === 'term') {
+                            $termArr = array('term' => $child);
+                            $attributes = $resChild->attributes($namespace, true);
+                            if ($attributes) {
+                                foreach ($attributes as $attributeKey => $attributeValue) {
+                                    $termArr[(string)$attributeKey] = (string)$attributeValue;
+                                }
+                            }
+                            $arr[] = $termArr;
                         }
                         else {
                             if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
@@ -194,9 +203,10 @@ class FetchDataCommand extends ContainerAwareCommand
     {
         $dm = $this->getDocumentManager();
         $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
-        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
-        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
+
+//        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
+//        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
 
         foreach($providers as $provider) {
             $providerId = $provider->getIdentifier();
@@ -269,17 +279,24 @@ class FetchDataCommand extends ContainerAwareCommand
                                                     if (count($fieldValue[$k]) > 0) {
                                                         $found = true;
                                                         if ($k == 'term' && is_array($fieldValue)) {
-                                                            if (array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
-                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($fieldValue['term'][0], $termIds[$key])) {
-                                                                    $localId = null;
+                                                            $preferredTerm = null;
+                                                            foreach($fieldValue['term'] as $term) {
+                                                                if($term['pref'] === 'preferred') {
+                                                                    $preferredTerm = $term['term'];
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if ($preferredTerm && array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
+                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($preferredTerm, $termIds[$key])) {
+                                                                    $firstPurlId = null;
                                                                     foreach ($fieldValue['id'] as $termId) {
-                                                                        if ($termId['type'] === 'local') {
-                                                                            $localId = $termId['id'];
+                                                                        if ($termId['type'] === 'purl') {
+                                                                            $firstPurlId = $termId['id'];
                                                                             break;
                                                                         }
                                                                     }
-                                                                    if ($localId) {
-                                                                        $termIds[$key][$fieldValue['term'][0]] = $localId;
+                                                                    if ($firstPurlId) {
+                                                                        $termIds[$key][$preferredTerm] = $firstPurlId;
                                                                     }
                                                                 }
                                                             }

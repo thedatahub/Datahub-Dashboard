@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\RecordBundle\Document\Record;
 use AppBundle\Util\RecordUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -225,52 +226,55 @@ class DownloadController extends Controller
                 if ($fieldValues) {
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
-                                $ids = $fieldValue['id'];
-                                $localId = '';
-                                foreach($ids as $id) {
-                                    if($id['type'] === 'local') {
-                                        $localId = $id['id'];
-                                        $localAuthority_ = $id['source'];
-                                        if($localAuthority) {
-                                            if($localAuthority_ !== $localAuthority) {
-                                                $localAuthority = '';
+                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if ($preferredTerm) {
+                                if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                    $ids = $fieldValue['id'];
+                                    $localId = '';
+                                    foreach ($ids as $id) {
+                                        if ($id['type'] === 'local') {
+                                            $localId = $id['id'];
+                                            $localAuthority_ = $id['source'];
+                                            if ($localAuthority) {
+                                                if ($localAuthority_ !== $localAuthority) {
+                                                    $localAuthority = '';
+                                                }
+                                            } else {
+                                                $localAuthority = $localAuthority_;
                                             }
-                                        } else {
-                                            $localAuthority = $localAuthority_;
+                                            break;
                                         }
-                                        break;
                                     }
-                                }
-                                $isEmpty = true;
-                                foreach ($ids as $id) {
-                                    if ($id['type'] === 'purl') {
-                                        $isEmpty = false;
-                                        $authority = $this->getAuthority($id);
-                                        if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
-                                            $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
-                                        } else {
-                                            $isIn = false;
-                                            foreach ($termsWithId[$fieldValue['term'][0]] as $knownId) {
-                                                if ($knownId['concept_id'] === $id['id']) {
-                                                    $isIn = true;
-                                                    break;
+                                    $isEmpty = true;
+                                    foreach ($ids as $id) {
+                                        if ($id['type'] === 'purl') {
+                                            $isEmpty = false;
+                                            $authority = $this->getAuthority($id);
+                                            if (!array_key_exists($preferredTerm, $termsWithId)) {
+                                                $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority));
+                                            } else {
+                                                $isIn = false;
+                                                foreach ($termsWithId[$preferredTerm] as $knownId) {
+                                                    if ($knownId['concept_id'] === $id['id']) {
+                                                        $isIn = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!$isIn) {
+                                                    $termsWithId[$preferredTerm][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
                                                 }
                                             }
-                                            if (!$isIn) {
-                                                $termsWithId[$fieldValue['term'][0]][] = array('local_id' => $localId, 'concept_id' => $id['id'], 'authority' => $authority);
-                                            }
                                         }
                                     }
-                                }
-                                if ($isEmpty) {
-                                    if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
-                                        $termsWithId[$fieldValue['term'][0]] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
+                                    if ($isEmpty) {
+                                        if (!array_key_exists($preferredTerm, $termsWithId)) {
+                                            $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
+                                        }
                                     }
-                                }
-                            } else {
-                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
-                                    $termsWithoutId[$fieldValue['term'][0]] = '';
+                                } else {
+                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
+                                        $termsWithoutId[$preferredTerm] = '';
+                                    }
                                 }
                             }
                         }
@@ -328,30 +332,33 @@ class DownloadController extends Controller
                 if ($fieldValues) {
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
-                                $ids = $fieldValue['id'];
-                                foreach($ids as $id) {
-                                    if($id['source'] == $this->field) {
-                                        $authority = $this->getAuthority($id);
-                                        if (!array_key_exists($fieldValue['term'][0], $termsWithId)) {
-                                            $termsWithId[$fieldValue['term'][0]] = array(array('id' => $id['id'], 'authority' => $authority));
-                                        } else {
-                                            $isIn = false;
-                                            foreach($termsWithId[$fieldValue['term'][0]] as $knownId) {
-                                                if($knownId['id'] === $id['id']) {
-                                                    $isIn = true;
-                                                    break;
+                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if ($preferredTerm) {
+                                if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                    $ids = $fieldValue['id'];
+                                    foreach ($ids as $id) {
+                                        if ($id['source'] == $this->field) {
+                                            $authority = $this->getAuthority($id);
+                                            if (!array_key_exists($preferredTerm, $termsWithId)) {
+                                                $termsWithId[$preferredTerm] = array(array('id' => $id['id'], 'authority' => $authority));
+                                            } else {
+                                                $isIn = false;
+                                                foreach ($termsWithId[$preferredTerm] as $knownId) {
+                                                    if ($knownId['id'] === $id['id']) {
+                                                        $isIn = true;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            if (!$isIn) {
-                                                $termsWithId[$fieldValue['term'][0]][] = array('id' => $id['id'], 'authority' => $authority);
+                                                if (!$isIn) {
+                                                    $termsWithId[$preferredTerm][] = array('id' => $id['id'], 'authority' => $authority);
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            } else {
-                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
-                                    $termsWithoutId[$fieldValue['term'][0]] = '';
+                                } else {
+                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
+                                        $termsWithoutId[$preferredTerm] = '';
+                                    }
                                 }
                             }
                         }

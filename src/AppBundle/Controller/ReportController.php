@@ -346,30 +346,41 @@ class ReportController extends Controller
                     $fieldValues = $data[$field];
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
-                                $localId = null;
-                                foreach($fieldValue['id'] as $termId) {
-                                    if(array_key_exists('source', $termId)) {
-                                        $id = $termId['id'];
-                                        $authority = $termId['source'];
-                                        if($termId['type'] === 'local') {
-                                            $localId = $id;
-                                        }
-                                        if (array_key_exists($authority, $authorities)) {
-                                            if (!in_array($id, $authorities[$authority])) {
-                                                $authorities[$authority][] = $id;
+                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if($preferredTerm) {
+                                $firstPurlId = null;
+                                if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+                                    foreach ($fieldValue['id'] as $termId) {
+                                        if (array_key_exists('source', $termId)) {
+                                            $id = $termId['id'];
+                                            $authority = $termId['source'];
+                                            if ($termId['type'] === 'purl') {
+                                                if (!$firstPurlId) {
+                                                    $firstPurlId = $id;
+                                                }
+                                                if (array_key_exists($authority, $authorities)) {
+                                                    if (!in_array($id, $authorities[$authority])) {
+                                                        $authorities[$authority][] = $id;
+                                                    }
+                                                } else {
+                                                    $authorities[$authority] = array($id);
+                                                }
                                             }
-                                        } else {
-                                            $authorities[$authority] = array($id);
                                         }
                                     }
-                                }
-                                if ($localId && !array_key_exists($fieldValue['term'][0], $termsWithId)) {
-                                    $termsWithId[$fieldValue['term'][0]] = $localId;
-                                }
-                            } else {
-                                if (!array_key_exists($fieldValue['term'][0], $termsWithoutId)) {
-                                    $termsWithoutId[$fieldValue['term'][0]] = '';
+                                    if ($firstPurlId) {
+                                        if(!array_key_exists($preferredTerm, $termsWithId)) {
+                                            $termsWithId[$preferredTerm] = $firstPurlId;
+                                        }
+                                    } else {
+                                        if (!array_key_exists($preferredTerm, $termsWithoutId)) {
+                                            $termsWithoutId[$preferredTerm] = '';
+                                        }
+                                    }
+                                } else {
+                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
+                                        $termsWithoutId[$preferredTerm] = '';
+                                    }
                                 }
                             }
                         }
@@ -578,26 +589,13 @@ class ReportController extends Controller
                     $fieldValues = $data[$field];
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            foreach ($fieldValue['term'] as $term) {
-                                if (array_key_exists($term, $counts)) {
-                                    $counts[$term]++;
+                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if($preferredTerm) {
+                                if (array_key_exists($preferredTerm, $counts)) {
+                                    $counts[$preferredTerm]++;
                                 } else {
-                                    $counts[$term] = 1;
+                                    $counts[$preferredTerm] = 1;
                                 }
-                            }
-                        } else if(is_array($fieldValue)) {
-                            foreach($fieldValue as $value) {
-                                if (array_key_exists($value, $counts)) {
-                                    $counts[$value]++;
-                                } else {
-                                    $counts[$value] = 1;
-                                }
-                            }
-                        } else {
-                            if (array_key_exists($fieldValue, $counts)) {
-                                $counts[$fieldValue]++;
-                            } else {
-                                $counts[$fieldValue] = 1;
                             }
                         }
                     }
