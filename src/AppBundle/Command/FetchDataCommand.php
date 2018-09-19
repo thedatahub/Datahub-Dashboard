@@ -7,6 +7,7 @@ use AppBundle\ReportBundle\Document\CompletenessReport;
 use AppBundle\ReportBundle\Document\CompletenessTrend;
 use AppBundle\ReportBundle\Document\FieldReport;
 use AppBundle\ReportBundle\Document\FieldTrend;
+use AppBundle\Util\RecordUtil;
 use Phpoaipmh\Endpoint;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -88,7 +89,7 @@ class FetchDataCommand extends ContainerAwareCommand
     private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef) {
         $result = array();
         foreach ($dataDef as $key => $value) {
-            if($key === 'parent_xpath' || $key === 'csv') {
+            if($key === 'parent_xpath' || $key === 'csv' || $key === 'exclude') {
                 continue;
             }
             if(array_key_exists('xpath', $value)) {
@@ -205,8 +206,8 @@ class FetchDataCommand extends ContainerAwareCommand
         $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
 
-//        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
-//        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
+        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
+        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
 
         foreach($providers as $provider) {
             $providerId = $provider->getIdentifier();
@@ -224,11 +225,13 @@ class FetchDataCommand extends ContainerAwareCommand
 
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value)) {
-                    $fields[$value['class']][$key] = array();
+                    if(array_key_exists('class', $value)) {
+                        $fields[$value['class']][$key] = array();
+                    }
                 }
                 elseif (array_key_exists('parent_xpath', $value)) {
                     foreach ($value as $k => $v) {
-                        if ($k === 'parent_xpath' || $k == 'csv') {
+                        if ($k === 'parent_xpath' || $k == 'csv' || $k == 'exclude' || !array_key_exists('class', $v)) {
                             continue;
                         }
                         if (array_key_exists('xpath', $v)) {
@@ -250,23 +253,31 @@ class FetchDataCommand extends ContainerAwareCommand
                 $basicComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
-                        //TODO check why this fails
+                        //TODO check why this failed
                         if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key])) {
-                            if(count($data[$key]) > 0) {
+                            if(count($data[$key]) > 0 && array_key_exists('class', $value)) {
                                 $fields[$value['class']][$key][] = $record->getId();
                             }
                         }
                         else {
-                            if ($value['class'] == 'minimum') {
-                                $minimumComplete = false;
-                                $basicComplete = false;
-                            } elseif ($value['class'] == 'basic') {
-                                $basicComplete = false;
+                            $exclude = false;
+                            if(array_key_exists('exclude', $value)) {
+                                if($value['exclude'] === true) {
+                                    $exclude = true;
+                                }
+                            }
+                            if(!$exclude && array_key_exists('class', $value)) {
+                                if ($value['class'] == 'minimum') {
+                                    $minimumComplete = false;
+                                    $basicComplete = false;
+                                } elseif ($value['class'] == 'basic') {
+                                    $basicComplete = false;
+                                }
                             }
                         }
                     } elseif (array_key_exists('parent_xpath', $value)) {
                         foreach ($value as $k => $v) {
-                            if ($k === 'parent_xpath' || $k === 'csv') {
+                            if ($k === 'parent_xpath' || $k === 'csv' || $k == 'exclude') {
                                 continue;
                             }
                             if (array_key_exists('xpath', $v)) {
@@ -278,16 +289,10 @@ class FetchDataCommand extends ContainerAwareCommand
                                                 if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
                                                     if (count($fieldValue[$k]) > 0) {
                                                         $found = true;
-                                                        if ($k == 'term' && is_array($fieldValue)) {
-                                                            $preferredTerm = null;
-                                                            foreach($fieldValue['term'] as $term) {
-                                                                if($term['pref'] === 'preferred') {
-                                                                    $preferredTerm = $term['term'];
-                                                                    break;
-                                                                }
-                                                            }
-                                                            if ($preferredTerm && array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
-                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($preferredTerm, $termIds[$key])) {
+                                                        if ($k === 'term' && is_array($fieldValue)) {
+                                                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                                                            if ($term && array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
+                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($term, $termIds[$key])) {
                                                                     $firstPurlId = null;
                                                                     foreach ($fieldValue['id'] as $termId) {
                                                                         if ($termId['type'] === 'purl') {
@@ -296,7 +301,7 @@ class FetchDataCommand extends ContainerAwareCommand
                                                                         }
                                                                     }
                                                                     if ($firstPurlId) {
-                                                                        $termIds[$key][$preferredTerm] = $firstPurlId;
+                                                                        $termIds[$key][$term] = $firstPurlId;
                                                                     }
                                                                 }
                                                             }
@@ -307,15 +312,23 @@ class FetchDataCommand extends ContainerAwareCommand
                                         }
                                     }
                                 }
-                                if($found) {
+                                if($found && array_key_exists('class', $v)) {
                                     $fields[$v['class']][$key . '/' . $k][] = $record->getId();
                                 }
                                 else {
-                                    if ($v['class'] == 'minimum') {
-                                        $minimumComplete = false;
-                                        $basicComplete = false;
-                                    } elseif ($v['class'] == 'basic') {
-                                        $basicComplete = false;
+                                    $exclude = false;
+                                    if(array_key_exists('exclude', $value)) {
+                                        if($value['exclude'] === true) {
+                                            $exclude = true;
+                                        }
+                                    }
+                                    if(!$exclude && array_key_exists('class', $v)) {
+                                        if ($v['class'] == 'minimum') {
+                                            $minimumComplete = false;
+                                            $basicComplete = false;
+                                        } elseif ($v['class'] == 'basic') {
+                                            $basicComplete = false;
+                                        }
                                     }
                                 }
                             }

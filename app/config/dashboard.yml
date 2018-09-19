@@ -1,5 +1,5 @@
 parameters:
-    locale: 'nl'
+    app.locales: en|nl
     datahub.namespace: 'lido'
     datahub.metadataprefix: 'oai_lido'
     trends.max_history_months: 2
@@ -13,267 +13,272 @@ parameters:
         # maximum depth is 2 (e.g. object_name:term, but not object:name:term)
         # for ambiguity, always use "term" to identify terms and "id" to identity id's
         provider:
+            xpath: 'administrativeMetadata/recordWrap/recordSource/legalBodyName/appellationValue'
+        storage_institution:
             class: 'minimum'
-            label: 'Naam bewaarinstelling'
-            csv: 'bewaarinstelling'
+            csv: 'csv_storage_institution'
+            label: 'label_storage_institution'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/repositoryName/legalBodyName/appellationValue'
         object_number:
             class: 'minimum'
-            label: 'Work PID'
-            csv: 'objectnummer'
+            csv: 'csv_object_number'
+            label: 'label_object_number'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="objectnummer"]'
         title:
             class: 'minimum'
-            label: 'Titel'
-            csv: 'titel'
+            csv: 'csv_title'
+            label: 'label_title'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/appellationValue'
         short_description:
             class: 'minimum'
-            label: 'Korte beschrijving'
-            csv: 'beschrijving'
+            csv: 'csv_short_description'
+            label: 'label_short_description'
             xpath: 'descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap/objectDescriptionSet/descriptiveNoteValue'
         object_name:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/objectWorkType'
-            csv: 'objectnaam'
+            csv: 'csv_object_name'
             term:
                 class: 'minimum'
-                label: 'Term objectnaam'
-                xpath: 'term'
+                label: 'label_term_object_name'
+                xpath: 'term[@pref="preferred"]'
             id:
                 class: 'extended'
-                label: 'Identificatie objectnaam'
-                xpath: 'conceptID[@pref="alternate"]'
+                label: 'label_id_object_name'
+                xpath: 'conceptID'
         acquisition:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventMethod'
-            csv: 'verwervingsmethode'
+            exclude: true
+            csv: 'csv_acquisition'
             term:
                 class: 'minimum'
-                label: 'Term verwervingsmethode'
+                label: 'label_term_acquisition'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Naam verwervingsbron'
+                label: 'label_id_acquisition'
                 xpath: 'conceptID'
         acquisition_source:
             class: 'minimum'
-            csv: 'verwervingsbron'
-            label: 'Identificatie verwervingsmethode'
+            exclude: true
+            csv: 'csv_acquisition_source'
+            label: 'label_acquisition_source'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appelationValue'
         acquisition_date:
             class: 'minimum'
-            csv: 'verwervingsdatum'
-            label: 'Waarde verwervingsdatum'
+            exclude: true
+            csv: 'csv_acquisition_date'
+            label: 'label_acquisition_date'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventDate/displayDate'
         main_motif:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="hoofdmotief"]'
-            csv: 'hoofdmotief'
+            csv: 'csv_main_motif'
             term:
                 class: 'basic'
-                label: 'Term hoofdmotief'
+                label: 'label_term_main_motif'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie hoofdmotief'
+                label: 'label_id_main_motif'
                 xpath: 'conceptID'
         creator:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventActor/actorInRole'
-            csv: 'vervaardiger'
+            csv: 'csv_creator'
             term:
                 class: 'basic'
-                label: 'Naam vervaardiger'
+                label: 'label_term_creator'
                 xpath: 'actor/nameActorSet/appellationValue[@pref="preferred"]'
             id:
                 class: 'extended'
-                label: 'Identificatie vervaardiger'
+                label: 'label_id_creator:'
                 xpath: 'actor/actorID'
             role:
                 class: 'extended'
-                label: 'Rol vervaardiger'
+                label: 'label_role_creator'
                 xpath: 'roleActor/term'
             qualification:
                 class: 'extended'
-                label: 'Kwalificatie vervaardiger'
+                label: 'label_qualification_creator'
                 xpath: 'attributionQualifierActor'
         date:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventDate/date'
-            csv: 'datum'
+            csv: 'csv_date'
             start:
                 class: 'basic'
-                label: 'Begindatum'
+                label: 'label_start_date'
                 xpath: 'earliestDate'
             end:
                 class: 'basic'
-                label: 'Einddatum'
+                label: 'label_end_date'
                 xpath: 'latestDate'
         material:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech'
-            csv: 'materiaal'
+            csv: 'csv_material'
             term:
                 class: 'basic'
-                label: 'Term materiaal'
-                xpath: 'term'
+                label: 'label_term_material'
+                xpath: 'term[@pref="preferred"]'
             id:
                 class: 'extended'
-                label: 'Identificatie materiaal'
+                label: 'label_id_material'
                 xpath: 'conceptID'
         condition:
             class: 'basic'
-            csv: 'conditie'
-            label: 'Term conditie'
+            csv: 'csv_condition'
+            label: 'label_condition'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDescriptionSet/descriptiveNoteValue'
         condition_assessor:
             class: 'extended'
-            csv: 'conditie_assessor'
-            label: 'Assessor conditie'
+            csv: 'csv_condition_assessor'
+            label: 'label_condition_assessor'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventActor/actorInRole/actor/nameActorSet/appelationValue'
         condition_date:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDate/date'
-            csv: 'conditiedatum'
+            csv: 'csv_condition_date'
             start:
                 class: 'extended'
-                label: 'Begindatum conditie'
+                label: 'label_start_condition_date'
                 xpath: 'earliestDate'
             end:
                 class: 'extended'
-                label: 'Einddatum conditie'
+                label: 'label_end_condition_date'
                 xpath: 'latestDate'
         measurement:
             parent_xpath: 'descriptiveMetadata/objectIdentificationWrap/objectMeasurementsWrap/objectMeasurementsSet/objectMeasurements'
-            csv: 'afmetingen'
+            csv: 'csv_measurement'
             extent:
                 class: 'basic'
-                label: 'Onderdeel afmeting'
+                label: 'label_extent_measurement'
                 xpath: 'extentMeasurements'
             type:
                 class: 'basic'
-                label: 'Dimensie afmeting'
+                label: 'label_type_measurement'
                 xpath: 'measurementsSet/measurementType'
             value:
                 class: 'basic'
-                label: 'Waarde afmeting'
+                label: 'label_value_measurement'
                 xpath: 'measurementsSet/measurementValue'
             unit:
                 class: 'basic'
-                label: 'Eenheid afmeting'
+                label: 'label_unit_measurement'
                 xpath: 'measurementsSet/measurementUnit'
         displayed_concept:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@label="concept"]/subjectConcept'
-            csv: 'afgebeeld_concept'
+            csv: 'csv_displayed_concept'
             term:
                 class: 'basic'
-                label: 'Term afgebeeld concept'
+                label: 'label_term_displayed_concept'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie afgebeeld concept'
+                label: 'label_id_displayed_concept'
                 xpath: 'conceptID'
         displayed_subject:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectActor/actor'
-            csv: 'afgebeelde_persoon_of_instelling'
+            csv: 'csv_displayed_subject'
             term:
                 class: 'basic'
-                label: 'Naam afgebeelde persoon of instelling'
+                label: 'label_term_displayed_subject'
                 xpath: 'nameActorSet/appelationValue'
             id:
                 class: 'extended'
-                label: 'Identificatie afgebeelde persoon of instelling'
+                label: 'label_id_displayed_subject'
                 xpath: 'actorID'
         displayed_location:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace/place'
-            csv: 'afgebeelde_locatie'
+            csv: 'csv_displayed_location'
             term:
                 class: 'basic'
-                label: 'Naam afgebeelde locatie'
+                label: 'label_term_displayed_location'
                 xpath: 'namePlaceSet/appelationValue'
             id:
                 class: 'extended'
-                label: 'Identificatie afgebeelde locatie'
+                label: 'label_id_displayed_location'
                 xpath: 'placeID'
         displayed_event:
             parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectEvent/event'
-            csv: 'afgebeelde_gebeurtenis'
+            csv: 'csv_displayed_event'
             term:
                 class: 'basic'
-                label: 'Naam afgebeelde gebeurtenis'
+                label: 'label_term_displayed_event'
                 xpath: 'eventName/appelationValue'
             id:
                 class: 'extended'
-                label: 'Identificatie afgebeelde gebeurtenis'
+                label: 'label_id_displayed_event'
                 xpath: 'eventID'
         work_pid:
             class: 'extended'
-            csv: 'objectnummer'
-            label: 'Waarde objectnummer'
+            csv: 'csv_work_pid'
+            label: 'label_work_pid'
             xpath: 'objectPublishedID'
         database_id:
             class: 'minimum'
-            csv: 'databank_id'
-            label: 'Databank ID (priref, tmsid,..)'
+            csv: 'csv_database_id'
+            label: 'label_database_id'
             xpath: 'administrativeMetadata/recordWrap/recordID[@type="local"]'
         data_pid:
             class: 'minimum'
-            csv: 'data_pid'
-            label: 'Data PID'
+            csv: 'csv_data_pid'
+            label: 'label_data_pid'
             xpath: 'lidoRecID[@pref="alternate"]'
         application_id:
             class: 'minimum'
-            csv: 'record_id'
-            label: 'Online record ID'
+            csv: 'csv_application_id'
+            label: 'label_application_id'
             xpath: 'lidoRecID[@pref="preferred"]'
         classification:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]'
-            csv: 'classificatie'
+            csv: 'csv_classification'
             term:
                 class: 'extended'
-                label: 'Term objectcategorie'
+                label: 'label_term_classification'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie objectcategorie'
+                label: 'label_id_classification'
                 xpath: 'conceptID'
         rights:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
-            csv: 'rechten_status'
-            status:
+            csv: 'csv_rights'
+            term:
                 class: 'extended'
-                label: 'Term rechten status'
+                label: 'label_term_rights'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie rechten status'
+                label: 'label_id_rights'
                 xpath: 'conceptID'
         rights_work:
             parent_xpath: 'administrativeMetadata/rightsWorkWrap/rightsWorkSet/rightsType'
-            csv: 'rechten_werk'
+            csv: 'csv_rights_work'
             term:
                 class: 'extended'
-                label: 'Term rechten werk'
+                label: 'label_term_rights_work'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie rechten werk'
+                label: 'label_id_rights_work'
                 xpath: 'conceptID'
         rights_digital_representation:
             parent_xpath: 'administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType'
-            csv: 'rechten_digitale_representatie'
+            csv: 'csv_rights_digital_representation'
             term:
                 class: 'extended'
-                label: 'Term rechten digitale representatie'
+                label: 'label_term_rights_digital_representation'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'Identificatie rechten digitale representatie'
+                label: 'label_id_rights_digital_representation'
                 xpath: 'conceptID'
         data_provider:
             parent_xpath: 'administrativeMetadata/recordWrap/recordSource'
-            csv: 'data_provider'
-            name:
+            csv: 'csv_data_provider'
+            term:
                 class: 'extended'
-                label: 'Naam data provider'
+                label: 'label_term_data_provider'
                 xpath: 'legalBodyName/appellationValue'
             id:
                 class: 'extended'
-                label: 'Identificatie data provider'
+                label: 'label_id_data_provider'
                 xpath: 'legalBodyID'
 
     terms_with_ids:

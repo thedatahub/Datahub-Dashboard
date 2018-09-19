@@ -7,19 +7,23 @@ use AppBundle\Util\RecordUtil;
 use MongoDB\BSON\UTCDateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
 
 class ReportController extends Controller
 {
     private $dataDef;
     private $provider;
+    private $translator;
 
     /**
-     * @Route("/report/{provider}/{aspect}/{parameter}/{question}", name="report", requirements={"provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+"})
+     * @Route("/{_locale}/report/{provider}/{aspect}/{parameter}/{question}", name="report", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+"})
      */
-    public function report($provider = '', $aspect = 'volledigheid', $parameter = 'minimaal', $question = 'overzicht')
+    public function report($_locale = 'nl', $provider = '', $aspect = 'volledigheid', $parameter = 'minimaal', $question = 'overzicht')
     {
         $this->provider = $provider;
+
+        $this->translator = $this->get('translator');
+        $this->translator->setLocale($_locale);
 
         $serviceName = $this->getParameter('service_name');
         $serviceAddress = $this->getParameter('service_address');
@@ -34,8 +38,8 @@ class ReportController extends Controller
             }
         }
 
-        $route = $this->generateUrl('report', array('provider' => $this->provider));
-        $download = $this->generateUrl('download', array('provider' => $this->provider));
+        $route = $this->generateUrl('report', array('_locale' => $_locale, 'provider' => $this->provider));
+        $download = $this->generateUrl('download', array('_locale' => $_locale, 'provider' => $this->provider));
 
         $functionCall = null;
         $parameters = $leftMenu[ucfirst($aspect)];
@@ -66,7 +70,12 @@ class ReportController extends Controller
             'active_aspect' => $aspect,
             'active_parameter' => $parameter,
             'active_question' => $question,
-            'report' => $report
+            'report' => $report,
+            'route_manual' => $this->generateUrl('manual'),
+            'route_about' => $this->generateUrl('about'),
+            'route_open_source' => $this->generateUrl('open_source'),
+            'route_open_data' => $this->generateUrl('open_data'),
+            'current_page' => 'dashboard'
         );
         return $this->render('report.html.twig', $data);
     }
@@ -169,6 +178,7 @@ class ReportController extends Controller
                 } else {
                     $label = $this->dataDef[$key]['label'];
                 }
+                $label = $this->translator->trans($label);
                 $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '"';
             }
         }
@@ -182,6 +192,7 @@ class ReportController extends Controller
     {
         $reports = $this->getDocumentManager()->getRepository('ReportBundle:CompletenessReport')->findBy(array('provider' => $this->provider));
         $done = 0;
+        $total = 0;
         if($reports && count($reports) > 0) {
             $report = $reports[0];
             $total = $report->getTotal();
@@ -346,8 +357,8 @@ class ReportController extends Controller
                     $fieldValues = $data[$field];
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
-                            if($preferredTerm) {
+                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if($term) {
                                 $firstPurlId = null;
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     foreach ($fieldValue['id'] as $termId) {
@@ -377,17 +388,17 @@ class ReportController extends Controller
                                         }
                                     }
                                     if ($firstPurlId) {
-                                        if(!array_key_exists($preferredTerm, $termsWithId)) {
-                                            $termsWithId[$preferredTerm] = $firstPurlId;
+                                        if(!array_key_exists($term, $termsWithId)) {
+                                            $termsWithId[$term] = $firstPurlId;
                                         }
                                     } else {
-                                        if (!array_key_exists($preferredTerm, $termsWithoutId)) {
-                                            $termsWithoutId[$preferredTerm] = '';
+                                        if (!array_key_exists($term, $termsWithoutId)) {
+                                            $termsWithoutId[$term] = '';
                                         }
                                     }
                                 } else {
-                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
-                                        $termsWithoutId[$preferredTerm] = '';
+                                    if (!array_key_exists($term, $termsWithoutId)) {
+                                        $termsWithoutId[$term] = '';
                                     }
                                 }
                             }
@@ -606,12 +617,12 @@ class ReportController extends Controller
                     $fieldValues = $data[$field];
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
-                            if($preferredTerm) {
-                                if (array_key_exists($preferredTerm, $counts)) {
-                                    $counts[$preferredTerm]++;
+                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if($term) {
+                                if (array_key_exists($term, $counts)) {
+                                    $counts[$term]++;
                                 } else {
-                                    $counts[$preferredTerm] = 1;
+                                    $counts[$term] = 1;
                                 }
                             }
                         }

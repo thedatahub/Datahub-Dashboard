@@ -1,0 +1,107 @@
+csv_storage_institution: storage_institution
+label_storage_institution: Name storage institution
+
+csv_object_number: object_number
+label_object_number: Value object number
+
+csv_title: title
+label_title: Title
+
+csv_short_description: description
+label_short_description: Short description
+
+csv_object_name: object_name
+label_term_object_name: Term object name
+label_id_object_name: Identification object name
+
+acquisition: acquisition
+label_term_acquisition: Term acquisition
+label_id_acquisition: Identification acquisition
+
+csv_acquisition_source: acquisition_source
+label_acquisition_source: Name acquisition source
+
+csv_acquisition_date: acquisition_date
+label_acquisition_date: Value acquisition date
+
+csv_main_motif: main_motif
+label_term_main_motif: Term main motif
+label_id_main_motif: Identification main motif
+
+csv_creator: creator
+label_term_creator: Name creator
+label_id_creator: Identification creator
+label_role_creator: Role creator
+label_qualification_creator: Qualification creator
+
+csv_date: date
+label_start_date: Start date
+label_end_date: End date
+
+csv_material: material
+label_term_material: Term material
+label_id_material: Identification material
+
+csv_condition: condition
+label_condition: Term condition
+
+csv_condition_assessor: condition_assessor
+label_condition_assessor: Assessor condition
+
+csv_condition_date: condition_date
+label_start_condition_date: Start date condition
+label_end_condition_date: End date condition
+
+csv_measurement: measurement
+label_extent_measurement: Extent measurement
+label_type_measurement: Dimension measurement
+label_value_measurement: Value measurement
+label_unit_measurement: Unit measurement
+
+csv_displayed_concept: displayed_concept
+label_term_displayed_concept: Term displayed concept
+label_id_displayed_concept: Identification displayed concept
+
+csv_displayed_subject: displayed_subject
+label_term_displayed_subject: Name displayed subject
+label_id_displayed_subject: Identification displayed subject
+
+csv_displayed_location: displayed_location
+label_term_displayed_location: Name displayed location
+label_id_displayed_location: Identification displayed location
+
+csv_displayed_event: displayed_event
+label_term_displayed_event: Name displayed event
+label_id_displayed_event: Identification displayed event
+
+csv_work_pid: work_pid
+label_work_pid: Work PID
+
+csv_database_id: database_id
+label_database_id: Database ID (priref, tmsid,..)
+
+csv_data_pid: data_pid
+label_data_pid: Data PID
+
+csv_application_id: record_id
+label_application_id: Online record ID
+
+csv_classification: objectcategory
+label_term_classification: Term objectcategory
+label_id_classification: Identification objectcategory
+
+csv_rights: rights_status
+label_term_rights: Term rights status
+label_id_rights: Identification rights status
+
+csv_rights_work: rights_work
+label_term_rights_work: Term rights work
+label_id_rights_work: Identification rights work
+
+csv_rights_digital_representation: rights_digital_representation
+label_term_rights_digital_representation: Term rights digital representation
+label_id_rights_digital_representation: Identification digital representation
+
+csv_data_provider: data_provider
+label_term_data_provider: Name data provider
+label_id_data_provider: Identification data provider

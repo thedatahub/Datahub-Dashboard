@@ -1,0 +1,107 @@
+csv_storage_institution: bewaarinstelling
+label_storage_institution: Naam bewaarinstelling
+
+csv_object_number: objectnummer
+label_object_number: Waarde objectnummer
+
+csv_title: titel
+label_title: Titel
+
+csv_short_description: beschrijving
+label_short_description: Korte beschrijving
+
+csv_object_name: objectnaam
+label_term_object_name: Term objectnaam
+label_id_object_name: Identificatie objectnaam
+
+acquisition: verwervingsmethode
+label_term_acquisition: Term verwervingsmethode
+label_id_acquisition: Identificatie verwervingsmethode
+
+csv_acquisition_source: verwervingsbron
+label_acquisition_source: Naam verwervingsbron
+
+csv_acquisition_date: verwervingsdatum
+label_acquisition_date: Waarde verwervingsdatum
+
+csv_main_motif: hoofdmotief
+label_term_main_motif: Term hoofdmotief
+label_id_main_motif: Identificatie hoofdmotief
+
+csv_creator: vervaardiger
+label_term_creator: Naam vervaardiger
+label_id_creator: Identificatie vervaardiger
+label_role_creator: Rol vervaardiger
+label_qualification_creator: Kwalificatie vervaardiger
+
+csv_date: datum
+label_start_date: Begindatum
+label_end_date: Einddatum
+
+csv_material: materiaal
+label_term_material: Term materiaal
+label_id_material: Identificatie materiaal
+
+csv_condition: conditie
+label_condition: Term conditie
+
+csv_condition_assessor: conditie_assessor
+label_condition_assessor: Assessor conditie
+
+csv_condition_date: conditiedatum
+label_start_condition_date: Begindatum conditie
+label_end_condition_date: Einddatum conditie
+
+csv_measurement: afmeting
+label_extent_measurement: Onderdeel afmeting
+label_type_measurement: Dimensie afmeting
+label_value_measurement: Waarde afmeting
+label_unit_measurement: Eenheid afmeting
+
+csv_displayed_concept: afgebeeld_concept
+label_term_displayed_concept: Term afgebeeld concept
+label_id_displayed_concept: Identificatie afgebeeld concept
+
+csv_displayed_subject: afgebeelde_persoon_of_instelling
+label_term_displayed_subject: Naam afgebeelde persoon of instelling
+label_id_displayed_subject: Identificatie afgebeelde persoon of instelling
+
+csv_displayed_location: afgebeelde_locatie
+label_term_displayed_location: Naam afgebeelde locatie
+label_id_displayed_location: Identificatie afgebeelde locatie
+
+csv_displayed_event: afgebeelde_gebeurtenis
+label_term_displayed_event: Naam afgebeelde gebeurtenis
+label_id_displayed_event: Identificatie afgebeelde gebeurtenis
+
+csv_work_pid: work_pid
+label_work_pid: Work PID
+
+csv_database_id: databank_id
+label_database_id: Databank ID (priref, tmsid,..)
+
+csv_data_pid: data_pid
+label_data_pid: Data PID
+
+csv_application_id: record_id
+label_application_id: Online record ID
+
+csv_classification: objectcategorie
+label_term_classification: Term objectcategorie
+label_id_classification: Identificatie objectcategorie
+
+csv_rights: rechten_status
+label_term_rights: Term rechten status
+label_id_rights: Identificatie rechten status
+
+csv_rights_work: rechten_werk
+label_term_rights_work: Term rechten werk
+label_id_rights_work: Identificatie rechten werk
+
+csv_rights_digital_representation: rechten_digitale_representatie
+label_term_rights_digital_representation: Term rechten digitale representatie'
+label_id_rights_digital_representation: Identificatie rechten digitale representatie
+
+csv_data_provider: data_provider
+label_term_data_provider: Naam data provider
+label_id_data_provider: Identificatie data provider

@@ -5,12 +5,15 @@ class RecordUtil
 {
     public static function getPreferredTerm($terms)
     {
-        foreach($terms as $term) {
-            if($term['pref'] === 'preferred') {
-                return $term['term'];
-            }
-        }
-        return null;
+        return $terms[0]['term'];
+
+        // Uncomment to only return terms where pref="preferred"
+//        foreach($terms as $term) {
+//            if($term['pref'] === 'preferred') {
+//                return $term['term'];
+//            }
+//        }
+//        return null;
     }
 
     public static function getFieldLabel($field, $dataDef)

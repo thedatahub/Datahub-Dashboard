@@ -5,6 +5,9 @@ parameters:
     # Name of the application as shown on the homepage
     service_name: 'Datahub Dashboard'
 
+    # The default locale (language) of the application (available locales: en|nl)
+    locale: nl
+
     # Email address where the admin of the application can be reached
     service_address: 'info@vlaamsekunstcollectie.be'
 

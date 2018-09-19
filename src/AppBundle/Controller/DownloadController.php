@@ -15,7 +15,7 @@ class DownloadController extends Controller
     private $field = null;
 
     /**
-     * @Route("/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
+     * @Route("/{_locale}/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
      */
     public function download($provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
     {
@@ -234,8 +234,8 @@ class DownloadController extends Controller
                 if ($fieldValues) {
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
-                            if ($preferredTerm) {
+                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if ($term) {
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     $ids = $fieldValue['id'];
                                     $localId = '';
@@ -258,30 +258,30 @@ class DownloadController extends Controller
                                         if ($termId['type'] === 'purl') {
                                             $isEmpty = false;
                                             $authority = $this->getAuthority($termId);
-                                            if (!array_key_exists($preferredTerm, $termsWithId)) {
-                                                $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority));
+                                            if (!array_key_exists($term, $termsWithId)) {
+                                                $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority));
                                             } else {
                                                 $isIn = false;
-                                                foreach ($termsWithId[$preferredTerm] as $knownId) {
+                                                foreach ($termsWithId[$term] as $knownId) {
                                                     if ($knownId['concept_id'] === $termId['id']) {
                                                         $isIn = true;
                                                         break;
                                                     }
                                                 }
                                                 if (!$isIn) {
-                                                    $termsWithId[$preferredTerm][] = array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority);
+                                                    $termsWithId[$term][] = array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority);
                                                 }
                                             }
                                         }
                                     }
                                     if ($isEmpty) {
-                                        if (!array_key_exists($preferredTerm, $termsWithId)) {
-                                            $termsWithId[$preferredTerm] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
+                                        if (!array_key_exists($term, $termsWithId)) {
+                                            $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
                                         }
                                     }
                                 } else {
-                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
-                                        $termsWithoutId[$preferredTerm] = '';
+                                    if (!array_key_exists($term, $termsWithoutId)) {
+                                        $termsWithoutId[$term] = '';
                                     }
                                 }
                             }
@@ -341,36 +341,36 @@ class DownloadController extends Controller
                 if ($fieldValues) {
                     foreach ($fieldValues as $fieldValue) {
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            $preferredTerm = RecordUtil::getPreferredTerm($fieldValue['term']);
-                            if ($preferredTerm) {
+                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                            if ($term) {
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     $ids = $fieldValue['id'];
                                     foreach ($ids as $termId) {
                                         if ($termId['source'] == $this->field) {
                                             $authority = $this->getAuthority($termId);
                                             $id = $termId['id'];
-                                            if (!array_key_exists($preferredTerm, $termsWithId)) {
+                                            if (!array_key_exists($term, $termsWithId)) {
                                                 $count = 1;
                                                 if(!array_key_exists($id, $idTerms)) {
-                                                    $idTerms[$id] = array($preferredTerm);
+                                                    $idTerms[$id] = array($term);
                                                 }
                                                 else {
                                                     $isIn = false;
                                                     foreach ($idTerms[$id] as $term) {
-                                                        if($term === $preferredTerm) {
+                                                        if($term === $term) {
                                                             $isIn = true;
                                                             break;
                                                         }
                                                     }
                                                     if(!$isIn) {
-                                                        $idTerms[$id][] = $preferredTerm;
+                                                        $idTerms[$id][] = $term;
                                                     }
                                                     $count = count($idTerms[$id]);
                                                 }
-                                                $termsWithId[$preferredTerm] = array(array('id' => $id, 'authority' => $authority, 'count' => $count));
+                                                $termsWithId[$term] = array(array('id' => $id, 'authority' => $authority, 'count' => $count));
                                             } else {
                                                 $isIn = false;
-                                                foreach ($termsWithId[$preferredTerm] as $knownId) {
+                                                foreach ($termsWithId[$term] as $knownId) {
                                                     if ($knownId['id'] === $id) {
                                                         $isIn = true;
                                                         break;
@@ -379,29 +379,29 @@ class DownloadController extends Controller
                                                 if (!$isIn) {
                                                     $count = 1;
                                                     if(!array_key_exists($id, $idTerms)) {
-                                                        $idTerms[$id] = array($preferredTerm);
+                                                        $idTerms[$id] = array($term);
                                                     }
                                                     else {
                                                         $isIn = false;
                                                         foreach ($idTerms[$id] as $term) {
-                                                            if($term === $preferredTerm) {
+                                                            if($term === $term) {
                                                                 $isIn = true;
                                                                 break;
                                                             }
                                                         }
                                                         if(!$isIn) {
-                                                            $idTerms[$id][] = $preferredTerm;
+                                                            $idTerms[$id][] = $term;
                                                         }
                                                         $count = count($idTerms['id']);
                                                     }
-                                                    $termsWithId[$preferredTerm][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
+                                                    $termsWithId[$term][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
                                                 }
                                             }
                                         }
                                     }
                                 } else {
-                                    if (!array_key_exists($preferredTerm, $termsWithoutId)) {
-                                        $termsWithoutId[$preferredTerm] = '';
+                                    if (!array_key_exists($term, $termsWithoutId)) {
+                                        $termsWithoutId[$term] = '';
                                     }
                                 }
                             }
