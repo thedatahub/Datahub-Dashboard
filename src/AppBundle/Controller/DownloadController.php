@@ -55,11 +55,12 @@ class DownloadController extends Controller
         // Generate response
         $response = new Response();
         if($this->field) {
+            $field = preg_replace("/[^A-Za-z0-9 _-]/", '', $field);
             if(array_key_exists($field, $this->dataDef) && array_key_exists('csv', $this->dataDef[$field])) {
                 $label = $this->translator->trans($this->dataDef[$field]['csv']);
             }
             else {
-                $label = $this->questionLabel . '_' . $field;
+                $label = $this->questionLabel . '_' . $this->translator->trans($field);
             }
             $filename = $provider . '_' . $aspectLabel . '_' . $label . '.csv';
         } else {
@@ -546,7 +547,7 @@ class DownloadController extends Controller
         return $this->ambigtermBar('displayed_event');
     }
 
-    private function richRecBar($field)
+    private function richOccurrencesBar($field)
     {
         $records = $this->getAllRecords();
         $csvArray = array();
@@ -600,63 +601,78 @@ class DownloadController extends Controller
         return $applicationId . ',' . $objectNumber . ',' . $this->questionLabel . $csvData;
     }
 
-    private function richRecStorageInstitutionBarChart() {
-        return $this->richRecBar('storage_institution');
+    private function richOccurrencesStorageInstitutionBarChart()
+    {
+        return $this->richOccurrencesBar('storage_institution');
     }
 
-    private function richRecObjectIdBarChart() {
-        return $this->richRecBar('object_number');
+    private function richOccurrencesObjectIdBarChart()
+    {
+        return $this->richOccurrencesBar('object_number');
     }
 
-    private function richRecDataPidBarChart() {
-        return $this->richRecBar('data_pid');
+    private function richOccurrencesDataPidBarChart()
+    {
+        return $this->richOccurrencesBar('data_pid');
     }
 
-    private function richRecTitleBarChart() {
-        return $this->richRecBar('title');
+    private function richOccurrencesTitleBarChart()
+    {
+        return $this->richOccurrencesBar('title');
     }
 
-    private function richRecShortDescBarChart() {
-        return $this->richRecBar('short_description');
+    private function richOccurrencesShortDescBarChart()
+    {
+        return $this->richOccurrencesBar('short_description');
     }
 
-    private function richRecObjectNameBarChart() {
-        return $this->richRecBar('object_name');
+    private function richOccurrencesObjectNameBarChart()
+    {
+        return $this->richOccurrencesBar('object_name');
     }
 
-    private function richRecObjectCatBarChart() {
-        return $this->richRecBar('object_category');
+    private function richOccurrencesObjectCatBarChart()
+    {
+        return $this->richOccurrencesBar('object_category');
     }
 
-    private function richRecMainMotifBarChart() {
-        return $this->richRecBar('main_motif');
+    private function richOccurrencesMainMotifBarChart()
+    {
+        return $this->richOccurrencesBar('main_motif');
     }
 
-    private function richRecCreatorBarChart() {
-        return $this->richRecBar('creator');
+    private function richOccurrencesCreatorBarChart()
+    {
+        return $this->richOccurrencesBar('creator');
     }
 
-    private function richRecMaterialBarChart() {
-        return $this->richRecBar('material');
+    private function richOccurrencesMaterialBarChart()
+    {
+        return $this->richOccurrencesBar('material');
     }
 
-    private function richRecConceptBarChart() {
-        return $this->richRecBar('displayed_concept');
+    private function richOccurrencesConceptBarChart()
+    {
+        return $this->richOccurrencesBar('displayed_concept');
     }
 
-    private function richRecSubjectBarChart() {
-        return $this->richRecBar('displayed_subject');
+    private function richOccurrencesSubjectBarChart()
+    {
+        return $this->richOccurrencesBar('displayed_subject');
     }
 
-    private function richRecLocationBarChart() {
-        return $this->richRecBar('displayed_location');
+    private function richOccurrencesLocationBarChart()
+    {
+        return $this->richOccurrencesBar('displayed_location');
     }
 
-    private function richRecEventBarChart() {
-        return $this->richRecBar('displayed_event');
+    private function richOccurrencesEventBarChart()
+    {
+        return $this->richOccurrencesBar('displayed_event');
     }
 
-    private function richTermBar($field) {
+    private function richTermBar($field)
+    {
         $records = $this->getAllRecords();
         $csvArray = array();
         if($records) {
@@ -693,7 +709,13 @@ class DownloadController extends Controller
                             $recordIds = $this->getRecordIds($data);
                             $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->field);
                         }
+                    } else if($this->field === '(undefined)') {
+                        $recordIds = $this->getRecordIds($data);
+                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
                     }
+                } else if($this->field === '(undefined)') {
+                    $recordIds = $this->getRecordIds($data);
+                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
                 }
             }
         }
@@ -709,35 +731,48 @@ class DownloadController extends Controller
         return $applicationId . ',' . $objectNumber . ',' . $this->questionLabel . $csvData;
     }
 
-    private function richTermObjectNameBarChart() {
+    private function richTermObjectNameBarChart()
+    {
         return $this->richTermBar('object_name');
     }
 
-    private function richTermMainMotifBarChart() {
+    private function richTermObjectCatBarChart()
+    {
+        return $this->richTermBar('object_category');
+    }
+
+    private function richTermMainMotifBarChart()
+    {
         return $this->richTermBar('main_motif');
     }
 
-    private function richTermCreatorBarChart() {
+    private function richTermCreatorBarChart()
+    {
         return $this->richTermBar('creator');
     }
 
-    private function richTermMaterialBarChart() {
+    private function richTermMaterialBarChart()
+    {
         return $this->richTermBar('material');
     }
 
-    private function richTermConceptBarChart() {
+    private function richTermConceptBarChart()
+    {
         return $this->richTermBar('displayed_concept');
     }
 
-    private function richTermSubjectBarChart() {
+    private function richTermSubjectBarChart()
+    {
         return $this->richTermBar('displayed_subject');
     }
 
-    private function richTermLocationBarChart() {
+    private function richTermLocationBarChart()
+    {
         return $this->richTermBar('displayed_location');
     }
 
-    private function richTermEventBarChart() {
+    private function richTermEventBarChart()
+    {
         return $this->richTermBar('displayed_event');
     }
 }

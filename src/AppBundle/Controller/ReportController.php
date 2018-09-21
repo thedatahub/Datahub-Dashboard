@@ -230,8 +230,8 @@ class ReportController extends Controller
             true,
             false,
             false,
-            'Minimale registratie - Overzicht velden',
-            'Korte beschrijving (todo)'
+            $this->translator->trans('label_completeness_minimum') . ' - ' . $this->translator->trans('overview_fields'),
+            $this->translator->trans('description_completeness_minimum_overview')
         );
     }
 
@@ -240,20 +240,20 @@ class ReportController extends Controller
         return $this->fullRecords(
             false,
             true,
-            'Minimale registratie - Volledig ingevulde records',
-            'Korte beschrijving (todo)'
+            $this->translator->trans('label_completeness_minimum') . ' - ' . $this->translator->trans('complete_records'),
+            $this->translator->trans('description_completeness_minimum_complete_records')
         );
     }
 
     private function minTrend()
     {
-        $title = 'Historiek minimale registratie';
+        $title = $this->translator->trans('label_completeness_minimum') . ' - ' . $this->translator->trans('history');
         return new Report(
             $title,
             $title,
-            'Korte beschrijving (todo)',
+            $this->translator->trans('description_completeness_minimum_trend'),
             array($this->generateCompletenessTrendGraph(
-                true, false, 'Volledig ingevulde records'
+                true, false, $this->translator->trans('complete_records')
             ))
         );
     }
@@ -264,8 +264,8 @@ class ReportController extends Controller
             false,
             true,
             false,
-            'Basisregistratie - Overzicht velden',
-            'Korte beschrijving (todo)'
+            $this->translator->trans('label_completeness_basic') . ' - ' . $this->translator->trans('overview_fields'),
+            $this->translator->trans('description_completeness_basic_overview')
         );
     }
 
@@ -274,20 +274,20 @@ class ReportController extends Controller
         return $this->fullRecords(
             true,
             false,
-            'Basisregistratie - Volledig ingevulde records',
-            'Korte beschrijving (todo)'
+            $this->translator->trans('label_completeness_basic') . ' - ' . $this->translator->trans('complete_records'),
+            $this->translator->trans('description_completeness_basic_complete_records')
         );
     }
 
     private function basicTrend()
     {
-        $title = 'Historiek basisregistratie';
+        $title = $this->translator->trans('label_completeness_basic') . ' - ' . $this->translator->trans('history');
         return new Report(
             $title,
             $title,
-            'Korte beschrijving (todo)',
+            $this->translator->trans('description_completeness_basic_trend'),
             array($this->generateCompletenessTrendGraph(
-                false, true, 'Volledig ingevulde records'
+                false, true, $this->translator->trans('complete_records')
             ))
         );
     }
@@ -298,11 +298,12 @@ class ReportController extends Controller
             false,
             false,
             true,
-            'Uitgebreide registratie - Overzicht velden',
-            'Korte beschrijving (todo)');
+            $this->translator->trans('label_completeness_extended') . ' - ' . $this->translator->trans('overview_fields'),
+            $this->translator->trans('description_completeness_extended_overview')
+        );
     }
 
-    private function ambigIds($field, $label)
+    private function ambigIds($field, $label, $description)
     {
         $allRecords = $this->getAllRecords();
         $counts = array();
@@ -320,7 +321,6 @@ class ReportController extends Controller
                 }
             }
             foreach ($ids as $id => $count) {
-                $count = $label . ' die ' . $count . 'x voorkomen';
                 if (!array_key_exists($count, $counts)) {
                     $counts[$count] = 1;
                 } else {
@@ -328,29 +328,37 @@ class ReportController extends Controller
                 }
             }
         }
-
-        $pieChart = $this->generatePieChart($counts);
-        $pieChart->canDownload = true;
         $isGood = false;
-        if(count($counts) == 1 && array_key_exists($label . ' die 1x voorkomen', $counts)) {
+        if(count($counts) == 1 && array_key_exists(1, $counts)) {
             $isGood = true;
         }
+        $countsPie = array();
+        foreach($counts as $key => $value) {
+            if($key === 1) {
+                $countsPie[$label . ' ' . $this->translator->trans('which_occur_%x%_time', array('%x%' => $key))] = $value;
+            } else {
+                $countsPie[$label . ' ' . $this->translator->trans('which_occur_%x%_times', array('%x%' => $key))] = $value;
+            }
+        }
+
+        $pieChart = $this->generatePieChart($countsPie);
+        $pieChart->canDownload = true;
         if($isGood) {
             $pieChart->isFull = true;
-            $pieChart->fullText = 'Alle ' . $label . ' komen exact 1x voor.';
+            $pieChart->fullText = $this->translator->trans('all_%label%_occur_once', array('%label%' => $label));
         }
-        $title = 'Ondubbelzinnigheid ' . $label;
-        return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart));
+        $title = $this->translator->trans('label_ambiguity'). ' ' . $label;
+        return new Report($title, $title, $description, array($pieChart));
     }
 
     private function ambigWorkPids()
     {
-        return $this->ambigIds('work_pid', 'Work PID\'s');
+        return $this->ambigIds('work_pid', $this->translator->trans('work_pids'), $this->translator->trans('description_ambiguity_records_work_pids'));
     }
 
     private function ambigDataPids()
     {
-        return $this->ambigIds('data_pid', 'Data PID\'s');
+        return $this->ambigIds('data_pid', $this->translator->trans('data_pids'), $this->translator->trans('description_ambiguity_records_data_pids'));
     }
 
     private function ambigTerms($field)
@@ -417,20 +425,20 @@ class ReportController extends Controller
             }
         }
 
-        $pieces = array('Termen met ID' => count($termsWithId), 'Termen zonder ID' => count($termsWithoutId));
+        $pieces = array($this->translator->trans('terms_with_id') => count($termsWithId), $this->translator->trans('terms_without_id') => count($termsWithoutId));
         $pieChart = $this->generatePieChart($pieces);
         $pieChart->canDownload = true;
         if(count($termsWithoutId) == 0 && count($termsWithId) > 0) {
             $pieChart->isFull = true;
-            $pieChart->fullText = 'Alle termen hebben een ID.';
+            $pieChart->fullText = $this->translator->trans('all_terms_have_an_id');
         }
         elseif(count($termsWithId) == 0) {
             $pieChart->isEmpty = true;
             if(count($termsWithoutId) == 0) {
-                $pieChart->emptyText = 'Er zijn geen records waarvoor dit veld is ingevuld.';
+                $pieChart->emptyText = $this->translator->trans('no_records_for_this_field');
                 $pieChart->canDownload = false;
             } else {
-                $pieChart->emptyText = 'Er zijn geen termen met een ID.';
+                $pieChart->emptyText = $this->translator->trans('no_terms_with_id');
             }
         }
 
@@ -438,21 +446,21 @@ class ReportController extends Controller
         foreach($authorities as $key => $value) {
             $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '"';
         }
-        $barChart = $this->generateBarChart($csvData, 'ID\'s voor deze authority');
+        $barChart = $this->generateBarChart($csvData, $this->translator->trans('ids_for_this_authority'));
         $barChart->canDownload = true;
         if(count($authorities) == 0) {
             $barChart->isEmpty = true;
             if(count($termsWithId) > 0) {
-                $barChart->emptyText = "Er zijn geen authorities voor deze termen";
+                $barChart->emptyText = $this->translator->trans('no_authorities_for_these_terms');
             }
         } else {
             $barChart->max = count($termsWithId) + count($termsWithoutId);
         }
 
-        $lineChart = $this->generateFieldTrendGraph($field, 'Termen met ID');
+        $lineChart = $this->generateFieldTrendGraph($field, $this->translator->trans('terms_with_id'));
 
         $title = $this->translator->trans('label_ambiguity') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
-        return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart, $barChart, $lineChart));
+        return new Report($title, $title, $this->translator->trans('description_ambiguity_terms'), array($pieChart, $barChart, $lineChart));
     }
 
     private function ambigObjectName()
@@ -462,7 +470,7 @@ class ReportController extends Controller
 
     private function ambigCategory()
     {
-        return $this->ambigTerms('classification');
+        return $this->ambigTerms('object_category');
     }
 
     private function ambigMainMotif()
@@ -500,7 +508,7 @@ class ReportController extends Controller
         return $this->ambigTerms('displayed_event');
     }
 
-    private function richRecs($field)
+    private function richOccurrences($field)
     {
         $allRecords = $this->getAllRecords();
         $counts = array();
@@ -531,110 +539,118 @@ class ReportController extends Controller
         foreach($counts as $key => $value) {
             $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
         }
-        $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
-            $barChart->emptyText = 'Er zijn geen records waarvoor dit veld werd ingevuld.';
+            $barChart->emptyText = $this->translator->trans('no_records_for_this_field');
         } else {
-            $barChart->legendText = 'Aantal occurrences';
+            $barChart->legendText = $this->translator->trans('occurrences');
         }
 
         $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef)) . ' in records';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
+        return new Report($title, $title, $this->translator->trans('description_richness_occurrences'), array($barChart));
     }
 
-    private function richRecStorageInstitution()
+    private function richOccurrencesStorageInstitution()
     {
-        return $this->richRecs('storage_institution');
+        return $this->richOccurrences('storage_institution');
     }
 
-    private function richRecObjectId()
+    private function richOccurrencesObjectId()
     {
-        return $this->richRecs('database_id');
+        return $this->richOccurrences('database_id');
     }
 
-    private function richRecDataPid()
+    private function richOccurrencesDataPid()
     {
-        return $this->richRecs('data_pid');
+        return $this->richOccurrences('data_pid');
     }
 
-    private function richRecTitle()
+    private function richOccurrencesTitle()
     {
-        return $this->richRecs('title');
+        return $this->richOccurrences('title');
     }
 
-    private function richRecShortDesc()
+    private function richOccurrencesShortDesc()
     {
-        return $this->richRecs('short_description');
+        return $this->richOccurrences('short_description');
     }
 
-    private function richRecObjectName()
+    private function richOccurrencesObjectName()
     {
-        return $this->richRecs('object_name');
+        return $this->richOccurrences('object_name');
     }
 
-    private function richRecObjectCat()
+    private function richOccurrencesObjectCat()
     {
-        return $this->richRecs('classification');
+        return $this->richOccurrences('object_category');
     }
 
-    private function richRecMainMotif()
+    private function richOccurrencesMainMotif()
     {
-        return $this->richRecs('main_motif');
+        return $this->richOccurrences('main_motif');
     }
 
-    private function richRecCreator()
+    private function richOccurrencesCreator()
     {
-        return $this->richRecs('creator');
+        return $this->richOccurrences('creator');
     }
 
-    private function richRecMaterial()
+    private function richOccurrencesMaterial()
     {
-        return $this->richRecs('material');
+        return $this->richOccurrences('material');
     }
 
-    private function richRecConcept()
+    private function richOccurrencesConcept()
     {
-        return $this->richRecs('displayed_concept');
+        return $this->richOccurrences('displayed_concept');
     }
 
-    private function richRecSubject()
+    private function richOccurrencesSubject()
     {
-        return $this->richRecs('displayed_subject');
+        return $this->richOccurrences('displayed_subject');
     }
 
-    private function richRecLocation()
+    private function richOccurrencesLocation()
     {
-        return $this->richRecs('displayed_location');
+        return $this->richOccurrences('displayed_location');
     }
 
-    private function richRecEvent()
+    private function richOccurrencesEvent()
     {
-        return $this->richRecs('displayed_event');
+        return $this->richOccurrences('displayed_event');
     }
 
     private function richTerms($field)
     {
-        $undefinedKey = 'niet gedefinieerd';
+        $undefinedKey = '(undefined)';
 
         $allRecords = $this->getAllRecords();
         $counts = array();
         if($allRecords) {
             foreach ($allRecords as $record) {
                 $data = $record->getData();
-                if ($data[$field] && count($data[$field]) > 0) {
-                    $fieldValues = $data[$field];
-                    foreach ($fieldValues as $fieldValue) {
-                        if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
-                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
-                            if($term) {
-                                if (array_key_exists($term, $counts)) {
-                                    $counts[$term]++;
-                                } else {
-                                    $counts[$term] = 1;
+                if(array_key_exists($field, $data)) {
+                    if ($data[$field] && count($data[$field]) > 0) {
+                        $fieldValues = $data[$field];
+                        foreach ($fieldValues as $fieldValue) {
+                            if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
+                                $term = RecordUtil::getPreferredTerm($fieldValue['term']);
+                                if ($term) {
+                                    if (array_key_exists($term, $counts)) {
+                                        $counts[$term]++;
+                                    } else {
+                                        $counts[$term] = 1;
+                                    }
                                 }
                             }
+                        }
+                    } else {
+                        if (array_key_exists($undefinedKey, $counts)) {
+                            $counts[$undefinedKey]++;
+                        } else {
+                            $counts[$undefinedKey] = 1;
                         }
                     }
                 } else {
@@ -651,22 +667,31 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
+            if($key === '(undefined)') {
+                $csvData .= PHP_EOL . '"' . $key . '","' . $this->translator->trans('undefined') . '","' . $value . '"';
+            } else {
+                $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
+            }
         }
-        $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
-            $barChart->emptyText = 'Er zijn geen termen voor dit veld.';
+            $barChart->emptyText = $this->translator->trans('no_terms_for_this_field');
         }
 
-        $title = 'Rijkheid ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
-        return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
+        $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
+        return new Report($title, $title, $this->translator->trans('description_richness_terms'), array($barChart));
     }
 
     private function richTermObjectName()
     {
         return $this->richTerms('object_name');
+    }
+
+    private function richTermObjectCat()
+    {
+        return $this->richTerms('object_category');
     }
 
     private function richTermMainMotif()
@@ -706,37 +731,37 @@ class ReportController extends Controller
 
     private function openWorkRecords()
     {
-        $title = 'Openheid werk - records';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_work')) . ' - ' . strtolower($this->translator->trans('label_openness_work_records'));
+        return new Report($title, $title, $this->translator->trans('description_openness_work_records'), array());
     }
 
     private function openWorkTerms()
     {
-        $title = 'Openheid werk - termen';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_terms')) . ' - ' . strtolower($this->translator->trans('label_openness_work_terms'));
+        return new Report($title, $title, $this->translator->trans('description_openness_work_terms'), array());
     }
 
     private function openDigRepRecords()
     {
-        $title = 'Openheid digitale representatie - records';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_digital_representation')) . ' - ' . strtolower($this->translator->trans('label_openness_digital_representation_records'));
+        return new Report($title, $title, $this->translator->trans('description_openness_digital_representation_records'), array());
     }
 
     private function openDigRepTerms()
     {
-        $title = 'Openheid digitale representatie - termen';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_digital_representation')) . ' - ' . strtolower($this->translator->trans('label_openness_digital_representation_terms'));
+        return new Report($title, $title, $this->translator->trans('description_openness_digital_representation_records'), array());
     }
 
     private function openRecordRecords()
     {
-        $title = 'Openheid record - records';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_records'));
+        return new Report($title, $title, $this->translator->trans('description_openness_record_records'), array());
     }
 
     private function openRecordTerms()
     {
-        $title = 'Openheid record - termen';
-        return new Report($title, $title, 'Korte beschrijving (todo)', array());
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_terms'));
+        return new Report($title, $title, $this->translator->trans('description_openness_record_records'), array());
     }
 }

@@ -87,9 +87,9 @@ label_data_pid: Data PID
 csv_application_id: record_id
 label_application_id: Online record ID
 
-csv_classification: objectcategorie
-label_term_classification: Term objectcategorie
-label_id_classification: Identificatie objectcategorie
+csv_object_category: objectcategorie
+label_term_object_category: Term objectcategorie
+label_id_object_category: Identificatie objectcategorie
 
 csv_rights: rechten_status
 label_term_rights: Term rechten status
@@ -153,6 +153,7 @@ label_richness_occurrences_displayed_location: Afgebeelde locatie
 label_richness_occurrences_displayed_event: Afgebeelde gebeurtenis
 label_richness_terms: Termen
 label_richness_terms_object_name: Objectnaam
+label_richness_terms_object_category: Objectcategorie
 label_richness_terms_main_motif: Hoofdmotief
 label_richness_terms_creator: Vervaardiger
 label_richness_terms_material: Materiaal
@@ -173,11 +174,49 @@ label_openness_record_records: Records
 label_openness_record_terms: Termen
 
 # ReportController.php
+description_completeness_minimum_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de minimale registratie.
+description_completeness_minimum_complete_records: De hoeveelheid records die aan de minimale registratie voldoen.
+description_completeness_minimum_trend: Een historische trend van de hoeveelheid records die aan de minimale registratie voldoen.
+description_completeness_basic_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de basisregistratie.
+description_completeness_basic_complete_records: De hoeveelheid records die aan de basisregistratie voldoen.
+description_completeness_basic_trend: Een historische trend van de hoeveelheid records die aan de basisregistratie voldoen.
+description_completeness_extended_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld uit een uitgebreide set van velden.
+
+description_ambiguity_records_work_pids: Korte beschrijving (todo)
+description_ambiguity_records_data_pids: Korte beschrijving (todo)
+description_ambiguity_terms: Korte beschrijving (todo)
+
+description_richness_occurrences: Korte beschrijving (todo)
+description_richness_terms: Korte beschrijving (todo)
+description_openness_work_records: Korte beschrijving (todo)
+description_openness_work_terms: Korte beschrijving (todo)
+description_openness_digital_representation_records: Korte beschrijving (todo)
+description_openness_digital_representation_records: Korte beschrijving (todo)
+description_openness_record_records: Korte beschrijving (todo)
+description_openness_record_records: Korte beschrijving (todo)
+
 filled_in_records: Ingevulde records
 complete_records: Volledige records
 incomplete_records: Onvolledige records
 all_records_complete: Alle records zijn volledig ingevuld.
 no_complete_records: Er zijn geen volledig ingevulde records.
+overview_fields: Overzicht velden
+history: Historiek
+which_occur_%x%_time: die %x%x voorkomen
+which_occur_%x%_times: die %x%x voorkomen
+all_%label%_occur_once: Alle %label% komen exact eenmaal voor.
+work_pids: Work PID's
+data_pids: Data PID's
+terms_with_id: Termen met ID
+terms_without_id: Termen zonder ID
+all_terms_have_an_id: Alle termen hebben een ID.
+no_records_for_this_field: Er zijn geen records waarvoor dit veld is ingevuld.
+no_terms_with_id: Er zijn geen termen met een ID.
+ids_for_this_authority: ID's voor deze authority
+no_authorities_for_these_terms: Er zijn geen authorities voor deze termen.
+amount_of_records: Aantal records
+undefined: niet gedefinieerd
+no_terms_for_this_field: Er zijn geen termen voor dit veld.
 
 # DownloadController.php
 persistent_id: Persistente ID
@@ -186,3 +225,6 @@ not_filled_in: niet ingevuld
 application_id: Applicatie ID
 object_number: Objectnummer
 occurrences: Aantal voorkomens
+
+# linegraph.html.twig
+date: Datum

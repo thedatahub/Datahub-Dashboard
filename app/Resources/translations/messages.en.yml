@@ -87,9 +87,9 @@ label_data_pid: Data PID
 csv_application_id: record_id
 label_application_id: Online record ID
 
-csv_classification: object_category
-label_term_classification: Term object category
-label_id_classification: Identification object category
+csv_object_category: object_category
+label_term_object_category: Term object category
+label_id_object_category: Identification object category
 
 csv_rights: rights_status
 label_term_rights: Term rights status
@@ -153,6 +153,7 @@ label_richness_occurrences_displayed_location: Displayed location
 label_richness_occurrences_displayed_event: Displayed event
 label_richness_terms: Terms
 label_richness_terms_object_name: Object name
+label_richness_terms_object_category: Object category
 label_richness_terms_main_motif: Main motif
 label_richness_terms_creator: Creator
 label_richness_terms_material: Material
@@ -173,11 +174,49 @@ label_openness_record_records: Records
 label_openness_record_terms: Termen
 
 # ReportController.php
+description_completeness_minimum_overview: An overview of the amount of records for which a certain field has been filled in, according to the requirements of the minimum registration.
+description_completeness_minimum_complete_records: The amount of records which fulfill the requirements of the minimum registration.
+description_completeness_minimum_trend: A historic trend of the amount of records which fulfill the requirements of the minimum registration.
+description_completeness_basic_overview: An overview of the amount of records for which a certain field has been filled in, according to the requirements of the basic registration.
+description_completeness_basic_complete_records: The amount of records which fulfill the requirements of the basic registration.
+description_completeness_basic_trend: A historic trend of the amount of records which fulfill the requirements of the basic registration.
+description_completeness_extended_overview: An overview of the amount of records for which a certain field has been filled in from an extended set of fields.
+
+description_ambiguity_records_work_pids: Short description (todo)
+description_ambiguity_records_data_pids: Short description (todo)
+description_ambiguity_terms: Short description (todo)
+
+description_richness_occurrences: Short description (todo)
+description_richness_terms: Short description (todo)
+description_openness_work_records: Short description (todo)
+description_openness_work_terms: Short description (todo)
+description_openness_digital_representation_records: Short description (todo)
+description_openness_digital_representation_records: Short description (todo)
+description_openness_record_records: Short description (todo)
+description_openness_record_records: Short description (todo)
+
 filled_in_records: Filled in records
 complete_records: Complete records
 incomplete_records: Incomplete records
 all_records_complete: All records are complete.
 no_complete_records: There are no complete records.
+overview_fields: Overview fields
+history: History
+which_occur_%x%_time: which occur %x% time
+which_occur_%x%_times: which occur %x% times
+all_%label%_occur_once: All %label% occur exactly once.
+work_pids: Work PIDs
+data_pids: Data PIDs
+terms_with_id: Terms with ID
+terms_without_id: Terms without ID
+all_terms_have_an_id: All terms have an ID.
+no_records_for_this_field: There are no records for which this field is filled in.
+no_terms_with_id: There are no terms with an ID.
+ids_for_this_authority: IDs for this authority
+no_authorities_for_these_terms: There are no authorities for these terms.
+amount_of_records: Amount of records
+undefined: undefined
+no_terms_for_this_field: There are no terms for this field.
 
 # DownloadController.php
 persistent_id: Persistent ID
@@ -186,3 +225,6 @@ not_filled_in: not filled in
 application_id: Application ID
 object_number: Object number
 occurrences: Occurrences
+
+# linegraph.html.twig
+date: Date

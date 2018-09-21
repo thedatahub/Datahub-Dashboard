@@ -225,16 +225,16 @@ parameters:
             csv: 'csv_application_id'
             label: 'label_application_id'
             xpath: 'lidoRecID[@pref="preferred"]'
-        classification:
+        object_category:
             parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]'
-            csv: 'csv_classification'
+            csv: 'csv_object_category'
             term:
                 class: 'extended'
-                label: 'label_term_classification'
+                label: 'label_term_object_category'
                 xpath: 'term'
             id:
                 class: 'extended'
-                label: 'label_id_classification'
+                label: 'label_id_object_category'
                 xpath: 'conceptID'
         rights:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
@@ -283,7 +283,7 @@ parameters:
 
     terms_with_ids:
       - 'object_name'
-      - 'classification'
+      - 'object_category'
       - 'main_motif'
       - 'creator'
       - 'material'
@@ -403,59 +403,59 @@ parameters:
                         storage_institution:
                             url: 'storage-institution'
                             label: 'label_richness_occurrences_storage_institution'
-                            function: 'richRecStorageInstitution'
+                            function: 'richOccurrencesStorageInstitution'
                         object_number:
                             url: 'object-number'
                             label: 'label_richness_occurrences_object_number'
-                            function: 'richRecObjectId'
+                            function: 'richOccurrencesObjectId'
                         data_pid:
                             url: 'data-pid'
                             label: 'label_richness_occurrences_data_pid'
-                            function: 'richRecDataPid'
+                            function: 'richOccurrencesDataPid'
                         title:
                             url: 'title'
                             label: 'label_richness_occurrences_title'
-                            function: 'richRecTitle'
+                            function: 'richOccurrencesTitle'
                         short_description:
                             url: 'short-description'
                             label: 'label_richness_occurrences_short_description'
-                            function: 'richRecShortDesc'
+                            function: 'richOccurrencesShortDesc'
                         object_name:
                             url: 'object-name'
                             label: 'label_richness_occurrences_object_name'
-                            function: 'richRecObjectName'
+                            function: 'richOccurrencesObjectName'
                         object_category:
                             url: 'object-category'
                             label: 'label_richness_occurrences_object_category'
-                            function: 'richRecObjectCat'
+                            function: 'richOccurrencesObjectCat'
                         main_motif:
                             url: 'main-motif'
                             label: 'label_richness_occurrences_main_motif'
-                            function: 'richRecMainMotif'
+                            function: 'richOccurrencesMainMotif'
                         creator:
                             url: 'creator'
                             label: 'label_richness_occurrences_creator'
-                            function: 'richRecCreator'
+                            function: 'richOccurrencesCreator'
                         material:
                             url: 'material'
                             label: 'label_richness_occurrences_material'
-                            function: 'richRecMaterial'
+                            function: 'richOccurrencesMaterial'
                         displayed_concept:
                             url: 'displayed-concept'
                             label: 'label_richness_occurrences_displayed_concept'
-                            function: 'richRecConcept'
+                            function: 'richOccurrencesConcept'
                         displayed_subject:
                             url: 'displayed-subject'
                             label: 'label_richness_occurrences_displayed_subject'
-                            function: 'richRecSubject'
+                            function: 'richOccurrencesSubject'
                         displayed_location:
                             url: 'displayed-location'
                             label: 'label_richness_occurrences_displayed_location'
-                            function: 'richRecLocation'
+                            function: 'richOccurrencesLocation'
                         displayed_event:
                             url: 'displayed-event'
                             label: 'label_richness_occurrences_displayed_event'
-                            function: 'richRecEvent'
+                            function: 'richOccurrencesEvent'
                 terms:
                     url: 'terms'
                     label: 'label_richness_terms'
@@ -464,6 +464,10 @@ parameters:
                             url: 'object-name'
                             label: 'label_richness_terms_object_name'
                             function: 'richTermObjectName'
+                        object_category:
+                            url: 'object-category'
+                            label: 'label_richness_terms_object_category'
+                            function: 'richTermObjectCat'
                         main_motif:
                             url: 'main-motif'
                             label: 'label_richness_terms_main_motif'

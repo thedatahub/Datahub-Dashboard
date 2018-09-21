@@ -66,7 +66,7 @@
     //Calculate the bottom margin
 
     //Height of the x axis title
-    var xTitle = textSize("Datum", bigFontSize);
+    var xTitle = textSize("{% trans %}date{% endtrans %}", bigFontSize);
     var xTitleHeight = xTitle.height;
 
     //Set padding for x axis title to 16
@@ -282,7 +282,7 @@
         .style("text-anchor", "middle")
         .style("font-size", bigFontSize)
         .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
-        .text("Datum");
+        .text("{% trans %}date{% endtrans %}");
 
     svg.append("text")      // title for the y-axis
         .attr("y", -yTickTextWidth - yTickWidth - yTickPadding - yTitlePadding)
