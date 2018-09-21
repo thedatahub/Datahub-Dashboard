@@ -654,7 +654,7 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . $value . '"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
         $barChart->canDownload = true;
@@ -663,7 +663,7 @@ class ReportController extends Controller
             $barChart->emptyText = 'Er zijn geen termen voor dit veld.';
         }
 
-        $title = 'Rijkheid ' . RecordUtil::getFieldLabel($field, $this->dataDef);
+        $title = 'Rijkheid ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
         return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
     }
 

@@ -644,4 +644,84 @@ class DownloadController extends Controller
     private function richRecEventBarChart() {
         return $this->richRecBar('displayed_event');
     }
+
+    private function richTermBar($field) {
+        $records = $this->getAllRecords();
+        $csvArray = array();
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                if ($data[$field] && count($data[$field]) > 0) {
+                    $add = false;
+                    foreach ($data[$field] as $term) {
+                        if (is_array($term)) {
+                            if (array_key_exists('term', $term)) {
+                                foreach ($term['term'] as $t) {
+                                    if($t['term'] === $this->field) {
+                                        $add = true;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                foreach ($term as $t) {
+                                    if($t['term'] === $this->field) {
+                                        $add = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            if($term === $this->field) {
+                                $add = true;
+                                break;
+                            }
+                        }
+                    }
+                    if($add) {
+                        $recordIds = $this->getRecordIds($data);
+                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->field);
+                    }
+                }
+            }
+        }
+
+        $csvData = '';
+        foreach($csvArray as $csvLine) {
+            $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['term'] . '"';
+        }
+
+        return 'Applicatie ID,Objectnummer,' . $this->questionLabel . $csvData;
+    }
+
+    private function richTermObjectNameBarChart() {
+        return $this->richTermBar('object_name');
+    }
+
+    private function richTermMainMotifBarChart() {
+        return $this->richTermBar('main_motif');
+    }
+
+    private function richTermCreatorBarChart() {
+        return $this->richTermBar('creator');
+    }
+
+    private function richTermMaterialBarChart() {
+        return $this->richTermBar('material');
+    }
+
+    private function richTermConceptBarChart() {
+        return $this->richTermBar('displayed_concept');
+    }
+
+    private function richTermSubjectBarChart() {
+        return $this->richTermBar('displayed_subject');
+    }
+
+    private function richTermLocationBarChart() {
+        return $this->richTermBar('displayed_location');
+    }
+
+    private function richTermEventBarChart() {
+        return $this->richTermBar('displayed_event');
+    }
 }
