@@ -17,7 +17,7 @@ class DownloadController extends Controller
     /**
      * @Route("/{_locale}/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
      */
-    public function download($provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
+    public function download($_locale = 'nl', $provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
     {
         $this->provider = $provider;
         $this->question = $question;

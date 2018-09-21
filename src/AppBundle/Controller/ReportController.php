@@ -18,7 +18,7 @@ class ReportController extends Controller
     /**
      * @Route("/{_locale}/report/{provider}/{aspect}/{parameter}/{question}", name="report", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+"})
      */
-    public function report($_locale = 'nl', $provider = '', $aspect = 'volledigheid', $parameter = 'minimaal', $question = 'overzicht')
+    public function report($_locale = 'nl', $provider = '', $aspect = 'completeness', $parameter = 'minimum', $question = 'overview')
     {
         $this->provider = $provider;
 
@@ -53,10 +53,10 @@ class ReportController extends Controller
         }
 
         $functionCall = null;
-        $parameters = $leftMenu[ucfirst($aspect)];
+        $parameters = $leftMenu[$aspect]['parameters'];
         foreach($parameters as $param) {
             if($param['url'] === $parameter) {
-                foreach ($param['list'] as $quest) {
+                foreach ($param['questions'] as $quest) {
                     if($quest['url'] === $question) {
                         $functionCall = $quest['function'];
                         break;
@@ -86,7 +86,7 @@ class ReportController extends Controller
             'route_about' => $this->generateUrl('about'),
             'route_open_source' => $this->generateUrl('open_source'),
             'route_open_data' => $this->generateUrl('open_data'),
-            'current_page' => 'dashboard',
+            'current_page' => 'home',
             'translated_routes' => $translatedRoutes
         );
         return $this->render('report.html.twig', $data);

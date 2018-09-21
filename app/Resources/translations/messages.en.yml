@@ -1,3 +1,4 @@
+# dashboard.yml, data_definition
 csv_storage_institution: storage_institution
 label_storage_institution: Name storage institution
 
@@ -105,3 +106,68 @@ label_id_rights_digital_representation: Identification digital representation
 csv_data_provider: data_provider
 label_term_data_provider: Name data provider
 label_id_data_provider: Identification data provider
+
+#dashboard.yml, left_menu
+label_completeness: Completeness
+label_completeness_minimum: Minimum registration
+label_completeness_minimum_overview: Overview of all fields
+label_completeness_minimum_complete_records: Amount of complete records
+label_completeness_minimum_trend: Historic trend of complete records
+label_completeness_basic: Basic registration
+label_completeness_basic_overview: Overview of all fields
+label_completeness_basic_complete_records: Amount of complete records
+label_completeness_basic_trend: Historic trend of complete records
+label_completeness_extended: Extended set
+label_completeness_extended_overview: Overview of all fields
+
+label_ambiguity: Ambiguity
+label_ambiguity_records: Records
+label_ambiguity_records_work_pids: Distribution of work PID's among records
+label_ambiguity_records_data_pids: Distribution of data PID's among records
+label_ambiguity_terms: Terms
+label_ambiguity_terms_object_name: Object name
+label_ambiguity_terms_object_category: Object category
+label_ambiguity_terms_main_motif: Main motif
+label_ambiguity_terms_creator: Creator
+label_ambiguity_terms_material: Material
+label_ambiguity_terms_displayed_concept: Displayed concept
+label_ambiguity_terms_displayed_subject: Displayed subject
+label_ambiguity_terms_displayed_location: Displayed location
+label_ambiguity_terms_displayed_event: Displayed event
+
+label_richness: Richness
+label_richness_occurrences: Occurrences
+label_richness_occurrences_storage_facility: Name storage institution
+label_richness_occurrences_object_number: Object number / Inventory number
+label_richness_occurrences_data_pid: Object number / Data PID
+label_richness_occurrences_title: Title
+label_richness_occurrences_short_description: Short description
+label_richness_occurrences_object_name: Object name
+label_richness_occurrences_object_category: Object category
+label_richness_occurrences_main_motif: Main motif
+label_richness_occurrences_creator: Creator
+label_richness_occurrences_material: Material
+label_richness_occurrences_displayed_concept: Displayed concept
+label_richness_occurrences_displayed_subject: Displayed subject
+label_richness_occurrences_displayed_location: Displayed location
+label_richness_occurrences_displayed_event: Displayed event
+label_richness_terms: Terms
+label_richness_terms_object_name: Object name
+label_richness_terms_main_motif: Main motif
+label_richness_terms_creator: Creator
+label_richness_terms_material: Material
+label_richness_terms_displayed_concept: Displayed concept
+label_richness_terms_displayed_subject: Displayed subject
+label_richness_terms_displayed_location: Displayed location
+label_richness_terms_displayed_event: Displayed event
+
+label_openness: Openness
+label_openness_work: Work
+label_openness_work_records: Records
+label_openness_work_terms: Terms
+label_openness_digital_representation: Digital representation
+label_openness_digital_representation_records: Records
+label_openness_digital_representation_terms: Terms
+label_openness_record: Record
+label_openness_record_records: Records
+label_openness_record_terms: Termen

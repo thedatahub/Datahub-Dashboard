@@ -295,175 +295,239 @@ parameters:
 
     # Values at the right are defined in ReportController.php
     left_menu:
-        Volledigheid:
-            Minimale registratie:
-                url: 'minimaal'
-                list:
-                    Overzicht van alle velden:
-                        url: 'overzicht'
-                        function: 'minFieldOverview'
-                    Aantal volledig ingevulde records:
-                        url: 'ingevuld'
-                        function: 'minFullRecords'
-                    Historische trend volledig ingevulde records:
-                        url: 'trend'
-                        function: 'minTrend'
-            Basisregistratie:
-                url: 'basis'
-                list:
-                    Overzicht van alle velden:
-                        url: 'overzicht'
-                        function: 'basicFieldOverview'
-                    Aantal volledig ingevulde records:
-                        url: 'ingevuld'
-                        function: 'basicFullRecords'
-                    Historische trend volledig ingevulde records:
-                        url: 'trend'
-                        function: 'basicTrend'
-            Uitgebreide set:
-                url: 'uitgebreid'
-                list:
-                    Overzicht van alle velden:
-                        url: 'overzicht'
-                        function: 'extendedFieldOverview'
-        Ondubbelzinnigheid:
-            Records:
-                url: 'records'
-                list:
-                    Verdeling van work PID's over de records:
-                        url: 'work_pids'
-                        function: 'ambigWorkPids'
-                    Verdeling van data PID's over de records:
-                        url: 'data_pids'
-                        function: 'ambigDataPids'
-            Termen:
-                url: 'termen'
-                list:
-                    Objectnaam:
-                        url: 'objectnaam'
-                        function: 'ambigObjectName'
-                    Objectcategorie:
-                        url: 'categorie'
-                        function: 'ambigCategory'
-                    Hoofdmotief:
-                        url: 'hoofdmotief'
-                        function: 'ambigMainMotif'
-                    Vervaardiger:
-                        url: 'vervaardiger'
-                        function: 'ambigCreator'
-                    Materiaal:
-                        url: 'materiaal'
-                        function: 'ambigMaterial'
-                    Afgebeeld concept:
-                        url: 'afgebeeld_concept'
-                        function: 'ambigConcept'
-                    Afgebeelde persoon of instelling:
-                        url: 'afgebeelde_persoon_of_instelling'
-                        function: 'ambigSubject'
-                    Afgebeelde locatie:
-                        url: 'afgebeelde_locatie'
-                        function: 'ambigLocation'
-                    Afgebeelde gebeurtenis:
-                        url: 'afgebeelde_gebeurtenis'
-                        function: 'ambigEvent'
-        Rijkheid:
-            Occurrences:
-              url: 'records'
-              list:
-                  Naam bewaarinstelling:
-                      url: 'bewaarinstelling'
-                      function: 'richRecProviderName'
-                  Objectnummer / Inventarisnummer:
-                      url: 'inventarisnummer'
-                      function: 'richRecObjectId'
-                  Objectnummer / Data PID:
-                      url: 'data_pid'
-                      function: 'richRecDataPid'
-                  Titel:
-                      url: 'titel'
-                      function: 'richRecTitle'
-                  Korte beschrijving:
-                      url: 'beschrijving'
-                      function: 'richRecShortDesc'
-                  Objectnaam:
-                      url: 'objectnaam'
-                      function: 'richRecObjectName'
-                  Objectcategorie:
-                      url: 'categorie'
-                      function: 'richRecObjectCat'
-                  Hoofdmotief:
-                      url: 'hoofdmotief'
-                      function: 'richRecMainMotif'
-                  Vervaardiger:
-                      url: 'vervaardiger'
-                      function: 'richRecCreator'
-                  Materiaal:
-                      url: 'materiaal'
-                      function: 'richRecMaterial'
-                  Afgebeeld concept:
-                      url: 'afgebeeld_concept'
-                      function: 'richRecConcept'
-                  Afgebeelde persoon of instelling:
-                      url: 'afgebeelde_persoon_of_instelling'
-                      function: 'richRecSubject'
-                  Afgebeelde locatie:
-                      url: 'afgebeelde_locatie'
-                      function: 'richRecLocation'
-                  Afgebeelde gebeurtenis:
-                      url: 'afgebeelde_gebeurtenis'
-                      function: 'richRecEvent'
-            Termen:
-                url: 'termen'
-                list:
-                  Objectnaam:
-                      url: 'objectnaam'
-                      function: 'richTermObjectName'
-                  Hoofdmotief:
-                      url: 'hoofdmotief'
-                      function: 'richTermMainMotif'
-                  Vervaardiger:
-                      url: 'vervaardiger'
-                      function: 'richTermCreator'
-                  Materiaal:
-                      url: 'materiaal'
-                      function: 'richTermMaterial'
-                  Afgebeeld concept:
-                      url: 'afgebeeld_concept'
-                      function: 'richTermConcept'
-                  Afgebeelde persoon of instelling:
-                      url: 'afgebeelde_persoon_of_instelling'
-                      function: 'richTermSubject'
-                  Afgebeelde locatie:
-                      url: 'afgebeelde_locatie'
-                      function: 'richTermLocation'
-                  Afgebeelde gebeurtenis:
-                      url: 'afgebeelde_gebeurtenis'
-                      function: 'richTermEvent'
-        Openheid:
-            Werk:
-                url: 'werk'
-                list:
-                    Records:
-                        url: 'records'
-                        function: 'openWorkRecords'
-                    Termen:
-                        url: 'termen'
-                        function: 'openWorkTerms'
-            Digitale representatie:
-                url: 'digitale_rep'
-                list:
-                    Records:
-                        url: 'records'
-                        function: 'openDigRepRecords'
-                    Termen:
-                        url: 'termen'
-                        function: 'openDigRepTerms'
-            Record:
-                url: 'record'
-                list:
-                    Records:
-                        url: 'records'
-                        function: 'openRecordRecords'
-                    Termen:
-                        url: 'termen'
-                        function: 'openRecordTerms'
+        completeness:
+            label: 'label_completeness'
+            parameters:
+                minimum:
+                    url: 'minimum'
+                    label: 'label_completeness_minimum'
+                    questions:
+                        overview:
+                            url: 'overview'
+                            label: 'label_completeness_minimum_overview'
+                            function: 'minFieldOverview'
+                        complete_records:
+                            url: 'complete-records'
+                            label: 'label_completeness_minimum_complete_records'
+                            function: 'minFullRecords'
+                        trend:
+                            url: 'trend'
+                            label: 'label_completeness_minimum_trend'
+                            function: 'minTrend'
+                basic:
+                    url: 'basic'
+                    label: 'label_completeness_basic'
+                    questions:
+                        overview:
+                            url: 'overview'
+                            label: 'label_completeness_basic_overview'
+                            function: 'basicFieldOverview'
+                        complete_records:
+                            url: 'complete-records'
+                            label: 'label_completeness_basic_complete_records'
+                            function: 'basicFullRecords'
+                        trend:
+                            url: 'trend'
+                            label: 'label_completeness_basic_trend'
+                            function: 'basicTrend'
+                extended:
+                    url: 'extended'
+                    label: 'label_completeness_extended'
+                    questions:
+                        overview:
+                            url: 'overview'
+                            label: 'label_completeness_extended_overview'
+                            function: 'extendedFieldOverview'
+        ambiguity:
+            label: 'label_ambiguity'
+            parameters:
+                records:
+                    url: 'records'
+                    label: 'label_ambiguity_records'
+                    questions:
+                        work_pids:
+                            url: 'work-pids'
+                            label: 'label_ambiguity_records_work_pids'
+                            function: 'ambigWorkPids'
+                        data_pids:
+                            url: 'data-pids'
+                            label: 'label_ambiguity_records_data_pids'
+                            function: 'ambigDataPids'
+                terms:
+                    url: 'terms'
+                    label: 'label_ambiguity_terms'
+                    questions:
+                        object_name:
+                            url: 'object-name'
+                            label: 'label_ambiguity_terms_object_name'
+                            function: 'ambigObjectName'
+                        object_category:
+                            url: 'object-category'
+                            label: 'label_ambiguity_terms_object_category'
+                            function: 'ambigCategory'
+                        main_motif:
+                            url: 'main-motif'
+                            label: 'label_ambiguity_terms_main_motif'
+                            function: 'ambigMainMotif'
+                        creator:
+                            url: 'creator'
+                            label: 'label_ambiguity_terms_creator'
+                            function: 'ambigCreator'
+                        material:
+                            url: 'material'
+                            label: 'label_ambiguity_terms_material'
+                            function: 'ambigMaterial'
+                        displayed_concept:
+                            url: 'displayed-concept'
+                            label: 'label_ambiguity_terms_displayed_concept'
+                            function: 'ambigConcept'
+                        displayed_subject:
+                            url: 'displayed-subject'
+                            label: 'label_ambiguity_terms_displayed_subject'
+                            function: 'ambigSubject'
+                        displayed_location:
+                            url: 'displayed-location'
+                            label: 'label_ambiguity_terms_displayed_location'
+                            function: 'ambigLocation'
+                        displayed_event:
+                            url: 'displayed-event'
+                            label: 'label_ambiguity_terms_displayed_event'
+                            function: 'ambigEvent'
+        richness:
+            label: 'label_richness'
+            parameters:
+                occurrences:
+                    url: 'occurrences'
+                    label: 'label_richness_occurrences'
+                    questions:
+                        storage_facility:
+                            url: 'storage-facility'
+                            label: 'label_richness_occurrences_storage_facility'
+                            function: 'richRecProviderName'
+                        object_number:
+                            url: 'object-number'
+                            label: 'label_richness_occurrences_object_number'
+                            function: 'richRecObjectId'
+                        data_pid:
+                            url: 'data-pid'
+                            label: 'label_richness_occurrences_data_pid'
+                            function: 'richRecDataPid'
+                        title:
+                            url: 'title'
+                            label: 'label_richness_occurrences_title'
+                            function: 'richRecTitle'
+                        short_description:
+                            url: 'short-description'
+                            label: 'label_richness_occurrences_short_description'
+                            function: 'richRecShortDesc'
+                        object_name:
+                            url: 'object-name'
+                            label: 'label_richness_occurrences_object_name'
+                            function: 'richRecObjectName'
+                        object_category:
+                            url: 'object-category'
+                            label: 'label_richness_occurrences_object_category'
+                            function: 'richRecObjectCat'
+                        main_motif:
+                            url: 'main-motif'
+                            label: 'label_richness_occurrences_main_motif'
+                            function: 'richRecMainMotif'
+                        creator:
+                            url: 'creator'
+                            label: 'label_richness_occurrences_creator'
+                            function: 'richRecCreator'
+                        material:
+                            url: 'material'
+                            label: 'label_richness_occurrences_material'
+                            function: 'richRecMaterial'
+                        displayed_concept:
+                            url: 'displayed-concept'
+                            label: 'label_richness_occurrences_displayed_concept'
+                            function: 'richRecConcept'
+                        displayed_subject:
+                            url: 'displayed-subject'
+                            label: 'label_richness_occurrences_displayed_subject'
+                            function: 'richRecSubject'
+                        displayed_location:
+                            url: 'displayed-location'
+                            label: 'label_richness_occurrences_displayed_location'
+                            function: 'richRecLocation'
+                        displayed_event:
+                            url: 'displayed-event'
+                            label: 'label_richness_occurrences_displayed_event'
+                            function: 'richRecEvent'
+                terms:
+                    url: 'terms'
+                    label: 'label_richness_terms'
+                    questions:
+                        object_name:
+                            url: 'object-name'
+                            label: 'label_richness_terms_object_name'
+                            function: 'richTermObjectName'
+                        main_motif:
+                            url: 'main-motif'
+                            label: 'label_richness_terms_main_motif'
+                            function: 'richTermMainMotif'
+                        creator:
+                            url: 'creator'
+                            label: 'label_richness_terms_creator'
+                            function: 'richTermCreator'
+                        material:
+                            url: 'material'
+                            label: 'label_richness_terms_material'
+                            function: 'richTermMaterial'
+                        displayed_concept:
+                            url: 'displayed-concept'
+                            label: 'label_richness_terms_displayed_concept'
+                            function: 'richTermConcept'
+                        displayed_subject:
+                            url: 'displayed-subject'
+                            label: 'label_richness_terms_displayed_subject'
+                            function: 'richTermSubject'
+                        displayed_location:
+                            url: 'displayed-location'
+                            label: 'label_richness_terms_displayed_location'
+                            function: 'richTermLocation'
+                        displayed_event:
+                            url: 'displayed-event'
+                            label: 'label_richness_terms_displayed_event'
+                            function: 'richTermEvent'
+        openness:
+            label: 'label_openness'
+            parameters:
+                work:
+                    label: 'label_openness_work'
+                    url: 'work'
+                    questions:
+                        records:
+                            url: 'records'
+                            label: 'label_openness_work_records'
+                            function: 'openWorkRecords'
+                        terms:
+                            url: 'termen'
+                            label: 'label_openness_work_terms'
+                            function: 'openWorkTerms'
+                digital_representation:
+                    url: 'digital-representation'
+                    label: 'label_openness_digital_representation'
+                    questions:
+                        records:
+                            url: 'records'
+                            label: 'label_openness_digital_representation_records'
+                            function: 'openDigRepRecords'
+                        terms:
+                            url: 'terms'
+                            label: 'label_openness_digital_representation_terms'
+                            function: 'openDigRepTerms'
+                record:
+                    url: 'record'
+                    label: 'label_openness_record'
+                    questions:
+                        records:
+                            url: 'records'
+                            label: 'label_openness_record_records'
+                            function: 'openRecordRecords'
+                        terms:
+                            url: 'terms'
+                            label: 'label_openness_record_terms'
+                            function: 'openRecordTerms'

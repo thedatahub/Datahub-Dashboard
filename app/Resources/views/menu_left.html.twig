@@ -3,17 +3,17 @@
     <div class="btn-group-vertical">
         {% set loopI = 1 %}
 
-        {% for aspect_label, parameters in left_menu %}
-            {% set aspect_url = aspect_label|lower %}
+        {% for aspect_name, aspect in left_menu %}
+            {% set aspect_url = aspect_name|lower %}
             {% if aspect_url == active_aspect %}
                 {% set is_active_aspect = 1 %}
             {% else %}
                 {% set is_active_aspect = 0 %}
             {% endif %}
 
-            <p class="left-menu-level-one">{{ aspect_label }}</p>
+            <p class="left-menu-level-one">{{ aspect.label|trans }}</p>
 
-            {%  for parameter_label, parameter in parameters %}
+            {%  for parameter_name, parameter in aspect.parameters %}
                 {% if is_active_aspect and parameter.url == active_parameter %}
                     {% set is_active_parameter = 1 %}
                 {% else %}
@@ -25,14 +25,14 @@
                     <div class="card">
                         <div class="card-header" id="heading{{ loopI }}">
                             <button class="btn btn-default not-rounded parameter {% if is_active_parameter %}parameter-active{% endif %}" data-toggle="collapse"
-                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if is_active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ parameter_label }}<span class="caret"></span></button>
+                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if is_active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ parameter.label|trans }}<span class="caret"></span></button>
                         </div>
 
                         <div id="collapse{{ loopI }}" class="collapse {% if is_active_parameter %}in{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
                             <div class="card-body">
                                 <div class="btn-group-vertical collapse collapsed-buttons">
 
-                                    {% for question_label, question in parameter.list %}
+                                    {% for question_name, question in parameter.questions %}
                                         {% if is_active_parameter and question.url == active_question %}
                                             {% set is_active_question = 1 %}
                                         {% else %}
@@ -40,7 +40,7 @@
                                         {% endif %}
 
                                         <a href="{{ route ~ "/" ~ aspect_url ~ "/" ~ parameter.url ~ "/" ~ question.url }}"
-                                           class="btn btn-default not-rounded collapsed-button question {% if is_active_question %}question-active{% endif %}">{{ question_label }}</a>
+                                           class="btn btn-default not-rounded collapsed-button question {% if is_active_question %}question-active{% endif %}">{{ question.label|trans }}</a>
                                     {% endfor %}
 
                                 </div>
