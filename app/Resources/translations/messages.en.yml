@@ -172,6 +172,17 @@ label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Termen
 
+# ReportController.php
+filled_in_records: Filled in records
+complete_records: Complete records
+incomplete_records: Incomplete records
+all_records_complete: All records are complete.
+no_complete_records: There are no complete records.
 
 # DownloadController.php
 persistent_id: Persistent ID
+filled_in: filled in
+not_filled_in: not filled in
+application_id: Application ID
+object_number: Object number
+occurrences: Occurrences

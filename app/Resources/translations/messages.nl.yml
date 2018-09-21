@@ -172,5 +172,17 @@ label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Termen
 
+# ReportController.php
+filled_in_records: Ingevulde records
+complete_records: Volledige records
+incomplete_records: Onvolledige records
+all_records_complete: Alle records zijn volledig ingevuld.
+no_complete_records: Er zijn geen volledig ingevulde records.
+
 # DownloadController.php
 persistent_id: Persistente ID
+filled_in: ingevuld
+not_filled_in: niet ingevuld
+application_id: Applicatie ID
+object_number: Objectnummer
+occurrences: Aantal voorkomens

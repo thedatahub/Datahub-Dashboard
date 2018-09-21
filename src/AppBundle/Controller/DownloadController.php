@@ -6,6 +6,8 @@ use AppBundle\Util\RecordUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Twig\Error\RuntimeError;
 
 class DownloadController extends Controller
 {
@@ -45,9 +47,6 @@ class DownloadController extends Controller
                     }
                 }
             }
-        }
-        if(!$functionCall) {
-            throw new NotFoundHttpException('Deze downloadpagina bestaat niet.');
         }
 
         $functionCall .= $graph;
@@ -131,13 +130,16 @@ class DownloadController extends Controller
                 $data = $record->getData();
                 $recordIds = $this->getRecordIds($data);
                 $part = $this->extractFieldFromRecord($data, $this->field);
-                $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . ($part ? 'ingevuld' : 'niet ingevuld');
+                $filledIn = $this->translator->trans($part ? 'filled_in' : 'not_filled_in');
+                $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . $filledIn;
             }
         }
 
         $label = RecordUtil::getFieldLabel($this->field, $this->dataDef);
+        $applicationId = $this->translator->trans('application_id');
+        $objectNumber = $this->translator->trans('object_number');
 
-        return 'Applicatie ID,Objectnummer,' . $label . $csvData;
+        return $applicationId . ',' . $objectNumber . ',' . $label . $csvData;
     }
 
     private function minFieldOverviewBarchart()
@@ -215,7 +217,11 @@ class DownloadController extends Controller
             $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['id'] . '","' . $csvLine['count'] . '"';
         }
 
-        return 'Applicatie ID,Objectnummer,' . $label . ',Aantal voorkomens' . $csvData;
+        $applicationId = $this->translator->trans('application_id');
+        $objectNumber = $this->translator->trans('object_number');
+        $occurrences = $this->translator->trans('occurrences');
+
+        return $applicationId . ',' . $objectNumber . ',' . $label . ',' . $occurrences . $csvData;
     }
 
     private function ambigWorkPidsPiechart()
@@ -560,21 +566,23 @@ class DownloadController extends Controller
                         $recordIds = $this->getRecordIds($data);
                         $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
                     }
-                } else if ($data[$field] && count($data[$field]) == $this->field) {
-                    $recordIds = $this->getRecordIds($data);
-                    foreach ($data[$field] as $term) {
-                        if (is_array($term)) {
-                            if (array_key_exists('term', $term)) {
-                                foreach ($term['term'] as $t) {
-                                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t['term']);
+                } else if (array_key_exists($field, $data)) {
+                    if($data[$field] && count($data[$field]) == $this->field) {
+                        $recordIds = $this->getRecordIds($data);
+                        foreach ($data[$field] as $term) {
+                            if (is_array($term)) {
+                                if (array_key_exists('term', $term)) {
+                                    foreach ($term['term'] as $t) {
+                                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t['term']);
+                                    }
+                                } else {
+                                    foreach ($term as $t) {
+                                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t);
+                                    }
                                 }
                             } else {
-                                foreach ($term as $t) {
-                                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t);
-                                }
+                                $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $term);
                             }
-                        } else {
-                            $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $term);
                         }
                     }
                 }
@@ -586,7 +594,10 @@ class DownloadController extends Controller
             $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['term'] . '"';
         }
 
-        return 'Applicatie ID,Objectnummer,' . $this->questionLabel . $csvData;
+        $applicationId = $this->translator->trans('application_id');
+        $objectNumber = $this->translator->trans('object_number');
+
+        return $applicationId . ',' . $objectNumber . ',' . $this->questionLabel . $csvData;
     }
 
     private function richRecStorageInstitutionBarChart() {
@@ -651,35 +662,37 @@ class DownloadController extends Controller
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                if ($data[$field] && count($data[$field]) > 0) {
-                    $add = false;
-                    foreach ($data[$field] as $term) {
-                        if (is_array($term)) {
-                            if (array_key_exists('term', $term)) {
-                                foreach ($term['term'] as $t) {
-                                    if($t['term'] === $this->field) {
-                                        $add = true;
-                                        break;
+                if(array_key_exists($field, $data)) {
+                    if ($data[$field] && count($data[$field]) > 0) {
+                        $add = false;
+                        foreach ($data[$field] as $term) {
+                            if (is_array($term)) {
+                                if (array_key_exists('term', $term)) {
+                                    foreach ($term['term'] as $t) {
+                                        if ($t['term'] === $this->field) {
+                                            $add = true;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    foreach ($term as $t) {
+                                        if ($t['term'] === $this->field) {
+                                            $add = true;
+                                            break;
+                                        }
                                     }
                                 }
                             } else {
-                                foreach ($term as $t) {
-                                    if($t['term'] === $this->field) {
-                                        $add = true;
-                                        break;
-                                    }
+                                if ($term === $this->field) {
+                                    $add = true;
+                                    break;
                                 }
                             }
-                        } else {
-                            if($term === $this->field) {
-                                $add = true;
-                                break;
-                            }
                         }
-                    }
-                    if($add) {
-                        $recordIds = $this->getRecordIds($data);
-                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->field);
+                        if ($add) {
+                            $recordIds = $this->getRecordIds($data);
+                            $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->field);
+                        }
                     }
                 }
             }
@@ -690,7 +703,10 @@ class DownloadController extends Controller
             $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['term'] . '"';
         }
 
-        return 'Applicatie ID,Objectnummer,' . $this->questionLabel . $csvData;
+        $applicationId = $this->translator->trans('application_id');
+        $objectNumber = $this->translator->trans('object_number');
+
+        return $applicationId . ',' . $objectNumber . ',' . $this->questionLabel . $csvData;
     }
 
     private function richTermObjectNameBarChart() {

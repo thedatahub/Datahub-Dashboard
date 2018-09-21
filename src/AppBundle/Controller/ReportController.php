@@ -64,9 +64,6 @@ class ReportController extends Controller
                 }
             }
         }
-        if(!$functionCall) {
-            throw $this->createNotFoundException('Deze pagina bestaat niet.');
-        }
 
         $report = $this->$functionCall();
         $data = array(
@@ -194,7 +191,7 @@ class ReportController extends Controller
                 $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '"';
             }
         }
-        $barChart = $this->generateBarChart($csvData, 'Ingevulde records');
+        $barChart = $this->generateBarChart($csvData, $this->translator->trans('filled_in_records'));
         $barChart->canDownload = true;
         $barChart->max = $total;
         return new Report($title, $title, $description, array($barChart));
@@ -214,15 +211,15 @@ class ReportController extends Controller
                 $done = $report->getMinimum();
             }
         }
-        $pieces = array('Volledige records' => $done, 'Onvolledige records' => $total - $done);
+        $pieces = array( $this->translator->trans('complete_records') => $done,  $this->translator->trans('incomplete_records') => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
         if($total - $done == 0 && $done > 0) {
             $pieChart->isFull = true;
-            $pieChart->fullText = 'Alle records zijn volledig ingevuld.';
+            $pieChart->fullText = $this->translator->trans('all_records_complete');
         }
         elseif($done == 0) {
             $pieChart->isEmpty = true;
-            $pieChart->emptyText = 'Er zijn geen volledig ingevulde records.';
+            $pieChart->emptyText = $this->translator->trans('no_complete_records');
         }
         return new Report($title, $title, $description, array($pieChart));
     }
@@ -543,7 +540,7 @@ class ReportController extends Controller
             $barChart->legendText = 'Aantal occurrences';
         }
 
-        $title = 'Rijkheid ' . RecordUtil::getFieldLabel($field, $this->dataDef) . ' in records';
+        $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef)) . ' in records';
         return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
     }
 
