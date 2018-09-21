@@ -16,9 +16,14 @@ body {
 }
 
 .content {
-  overflow: auto;
   padding-bottom: 35px;
   margin-bottom: 30px;
+}
+
+.content::after {
+  content: "";
+  clear: both;
+  display: table;
 }
 
 .footer {
