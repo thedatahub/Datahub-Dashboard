@@ -40,6 +40,17 @@ class ReportController extends Controller
 
         $route = $this->generateUrl('report', array('_locale' => $_locale, 'provider' => $this->provider));
         $download = $this->generateUrl('download', array('_locale' => $_locale, 'provider' => $this->provider));
+        $translatedRoutes = array();
+        foreach(explode('|', $this->getParameter('app.locales')) as $locale) {
+            $translatedRoute = array(
+                'locale'=> $locale,
+                'route' => $this->generateUrl('report', array('_locale' => $locale, 'provider' => $this->provider, 'aspect' => $aspect, 'parameter' => $parameter, 'question' => $question))
+            );
+            if($locale === $_locale) {
+                $translatedRoute['active'] = true;
+            }
+            $translatedRoutes[] = $translatedRoute;
+        }
 
         $functionCall = null;
         $parameters = $leftMenu[ucfirst($aspect)];
@@ -75,7 +86,8 @@ class ReportController extends Controller
             'route_about' => $this->generateUrl('about'),
             'route_open_source' => $this->generateUrl('open_source'),
             'route_open_data' => $this->generateUrl('open_data'),
-            'current_page' => 'dashboard'
+            'current_page' => 'dashboard',
+            'translated_routes' => $translatedRoutes
         );
         return $this->render('report.html.twig', $data);
     }

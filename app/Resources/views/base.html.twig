@@ -15,12 +15,17 @@
 </head>
 <body>
 <div class="content">
-    <div class="content-inside">
-        <nav class="navbar navbar-static-top navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/"></a>
-                </div>
+    <nav class="navbar navbar-static-top navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/"></a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav main-nav navbar-right">
                     <li class="first {% if current_page == 'dashboard' %}active{% endif %}">
                         <a href="/">Dashboard</a>
@@ -39,19 +44,20 @@
                     </li>
                     <li>
                         <div>
-                        <a href="/en">en</a>
-                        <a class="active" href="/nl">nl</a>
+                            {% for translated_route in translated_routes %}
+                                <a {% if translated_route.active is defined %}class="active" {% endif %}href="{{ translated_route.route }}">{{ translated_route.locale }}</a>
+                            {% endfor %}
                         </div>
                     </li>
                 </ul>
             </div>
-        </nav>
-        {% block body %}
-        {% endblock %}
-    </div>
+        </div>
+    </nav>
+    {% block body %}
+    {% endblock %}
 </div>
 <footer class="footer">
-    <div class="container">
+    <div class="footer-content">
         <span class="text-muted">Contact: <a href="mailto:{{ service_address }}?Subject={{ service_name }}" target="_top">{{ service_address }}</a></span>
     </div>
 </footer>

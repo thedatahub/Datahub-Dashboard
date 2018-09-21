@@ -62,7 +62,7 @@ parameters:
             exclude: true
             csv: 'csv_acquisition_source'
             label: 'label_acquisition_source'
-            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appelationValue'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventActor/actorInRole/actor/appellationValue'
         acquisition_date:
             class: 'minimum'
             exclude: true
@@ -89,7 +89,7 @@ parameters:
                 xpath: 'actor/nameActorSet/appellationValue[@pref="preferred"]'
             id:
                 class: 'extended'
-                label: 'label_id_creator:'
+                label: 'label_id_creator'
                 xpath: 'actor/actorID'
             role:
                 class: 'extended'
@@ -130,7 +130,7 @@ parameters:
             class: 'extended'
             csv: 'csv_condition_assessor'
             label: 'label_condition_assessor'
-            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventActor/actorInRole/actor/nameActorSet/appelationValue'
+            xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventActor/actorInRole/actor/nameActorSet/appellationValue'
         condition_date:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDate/date'
             csv: 'csv_condition_date'
@@ -162,7 +162,7 @@ parameters:
                 label: 'label_unit_measurement'
                 xpath: 'measurementsSet/measurementUnit'
         displayed_concept:
-            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@label="concept"]/subjectConcept'
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@type="concept"]/subjectConcept'
             csv: 'csv_displayed_concept'
             term:
                 class: 'basic'
@@ -178,7 +178,7 @@ parameters:
             term:
                 class: 'basic'
                 label: 'label_term_displayed_subject'
-                xpath: 'nameActorSet/appelationValue'
+                xpath: 'nameActorSet/appellationValue'
             id:
                 class: 'extended'
                 label: 'label_id_displayed_subject'
@@ -189,7 +189,7 @@ parameters:
             term:
                 class: 'basic'
                 label: 'label_term_displayed_location'
-                xpath: 'namePlaceSet/appelationValue'
+                xpath: 'namePlaceSet/appellationValue'
             id:
                 class: 'extended'
                 label: 'label_id_displayed_location'
@@ -200,7 +200,7 @@ parameters:
             term:
                 class: 'basic'
                 label: 'label_term_displayed_event'
-                xpath: 'eventName/appelationValue'
+                xpath: 'eventName/appellationValue'
             id:
                 class: 'extended'
                 label: 'label_id_displayed_event'

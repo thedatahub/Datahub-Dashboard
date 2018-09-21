@@ -12,6 +12,7 @@ use Phpoaipmh\Endpoint;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class FetchDataCommand extends ContainerAwareCommand
@@ -22,7 +23,6 @@ class FetchDataCommand extends ContainerAwareCommand
             // the name of the command (the part after "bin/console")
             ->setName('app:fetch-data')
             ->addArgument("url", InputArgument::OPTIONAL, "The URL of the Datahub")
-
             // the short description shown while running "php bin/console list"
             ->setDescription('Fetches all data from the Datahub and stores the relevant information in a local database.')
 
@@ -46,6 +46,7 @@ class FetchDataCommand extends ContainerAwareCommand
         } elseif($url === 'skip') {
             $skip = true;
         }
+        $verbose = $input->getOption('verbose');
 
         $namespace = $this->getContainer()->getParameter('datahub.namespace');
         $metadataPrefix = $this->getContainer()->getParameter('datahub.metadataprefix');
@@ -65,14 +66,14 @@ class FetchDataCommand extends ContainerAwareCommand
             foreach ($recs as $rec) {
                 $i++;
                 $data = $rec->metadata->children($namespace, true);
-                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $providers, $providerDef);
+                $fetchedData = $this->fetchData($dataDef, $namespace, $data, $providers, $providerDef, $verbose);
                 if(array_key_exists('provider', $fetchedData) && count($fetchedData['provider']) > 0) {
                     $record = new Record();
                     $record->setProvider($fetchedData['provider'][0]);
                     $record->setData($fetchedData);
                     $dm->persist($record);
                 }
-                if($i % 1000 === 0) {
+                if($verbose && $i % 1000 === 0) {
                     echo 'At ' . $i . PHP_EOL;
                 }
             }
@@ -86,7 +87,7 @@ class FetchDataCommand extends ContainerAwareCommand
         $this->generateAndStoreReport($dataDef, $providers);
     }
 
-    private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef) {
+    private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef, $verbose) {
         $result = array();
         foreach ($dataDef as $key => $value) {
             if($key === 'parent_xpath' || $key === 'csv' || $key === 'exclude') {
@@ -121,7 +122,7 @@ class FetchDataCommand extends ContainerAwareCommand
                         else {
                             if (strlen($child) > 0 && strtolower($child) !== 'n/a') {
                                 if ($key === 'provider') {
-                                    $arr[] = $this->addToProviders($child, $providers, $providerDef);
+                                    $arr[] = $this->addToProviders($child, $providers, $providerDef, $verbose);
                                 } else {
                                     $arr[] = $child;
                                 }
@@ -138,7 +139,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 $res = $data->xpath($xpath);
                 if ($res) {
                     foreach($res as $r) {
-                        $result[$key][] = $this->fetchData($value, $namespace, $r, $providers, $providerDef);
+                        $result[$key][] = $this->fetchData($value, $namespace, $r, $providers, $providerDef, $verbose);
                     }
                 } else {
                     $result[$key] = null;
@@ -160,7 +161,7 @@ class FetchDataCommand extends ContainerAwareCommand
         return $xpath;
     }
 
-    private function addToProviders($providerName, &$providers, $providerDef)
+    private function addToProviders($providerName, &$providers, $providerDef, $verbose)
     {
         foreach ($providers as $provider) {
             if ($provider->getName() === $providerName) {
@@ -185,7 +186,9 @@ class FetchDataCommand extends ContainerAwareCommand
         $provider->setIdentifier($providerId);
         $provider->setName($providerName);
         $providers[] = $provider;
-        echo 'Provider added: ' . $providerName . PHP_EOL;
+        if($verbose) {
+            echo 'Provider added: ' . $providerName . PHP_EOL;
+        }
 
         return $providerId;
     }

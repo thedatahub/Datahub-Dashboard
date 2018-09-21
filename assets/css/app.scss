@@ -15,6 +15,12 @@ body {
   background-color: #fafafa;
 }
 
+.content {
+  overflow: auto;
+  padding-bottom: 35px;
+  margin-bottom: 30px;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -23,16 +29,26 @@ body {
   background-color: #f5f5f5;
 }
 
+.footer-content {
+  max-width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .navbar {
   margin-bottom: 0;
   border-style: hidden;
-  height: 50px;
+  padding-right: 5px;
 }
 
 .container-fluid {
   max-width: 1140px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.navbar-collapse {
+  margin-top: 5px;
 }
 
 .navbar-default {
@@ -58,12 +74,23 @@ body {
 }
 
 .navbar-default .navbar-nav > li div {
-  margin-top: 12px;
   margin-left: 10px;
 }
 
 .navbar-default .navbar-nav > li div a {
   margin-left: 5px;
+}
+
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-nav > li div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 20px;
+}
+
+.navbar-default .navbar-nav > li div a.active {
+  color: #5F585D;
+  text-decoration: underline;
 }
 
 .navbar-default .navbar-brand {
@@ -76,8 +103,10 @@ body {
   background-position: left center; 
 }
 
-.main-nav {
-  margin-left: 30px;
+@media screen and (max-width: 1155px) {
+  .dropdown {
+      width: 100% !important;
+  }
 }
 
 h1 {
@@ -122,7 +151,7 @@ h1 {
 
 #main-container {
   font-size: 120%;
-  width: 1140px;
+  width: 1180px;
   margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
@@ -150,6 +179,7 @@ h1 {
 .left-menu {
   float: left;
   width: 320px;
+  margin-left: 20px;
   margin-right: 20px;
 }
 
@@ -216,10 +246,10 @@ h1 {
 
 #graphs {
   float: right;
-  margin-bottom: 40px;
   width: 800px;
   border: solid 1px rgb(220, 220, 220);
   background-color: white;
+  margin-right: 20px;
 }
 
 .graph {
