@@ -454,7 +454,7 @@ class ReportController extends Controller
 
         $lineChart = $this->generateFieldTrendGraph($field, 'Termen met ID');
 
-        $title = 'Ondubbelzinnigheid ' . RecordUtil::getFieldLabel($field, $this->dataDef);
+        $title = $this->translator->trans('label_ambiguity') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
         return new Report($title, $title, 'Korte beschrijving (todo)', array($pieChart, $barChart, $lineChart));
     }
 
@@ -532,9 +532,10 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . $value . '"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        $barChart->canDownload = true;
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = 'Er zijn geen records waarvoor dit veld werd ingevuld.';
@@ -546,9 +547,9 @@ class ReportController extends Controller
         return new Report($title, $title, 'Korte beschrijving (todo)', array($barChart));
     }
 
-    private function richRecProviderName()
+    private function richRecStorageInstitution()
     {
-        return $this->richRecs('provider');
+        return $this->richRecs('storage_institution');
     }
 
     private function richRecObjectId()
@@ -656,6 +657,7 @@ class ReportController extends Controller
             $csvData .= PHP_EOL . '"' . $field . '","' . $key . '","' . $value . '"';
         }
         $barChart = $this->generateBarChart($csvData, 'Aantal records');
+        $barChart->canDownload = true;
         if(count($counts) == 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = 'Er zijn geen termen voor dit veld.';

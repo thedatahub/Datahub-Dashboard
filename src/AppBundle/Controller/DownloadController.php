@@ -12,7 +12,9 @@ class DownloadController extends Controller
     private $provider = null;
     private $dataDef = null;
     private $question = null;
+    private $questionLabel = null;
     private $field = null;
+    private $translator;
 
     /**
      * @Route("/{_locale}/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
@@ -24,16 +26,21 @@ class DownloadController extends Controller
         if($field !== '')
             $this->field = $field;
 
+        $this->translator = $this->get('translator');
+        $this->translator->setLocale($_locale);
+
         $this->dataDef = $this->getParameter('data_definition');
         $leftMenu = $this->getParameter('left_menu');
 
         $functionCall = null;
-        $parameters = $leftMenu[ucfirst($aspect)];
+        $parameters = $leftMenu[$aspect]['parameters'];
+        $aspectLabel = $this->translator->trans($leftMenu[$aspect]['label']);
         foreach($parameters as $param) {
             if($param['url'] === $parameter) {
-                foreach ($param['list'] as $quest) {
+                foreach ($param['questions'] as $quest) {
                     if($quest['url'] === $question) {
                         $functionCall = $quest['function'];
+                        $this->questionLabel = $this->translator->trans($quest['label']);
                         break;
                     }
                 }
@@ -43,22 +50,23 @@ class DownloadController extends Controller
             throw new NotFoundHttpException('Deze downloadpagina bestaat niet.');
         }
 
-        $functionCall .= ucfirst($graph);
+        $functionCall .= $graph;
         $csvData = $this->$functionCall();
 
         // Generate response
         $response = new Response();
         if($this->field) {
             if(array_key_exists($field, $this->dataDef) && array_key_exists('csv', $this->dataDef[$field])) {
-                $label = $this->dataDef[$field]['csv'];
+                $label = $this->translator->trans($this->dataDef[$field]['csv']);
             }
             else {
-                $label = $question . '_' . $field;
+                $label = $this->questionLabel . '_' . $field;
             }
-            $filename = $provider . '_' . $aspect . '_' . $label . '.csv';
+            $filename = $provider . '_' . $aspectLabel . '_' . $label . '.csv';
         } else {
-            $filename = $provider . '_' . $aspect . '_' . $question . '.csv';
+            $filename = $provider . '_' . $aspectLabel . '_' . $this->questionLabel . '.csv';
         }
+        $filename = strtolower(str_replace(' ', '_', $filename));
 
         // Set headers
         $response->headers->set('Cache-Control', 'private');
@@ -392,7 +400,11 @@ class DownloadController extends Controller
                                                         if(!$isIn) {
                                                             $idTerms[$id][] = $term;
                                                         }
-                                                        $count = count($idTerms['id']);
+                                                        if(array_key_exists('id', $idTerms)) {
+                                                            $count = count($idTerms['id']);
+                                                        } else {
+                                                            $count = 0;
+                                                        }
                                                     }
                                                     $termsWithId[$term][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
                                                 }
@@ -432,9 +444,10 @@ class DownloadController extends Controller
             $csvData .= PHP_EOL . '"' . $data['term'] . '","' . $data['id'] . '","' . $data['authority'] . '"';
         }
 
-        $label = RecordUtil::getFieldLabel($field, $this->dataDef);
+        $label = $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
+        $persistentId = $this->translator->trans('persistent_id');
 
-        return $label . ',Persistente ID,Authority' . $csvData;
+        return $label . ',' . $persistentId . ',Authority' . $csvData;
     }
 
     private function ambigObjectNamePiechart()
@@ -525,5 +538,110 @@ class DownloadController extends Controller
     private function ambigEventBarchart()
     {
         return $this->ambigtermBar('displayed_event');
+    }
+
+    private function richRecBar($field)
+    {
+        $records = $this->getAllRecords();
+        $csvArray = array();
+        if($records) {
+            foreach ($records as $record) {
+                $data = $record->getData();
+                if($this->field == 0) {
+                    $add = false;
+                    if (!array_key_exists($field, $data)) {
+                        $add = true;
+                    } else if(!$data[$field]) {
+                        $add = true;
+                    } else if(count($data[$field]) == 0) {
+                        $add = true;
+                    }
+                    if($add) {
+                        $recordIds = $this->getRecordIds($data);
+                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
+                    }
+                } else if ($data[$field] && count($data[$field]) == $this->field) {
+                    $recordIds = $this->getRecordIds($data);
+                    foreach ($data[$field] as $term) {
+                        if (is_array($term)) {
+                            if (array_key_exists('term', $term)) {
+                                foreach ($term['term'] as $t) {
+                                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t['term']);
+                                }
+                            } else {
+                                foreach ($term as $t) {
+                                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $t);
+                                }
+                            }
+                        } else {
+                            $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $term);
+                        }
+                    }
+                }
+            }
+        }
+
+        $csvData = '';
+        foreach($csvArray as $csvLine) {
+            $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $csvLine['term'] . '"';
+        }
+
+        return 'Applicatie ID,Objectnummer,' . $this->questionLabel . $csvData;
+    }
+
+    private function richRecStorageInstitutionBarChart() {
+        return $this->richRecBar('storage_institution');
+    }
+
+    private function richRecObjectIdBarChart() {
+        return $this->richRecBar('object_number');
+    }
+
+    private function richRecDataPidBarChart() {
+        return $this->richRecBar('data_pid');
+    }
+
+    private function richRecTitleBarChart() {
+        return $this->richRecBar('title');
+    }
+
+    private function richRecShortDescBarChart() {
+        return $this->richRecBar('short_description');
+    }
+
+    private function richRecObjectNameBarChart() {
+        return $this->richRecBar('object_name');
+    }
+
+    private function richRecObjectCatBarChart() {
+        return $this->richRecBar('object_category');
+    }
+
+    private function richRecMainMotifBarChart() {
+        return $this->richRecBar('main_motif');
+    }
+
+    private function richRecCreatorBarChart() {
+        return $this->richRecBar('creator');
+    }
+
+    private function richRecMaterialBarChart() {
+        return $this->richRecBar('material');
+    }
+
+    private function richRecConceptBarChart() {
+        return $this->richRecBar('displayed_concept');
+    }
+
+    private function richRecSubjectBarChart() {
+        return $this->richRecBar('displayed_subject');
+    }
+
+    private function richRecLocationBarChart() {
+        return $this->richRecBar('displayed_location');
+    }
+
+    private function richRecEventBarChart() {
+        return $this->richRecBar('displayed_event');
     }
 }

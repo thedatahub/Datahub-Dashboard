@@ -107,7 +107,7 @@ csv_data_provider: data_provider
 label_term_data_provider: Naam data provider
 label_id_data_provider: Identificatie data provider
 
-#dashboard.yml, left_menu
+# dashboard.yml, left_menu
 label_completeness: Volledigheid
 label_completeness_minimum: Minimale registratie
 label_completeness_minimum_overview: Overzicht van alle velden
@@ -127,7 +127,7 @@ label_ambiguity_records_data_pids: Verdeling van data PID's over de records
 label_ambiguity_terms: Termen
 label_ambiguity_terms_object_name: Objectnaam
 label_ambiguity_terms_object_category: Objectcategorie
-label_ambiguity_terms_head_motif: Hoofdmotief
+label_ambiguity_terms_main_motif: Hoofdmotief
 label_ambiguity_terms_creator: Vervaardiger
 label_ambiguity_terms_material: Materiaal
 label_ambiguity_terms_displayed_concept: Afgebeeld concept
@@ -137,14 +137,14 @@ label_ambiguity_terms_displayed_event: Afgebeelde gebeurtenis
 
 label_richness: Rijkheid
 label_richness_occurrences: Occurrences
-label_richness_occurrences_storage_facility: Naam bewaarinstelling
+label_richness_occurrences_storage_institution: Naam bewaarinstelling
 label_richness_occurrences_object_number: Objectnummer / Inventarisnummer
 label_richness_occurrences_data_pid: Objectnummer / Data PID
 label_richness_occurrences_title: Titel
 label_richness_occurrences_short_description: Korte beschrijving
 label_richness_occurrences_object_name: Objectnaam
 label_richness_occurrences_object_category: Objectcategorie
-label_richness_occurrences_head_motif: Hoofdmotief
+label_richness_occurrences_main_motif: Hoofdmotief
 label_richness_occurrences_creator: Vervaardiger
 label_richness_occurrences_material: Materiaal
 label_richness_occurrences_displayed_concept: Afgebeeld concept
@@ -153,7 +153,7 @@ label_richness_occurrences_displayed_location: Afgebeelde locatie
 label_richness_occurrences_displayed_event: Afgebeelde gebeurtenis
 label_richness_terms: Termen
 label_richness_terms_object_name: Objectnaam
-label_richness_terms_head_motif: Hoofdmotief
+label_richness_terms_main_motif: Hoofdmotief
 label_richness_terms_creator: Vervaardiger
 label_richness_terms_material: Materiaal
 label_richness_terms_displayed_concept: Afgebeeld concept
@@ -171,3 +171,6 @@ label_openness_digital_representation_terms: Termen
 label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Termen
+
+# DownloadController.php
+persistent_id: Persistente ID

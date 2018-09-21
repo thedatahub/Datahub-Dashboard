@@ -293,7 +293,7 @@ parameters:
       - 'displayed_event'
 
 
-    # Values at the right are defined in ReportController.php
+    # Function values are defined in ReportController.php
     left_menu:
         completeness:
             label: 'label_completeness'
@@ -400,10 +400,10 @@ parameters:
                     url: 'occurrences'
                     label: 'label_richness_occurrences'
                     questions:
-                        storage_facility:
-                            url: 'storage-facility'
-                            label: 'label_richness_occurrences_storage_facility'
-                            function: 'richRecProviderName'
+                        storage_institution:
+                            url: 'storage-institution'
+                            label: 'label_richness_occurrences_storage_institution'
+                            function: 'richRecStorageInstitution'
                         object_number:
                             url: 'object-number'
                             label: 'label_richness_occurrences_object_number'

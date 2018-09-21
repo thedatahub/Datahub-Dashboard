@@ -87,9 +87,9 @@ label_data_pid: Data PID
 csv_application_id: record_id
 label_application_id: Online record ID
 
-csv_classification: objectcategory
-label_term_classification: Term objectcategory
-label_id_classification: Identification objectcategory
+csv_classification: object_category
+label_term_classification: Term object category
+label_id_classification: Identification object category
 
 csv_rights: rights_status
 label_term_rights: Term rights status
@@ -107,7 +107,7 @@ csv_data_provider: data_provider
 label_term_data_provider: Name data provider
 label_id_data_provider: Identification data provider
 
-#dashboard.yml, left_menu
+# dashboard.yml, left_menu
 label_completeness: Completeness
 label_completeness_minimum: Minimum registration
 label_completeness_minimum_overview: Overview of all fields
@@ -137,7 +137,7 @@ label_ambiguity_terms_displayed_event: Displayed event
 
 label_richness: Richness
 label_richness_occurrences: Occurrences
-label_richness_occurrences_storage_facility: Name storage institution
+label_richness_occurrences_storage_institution: Name storage institution
 label_richness_occurrences_object_number: Object number / Inventory number
 label_richness_occurrences_data_pid: Object number / Data PID
 label_richness_occurrences_title: Title
@@ -171,3 +171,7 @@ label_openness_digital_representation_terms: Terms
 label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Termen
+
+
+# DownloadController.php
+persistent_id: Persistent ID
