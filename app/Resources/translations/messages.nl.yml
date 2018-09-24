@@ -174,26 +174,24 @@ label_openness_record_records: Records
 label_openness_record_terms: Termen
 
 # ReportController.php
-description_completeness_minimum_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de minimale registratie.
+description_completeness_minimum_overview: De hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de minimale registratie.
 description_completeness_minimum_complete_records: De hoeveelheid records die aan de minimale registratie voldoen.
-description_completeness_minimum_trend: Een historische trend van de hoeveelheid records die aan de minimale registratie voldoen.
-description_completeness_basic_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de basisregistratie.
+description_completeness_minimum_trend: De historische trend van de hoeveelheid records die aan de minimale registratie voldoen.
+description_completeness_basic_overview: De hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de basisregistratie.
 description_completeness_basic_complete_records: De hoeveelheid records die aan de basisregistratie voldoen.
-description_completeness_basic_trend: Een historische trend van de hoeveelheid records die aan de basisregistratie voldoen.
-description_completeness_extended_overview: Een overzicht van de hoeveelheid records waarvoor een bepaald veld werd ingevuld uit een uitgebreide set van velden.
+description_completeness_basic_trend: De historische trend van de hoeveelheid records die aan de basisregistratie voldoen.
+description_completeness_extended_overview: De hoeveelheid records waarvoor een bepaald veld werd ingevuld uit een uitgebreide set van velden.
 
-description_ambiguity_records_work_pids: Korte beschrijving (todo)
-description_ambiguity_records_data_pids: Korte beschrijving (todo)
-description_ambiguity_terms: Korte beschrijving (todo)
+description_ambiguity_records_work_pids: De hoeveelheid Work PID's exact eenmaal voorkomen en hoeveel Work PID's meerdere malen voorkomen in de records.
+description_ambiguity_records_data_pids: De hoeveelheid Data PID's exact eenmaal voorkomen en hoeveel Data PID's meerdere malen voorkomen in de records.
+description_ambiguity_terms: Een overzicht van alle termen in dit veld die een externe ID hebben, welke authorities deze ID's toe behoren en de historische trend van de hoeveelheid termen met een externe ID.
 
-description_richness_occurrences: Korte beschrijving (todo)
-description_richness_terms: Korte beschrijving (todo)
-description_openness_work_records: Korte beschrijving (todo)
-description_openness_work_terms: Korte beschrijving (todo)
-description_openness_digital_representation_records: Korte beschrijving (todo)
-description_openness_digital_representation_records: Korte beschrijving (todo)
-description_openness_record_records: Korte beschrijving (todo)
-description_openness_record_records: Korte beschrijving (todo)
+description_richness_occurrences: De hoeveelheid records die nul, een, twee of meer voorkomens voor dit veld.
+description_richness_terms: Een overzicht van alle termen in dit veld en hoe vaak ze voorkomen in de volledige dataset.
+
+description_openness_work_records: De hoeveelheid records die het veld 'rechten werk' hebben ingevuld en de historische trend hiervan.
+description_openness_digital_representation_records: De hoeveelheid records die het veld 'rechten digitale representatie' hebben ingevuld en de historische trend hiervan.
+description_openness_record_records: De hoeveelheid records die het veld 'rechten data' hebben ingevuld en de historische trend hiervan.
 
 filled_in_records: Ingevulde records
 complete_records: Volledige records
