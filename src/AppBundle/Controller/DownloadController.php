@@ -378,7 +378,7 @@ class DownloadController extends Controller
             $localAuthority .= '';
         }
 
-        return $localAuthority . 'ID,' . $label . ',Concept ID,Authority' . $csvData;
+        return $localAuthority . ' ID,' . $label . ',Concept ID,Authority' . $csvData;
     }
 
     private function getAuthority($id)
