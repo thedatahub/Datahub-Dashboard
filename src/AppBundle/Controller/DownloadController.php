@@ -5,6 +5,7 @@ use AppBundle\RecordBundle\Document\Record;
 use AppBundle\Util\RecordUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Twig\Error\RuntimeError;
@@ -21,13 +22,17 @@ class DownloadController extends Controller
     /**
      * @Route("/{_locale}/download/{provider}/{aspect}/{parameter}/{question}/{graph}/{field}", name="download", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+", "graph"="[^/]+", "field"="[^/]+"})
      */
-    public function download($_locale = 'nl', $provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
+    public function download(Request $request, $_locale = null, $provider, $aspect = '', $parameter = '', $question = '', $graph = '', $field = '')
     {
         $this->provider = $provider;
         $this->question = $question;
         if($field !== '')
             $this->field = $field;
 
+        if(!$_locale) {
+            $_locale = $this->getParameter('locale');
+            $request->setLocale($_locale);
+        }
         $this->translator = $this->get('translator');
         $this->translator->setLocale($_locale);
 

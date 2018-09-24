@@ -18,10 +18,14 @@ class ReportController extends Controller
     /**
      * @Route("/{_locale}/report/{provider}/{aspect}/{parameter}/{question}", name="report", requirements={"_locale" = "%app.locales%", "provider"="[^/]+", "aspect"="[^/]+", "parameter"="[^/]+", "question"="[^/]+"})
      */
-    public function report($_locale = 'nl', $provider = '', $aspect = 'completeness', $parameter = 'minimum', $question = 'overview')
+    public function report(Request $request, $_locale = null, $provider = '', $aspect = 'completeness', $parameter = 'minimum', $question = 'overview')
     {
         $this->provider = $provider;
 
+        if(!$_locale) {
+            $_locale = $this->getParameter('locale');
+            $request->setLocale($_locale);
+        }
         $this->translator = $this->get('translator');
         $this->translator->setLocale($_locale);
 
@@ -79,6 +83,7 @@ class ReportController extends Controller
             'active_parameter' => $parameter,
             'active_question' => $question,
             'report' => $report,
+            'route_home' => $this->generateUrl('home'),
             'route_manual' => $this->generateUrl('manual'),
             'route_about' => $this->generateUrl('about'),
             'route_open_source' => $this->generateUrl('open_source'),

@@ -23,12 +23,12 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/"></a>
+                <a class="navbar-brand" href="{{ route_home }}"></a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav main-nav navbar-right">
                     <li class="first {% if current_page == 'home' %}active{% endif %}">
-                        <a href="/">Dashboard</a>
+                        <a href="{{ route_home }}">Dashboard</a>
                     </li>
                     <li {% if current_page == 'manual' %}class="active"{% endif %}>
                         <a href="{{ route_manual }}">Manual</a>

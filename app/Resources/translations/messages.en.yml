@@ -197,6 +197,10 @@ label_openness_record_records: Records
 label_openness_record_terms: Terms
 
 
+# IndexController.php
+choose_provider: Choose an organization...
+
+
 # ReportController.php
 description_completeness_minimum_overview: The amount of records for which a certain field has been filled in, according to the requirements of the minimum registration.
 description_completeness_minimum_complete_records: The amount of records which fulfill the requirements of the minimum registration.

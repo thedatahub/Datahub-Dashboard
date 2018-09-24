@@ -23,6 +23,7 @@ class IndexController extends Controller
         return array(
             'service_name' => $this->getParameter('service_name'),
             'service_address' => $this->getParameter('service_address'),
+            'route_home' => $this->generateUrl('home'),
             'route_manual' => $this->generateUrl('manual'),
             'route_about' => $this->generateUrl('about'),
             'route_open_source' => $this->generateUrl('open_source'),
@@ -36,13 +37,17 @@ class IndexController extends Controller
      * @Route("/");
      * @Route("/{_locale}", name="home", requirements={"_locale" = "%app.locales%"})
      */
-    public function homeWithLocale(Request $request)
+    public function homeWithLocale(Request $request, $_locale = null)
     {
+        if(!$_locale) {
+            $_locale = $this->getParameter('locale');
+            $request->setLocale($_locale);
+        }
         $providers = $this->get('doctrine_mongodb')->getRepository('ProviderBundle:Provider')->findAll();
 
         $data = array(
             'providers' => $providers,
-            'provider' => 'Kies een organisatie ...',
+            'provider' => $this->get('translator')->trans('choose_provider')
         );
         return $this->render("home.html.twig", $data + $this->getBasicData('home', $request));
     }
