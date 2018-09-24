@@ -37,12 +37,8 @@ class IndexController extends Controller
      * @Route("/");
      * @Route("/{_locale}", name="home", requirements={"_locale" = "%app.locales%"})
      */
-    public function homeWithLocale(Request $request, $_locale = null)
+    public function homeWithLocale(Request $request)
     {
-        if(!$_locale) {
-            $_locale = $this->getParameter('locale');
-            $request->setLocale($_locale);
-        }
         $providers = $this->get('doctrine_mongodb')->getRepository('ProviderBundle:Provider')->findAll();
 
         $data = array(
