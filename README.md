@@ -38,7 +38,7 @@ will need to provide these details (but can currently be skipped due to still be
 
 Before you install, ensure that you have a running MongoDB instance, and you 
 have created a user with the right permissions. From the 
-[Mongo shell]https://docs.mongodb.com/getting-started/shell/client/) run these
+[Mongo shell](https://docs.mongodb.com/getting-started/shell/client/) run these
 commands to create the required artefacts in MongoDB:
 
 ```
