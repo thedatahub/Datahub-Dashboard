@@ -121,22 +121,43 @@ class DownloadController extends Controller
         return array($applicationId, $objectNumber);
     }
 
+    private function fieldOverviewCmp($a, $b)
+    {
+        if($a['filled_in']) {
+            if($b['filled_in']) {
+                return 0;
+            } else {
+                return 1;
+            }
+        } else if($b['filled_in']) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
     private function fieldOverview()
     {
         $records = $this->getAllRecords();
 
-        $csvData = '';
+        $csvArray = array();
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
                 $recordIds = $this->getRecordIds($data);
                 $part = $this->extractFieldFromRecord($data, $this->field);
-                $filledIn = $this->translator->trans($part ? 'filled_in' : 'not_filled_in');
-                $csvData .= PHP_EOL . $recordIds[0] . ',' . $recordIds[1] . ',' . $filledIn;
+                $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'filled_in' => ($part ? true : false));
             }
         }
 
-        $label = RecordUtil::getFieldLabel($this->field, $this->dataDef);
+        usort($csvArray, array('AppBundle\Controller\DownloadController', 'fieldOverviewCmp'));
+
+        $csvData = '';
+        foreach($csvArray as $csvLine) {
+            $csvData .= PHP_EOL . '"' . $csvLine['app_id'] . '","' . $csvLine['obj_number'] . '","' . $this->translator->trans($csvLine['filled_in'] ? 'filled_in' : 'not_filled_in') . '"';
+        }
+
+        $label = $this->translator->trans(RecordUtil::getFieldLabel($this->field, $this->dataDef));
         $applicationId = $this->translator->trans('application_id');
         $objectNumber = $this->translator->trans('object_number');
 
@@ -235,6 +256,37 @@ class DownloadController extends Controller
         return $this->ambigIds('data_pid', 'Data PID');
     }
 
+    private function ambigTermPieCmp($a, $b)
+    {
+        $aLen = 0;
+        foreach($a as $aPart) {
+            $len = strlen($aPart['concept_id']);
+            if($len > 0) {
+                $aLen = $len;
+                break;
+            }
+        }
+        $bLen = 0;
+        foreach($b as $bPart) {
+            $len = strlen($bPart['concept_id']);
+            if($len > 0) {
+                $bLen = $len;
+                break;
+            }
+        }
+        if($aLen == 0) {
+            if($bLen == 0) {
+                return 0;
+            } else {
+                return -1;
+            }
+        } else if($bLen == 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     private function ambigtermPie($field)
     {
         $records = $this->getAllRecords();
@@ -306,6 +358,8 @@ class DownloadController extends Controller
             }
         }
 
+        uasort($termsWithId, array('AppBundle\Controller\DownloadController', 'ambigTermPieCmp'));
+
         $csvData = '';
         foreach($termsWithoutId as $term => $id) {
             $csvData .= PHP_EOL . '"","' . $term . '",""';
@@ -316,12 +370,12 @@ class DownloadController extends Controller
             }
         }
 
-        $label = RecordUtil::getFieldLabel($field, $this->dataDef);
+        $label = $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
 
         if(!$localAuthority) {
-            $localAuthority = ' ';
+            $localAuthority = '';
         } else {
-            $localAuthority .= ' ';
+            $localAuthority .= '';
         }
 
         return $localAuthority . 'ID,' . $label . ',Concept ID,Authority' . $csvData;
