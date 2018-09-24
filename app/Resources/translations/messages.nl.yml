@@ -1,4 +1,28 @@
-# dashboard.yml, data_definition
+# home.html.twig
+dashboard_description: Een korte beschrijving van de dashboard-applicatie.
+
+
+# about.html.twig
+about_description: Hier komt de 'about' pagina.
+
+
+# manual.html.twig
+manual_description: Hier komt de 'manual' pagina.
+
+
+# open_data.html.twig
+open_data_description: Hier komt de 'open data' pagina.
+
+
+# open_source.html.twig
+open_source_description: Hier komt de 'open source' pagina.
+
+
+# linegraph.html.twig
+date: Datum
+
+
+# dashboard.yml
 csv_storage_institution: bewaarinstelling
 label_storage_institution: Naam bewaarinstelling
 
@@ -107,7 +131,6 @@ csv_data_provider: data_provider
 label_term_data_provider: Naam data provider
 label_id_data_provider: Identificatie data provider
 
-# dashboard.yml, left_menu
 label_completeness: Volledigheid
 label_completeness_minimum: Minimale registratie
 label_completeness_minimum_overview: Overzicht van alle velden
@@ -173,6 +196,7 @@ label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Termen
 
+
 # ReportController.php
 description_completeness_minimum_overview: De hoeveelheid records waarvoor een bepaald veld werd ingevuld volgens de vereisten van de minimale registratie.
 description_completeness_minimum_complete_records: De hoeveelheid records die aan de minimale registratie voldoen.
@@ -216,6 +240,7 @@ amount_of_records: Aantal records
 undefined: niet gedefinieerd
 no_terms_for_this_field: Er zijn geen termen voor dit veld.
 
+
 # DownloadController.php
 persistent_id: Persistente ID
 filled_in: ingevuld
@@ -223,6 +248,3 @@ not_filled_in: niet ingevuld
 application_id: Applicatie ID
 object_number: Objectnummer
 occurrences: Aantal voorkomens
-
-# linegraph.html.twig
-date: Datum

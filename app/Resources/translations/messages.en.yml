@@ -1,4 +1,28 @@
-# dashboard.yml, data_definition
+# home.html.twig
+dashboard_description: A short description of the dashboard application.
+
+
+# about.html.twig
+about_description: Here comes the 'about' page.
+
+
+# manual.html.twig
+manual_description: Here comes the 'manual' page.
+
+
+# open_data.html.twig
+open_data_description: Here comes the 'open data' page.
+
+
+# open_source.html.twig
+open_source_description: Here comes the 'open source' page.
+
+
+# linegraph.html.twig
+date: Date
+
+
+# dashboard.yml
 csv_storage_institution: storage_institution
 label_storage_institution: Name storage institution
 
@@ -107,7 +131,6 @@ csv_data_provider: data_provider
 label_term_data_provider: Name data provider
 label_id_data_provider: Identification data provider
 
-# dashboard.yml, left_menu
 label_completeness: Completeness
 label_completeness_minimum: Minimum registration
 label_completeness_minimum_overview: Overview of all fields
@@ -173,6 +196,7 @@ label_openness_record: Record
 label_openness_record_records: Records
 label_openness_record_terms: Terms
 
+
 # ReportController.php
 description_completeness_minimum_overview: The amount of records for which a certain field has been filled in, according to the requirements of the minimum registration.
 description_completeness_minimum_complete_records: The amount of records which fulfill the requirements of the minimum registration.
@@ -216,6 +240,7 @@ amount_of_records: Amount of records
 undefined: undefined
 no_terms_for_this_field: There are no terms for this field.
 
+
 # DownloadController.php
 persistent_id: Persistent ID
 filled_in: filled in
@@ -223,6 +248,3 @@ not_filled_in: not filled in
 application_id: Application ID
 object_number: Object number
 occurrences: Occurrences
-
-# linegraph.html.twig
-date: Date

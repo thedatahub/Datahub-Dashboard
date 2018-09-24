@@ -52,7 +52,7 @@ class IndexController extends Controller
      */
     public function manual(Request $request)
     {
-        return $this->render("base.html.twig", $this->getBasicData('manual', $request));
+        return $this->render("manual.html.twig", $this->getBasicData('manual', $request));
     }
 
     /**
@@ -60,7 +60,7 @@ class IndexController extends Controller
      */
     public function about(Request $request)
     {
-        return $this->render("base.html.twig", $this->getBasicData('about', $request));
+        return $this->render("about.html.twig", $this->getBasicData('about', $request));
     }
 
     /**
@@ -68,7 +68,7 @@ class IndexController extends Controller
      */
     public function openSource(Request $request)
     {
-        return $this->render("base.html.twig", $this->getBasicData('open_source', $request));
+        return $this->render("open_source.html.twig", $this->getBasicData('open_source', $request));
     }
 
     /**
@@ -76,6 +76,6 @@ class IndexController extends Controller
      */
     public function openData(Request $request)
     {
-        return $this->render("base.html.twig", $this->getBasicData('open_data', $request));
+        return $this->render("open_data.html.twig", $this->getBasicData('open_data', $request));
     }
 }
