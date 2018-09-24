@@ -236,37 +236,34 @@ parameters:
                 class: 'extended'
                 label: 'label_id_object_category'
                 xpath: 'conceptID'
-        rights:
+        rights_data:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
-            csv: 'csv_rights'
+            csv: 'csv_rights_data'
             term:
-                class: 'extended'
-                label: 'label_term_rights'
+                class: 'rights_data'
+                label: 'label_term_rights_data'
                 xpath: 'term'
             id:
-                class: 'extended'
-                label: 'label_id_rights'
+                label: 'label_id_rights_data'
                 xpath: 'conceptID'
         rights_work:
             parent_xpath: 'administrativeMetadata/rightsWorkWrap/rightsWorkSet/rightsType'
             csv: 'csv_rights_work'
             term:
-                class: 'extended'
+                class: 'rights_work'
                 label: 'label_term_rights_work'
                 xpath: 'term'
             id:
-                class: 'extended'
                 label: 'label_id_rights_work'
                 xpath: 'conceptID'
         rights_digital_representation:
             parent_xpath: 'administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType'
             csv: 'csv_rights_digital_representation'
             term:
-                class: 'extended'
+                class: 'rights_digital_representation'
                 label: 'label_term_rights_digital_representation'
                 xpath: 'term'
             id:
-                class: 'extended'
                 label: 'label_id_rights_digital_representation'
                 xpath: 'conceptID'
         data_provider:
@@ -291,6 +288,9 @@ parameters:
       - 'displayed_subject'
       - 'displayed_location'
       - 'displayed_event'
+      - 'rights_work'
+      - 'rights_digital_representation'
+      - 'rights_data'
 
 
     # Function values are defined in ReportController.php

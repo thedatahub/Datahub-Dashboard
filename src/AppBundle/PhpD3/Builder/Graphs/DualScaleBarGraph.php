@@ -62,7 +62,7 @@ class DualScaleBarGraph extends Builder
         $this->renderElement = '';
         if(isset($fullDataArray['render_element']['value'])) {
             $type = '#';
-            if($fullDataArray['render_element']['type'] == 'class') {
+            if($fullDataArray['render_element']['type'] === 'class') {
                 $type='.';
             }
 

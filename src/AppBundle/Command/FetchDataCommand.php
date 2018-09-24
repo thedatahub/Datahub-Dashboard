@@ -109,7 +109,7 @@ class FetchDataCommand extends ContainerAwareCommand
                                 }
                             }
                             $arr[] = $idArr;
-                        } else if($key === 'term') {
+                        } elseif($key === 'term') {
                             $termArr = array('term' => $child);
                             $attributes = $resChild->attributes($namespace, true);
                             if ($attributes) {
@@ -224,7 +224,7 @@ class FetchDataCommand extends ContainerAwareCommand
             $completenessReport = new CompletenessReport();
             $completenessReport->setProvider($providerId);
 
-            $fields = array('minimum' => array(), 'basic' => array(), 'extended' => array());
+            $fields = array('minimum' => array(), 'basic' => array(), 'extended' => array(), 'rights_work' => array(), 'rights_digital_representation' => array(), 'rights_data' => array());
 
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value)) {
@@ -234,7 +234,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
                 elseif (array_key_exists('parent_xpath', $value)) {
                     foreach ($value as $k => $v) {
-                        if ($k === 'parent_xpath' || $k == 'csv' || $k == 'exclude' || !array_key_exists('class', $v)) {
+                        if ($k === 'parent_xpath' || $k === 'csv' || $k === 'exclude' || !array_key_exists('class', $v)) {
                             continue;
                         }
                         if (array_key_exists('xpath', $v)) {
@@ -254,6 +254,9 @@ class FetchDataCommand extends ContainerAwareCommand
                 $data = $record->getData();
                 $minimumComplete = true;
                 $basicComplete = true;
+                $rightsWorkComplete = true;
+                $rightsDigitalRepresentationComplete = true;
+                $rightsDataComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
                         //TODO check why this failed
@@ -270,17 +273,23 @@ class FetchDataCommand extends ContainerAwareCommand
                                 }
                             }
                             if(!$exclude && array_key_exists('class', $value)) {
-                                if ($value['class'] == 'minimum') {
+                                if ($value['class'] === 'minimum') {
                                     $minimumComplete = false;
                                     $basicComplete = false;
-                                } elseif ($value['class'] == 'basic') {
+                                } elseif ($value['class'] === 'basic') {
                                     $basicComplete = false;
+                                } elseif($value['class'] === 'rights_work') {
+                                    $rightsWorkComplete = false;
+                                } elseif($value['class'] === 'rights_digital_representation') {
+                                    $rightsDigitalRepresentationComplete = false;
+                                } elseif($value['class'] === 'rights_data') {
+                                    $rightsDataComplete = false;
                                 }
                             }
                         }
                     } elseif (array_key_exists('parent_xpath', $value)) {
                         foreach ($value as $k => $v) {
-                            if ($k === 'parent_xpath' || $k === 'csv' || $k == 'exclude') {
+                            if ($k === 'parent_xpath' || $k === 'csv' || $k === 'exclude') {
                                 continue;
                             }
                             if (array_key_exists('xpath', $v)) {
@@ -326,11 +335,17 @@ class FetchDataCommand extends ContainerAwareCommand
                                         }
                                     }
                                     if(!$exclude && array_key_exists('class', $v)) {
-                                        if ($v['class'] == 'minimum') {
+                                        if ($v['class'] === 'minimum') {
                                             $minimumComplete = false;
                                             $basicComplete = false;
-                                        } elseif ($v['class'] == 'basic') {
+                                        } elseif ($v['class'] === 'basic') {
                                             $basicComplete = false;
+                                        } elseif($v['class'] === 'rights_work') {
+                                            $rightsWorkComplete = false;
+                                        } elseif($v['class'] === 'rights_digital_representation') {
+                                            $rightsDigitalRepresentationComplete = false;
+                                        } elseif($v['class'] === 'rights_data') {
+                                            $rightsDataComplete = false;
                                         }
                                     }
                                 }
@@ -345,6 +360,15 @@ class FetchDataCommand extends ContainerAwareCommand
                 if ($basicComplete) {
                     $completenessReport->incrementBasic();
                 }
+                if($rightsWorkComplete) {
+                    $completenessReport->incrementRightsWork();
+                }
+                if($rightsDigitalRepresentationComplete) {
+                    $completenessReport->incrementRightsDigitalRepresentation();
+                }
+                if($rightsDataComplete) {
+                    $completenessReport->incrementRightsData();
+                }
             }
 
             $dm->persist($completenessReport);
@@ -355,6 +379,9 @@ class FetchDataCommand extends ContainerAwareCommand
             $completenessTrend->setTotal($completenessReport->getTotal());
             $completenessTrend->setMinimum($completenessReport->getMinimum());
             $completenessTrend->setBasic($completenessReport->getBasic());
+            $completenessTrend->setRightsWork($completenessReport->getRightsWork());
+            $completenessTrend->setRightsDigitalRepresentation($completenessReport->getRightsDigitalRepresentation());
+            $completenessTrend->setRightsData($completenessReport->getRightsData());
             $dm->persist($completenessTrend);
 
             $fieldReport = new FieldReport();

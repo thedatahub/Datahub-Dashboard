@@ -25,7 +25,7 @@ class PieChart extends Builder
 
             $type = '#';
 
-            if($fullDataArray['render_element']['type'] == 'class') {
+            if($fullDataArray['render_element']['type'] === 'class') {
                 $type = '.';
             }
 

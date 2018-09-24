@@ -33,7 +33,7 @@ class ReportController extends Controller
         $providers = $this->getDocumentManager()->getRepository('ProviderBundle:Provider')->findAll();
         $providerName = null;
         foreach($providers as $provider) {
-            if($provider->getIdentifier() == $this->provider) {
+            if($provider->getIdentifier() === $this->provider) {
                 $providerName = $provider->getName();
             }
         }
@@ -144,7 +144,7 @@ class ReportController extends Controller
         foreach($trend as $dataPoint) {
             if($isMinimum) {
                 $value = $dataPoint->getMinimum();
-            } else if($isBasic) {
+            } elseif($isBasic) {
                 $value = $dataPoint->getBasic();
             }
             $lineChartData .= '\n' . $dataPoint->getTimestamp()->format('Y-m-d') . ' 00:00:00,' . $value;
@@ -173,9 +173,9 @@ class ReportController extends Controller
             $total = $report->getTotal();
             if($isMinimum) {
                 $data = $report->getMinimum();
-            } else if($isBasic) {
+            } elseif($isBasic) {
                 $data = $report->getBasic();
-            } else if($isExtended) {
+            } elseif($isExtended) {
                 $data = $report->getExtended();
             }
             foreach ($data as $key => $value) {
@@ -207,17 +207,17 @@ class ReportController extends Controller
             $total = $report->getTotal();
             if ($isBasic) {
                 $done = $report->getbasic();
-            } else if ($isMinimum) {
+            } elseif ($isMinimum) {
                 $done = $report->getMinimum();
             }
         }
-        $pieces = array( $this->translator->trans('complete_records') => $done,  $this->translator->trans('incomplete_records') => $total - $done);
+        $pieces = array($this->translator->trans('complete_records') => $done,  $this->translator->trans('incomplete_records') => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
-        if($total - $done == 0 && $done > 0) {
+        if($total - $done === 0 && $done > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_records_complete');
         }
-        elseif($done == 0) {
+        elseif($done === 0) {
             $pieChart->isEmpty = true;
             $pieChart->emptyText = $this->translator->trans('no_complete_records');
         }
@@ -329,7 +329,7 @@ class ReportController extends Controller
             }
         }
         $isGood = false;
-        if(count($counts) == 1 && array_key_exists(1, $counts)) {
+        if(count($counts) === 1 && array_key_exists(1, $counts)) {
             $isGood = true;
         }
         $countsPie = array();
@@ -393,7 +393,7 @@ class ReportController extends Controller
                                                 } else {
                                                     $authorities[$authority] = array($id);
                                                 }
-                                            } else if($termId['type'] === 'local') {
+                                            } elseif($termId['type'] === 'local') {
                                                 if (array_key_exists($authority, $authorities)) {
                                                     if (!in_array($id, $authorities[$authority])) {
                                                         $authorities[$authority][] = $id;
@@ -428,13 +428,13 @@ class ReportController extends Controller
         $pieces = array($this->translator->trans('terms_with_id') => count($termsWithId), $this->translator->trans('terms_without_id') => count($termsWithoutId));
         $pieChart = $this->generatePieChart($pieces);
         $pieChart->canDownload = true;
-        if(count($termsWithoutId) == 0 && count($termsWithId) > 0) {
+        if(count($termsWithoutId) === 0 && count($termsWithId) > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_terms_have_an_id');
         }
-        elseif(count($termsWithId) == 0) {
+        elseif(count($termsWithId) === 0) {
             $pieChart->isEmpty = true;
-            if(count($termsWithoutId) == 0) {
+            if(count($termsWithoutId) === 0) {
                 $pieChart->emptyText = $this->translator->trans('no_records_for_this_field');
                 $pieChart->canDownload = false;
             } else {
@@ -448,7 +448,7 @@ class ReportController extends Controller
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('ids_for_this_authority'));
         $barChart->canDownload = true;
-        if(count($authorities) == 0) {
+        if(count($authorities) === 0) {
             $barChart->isEmpty = true;
             if(count($termsWithId) > 0) {
                 $barChart->emptyText = $this->translator->trans('no_authorities_for_these_terms');
@@ -541,7 +541,7 @@ class ReportController extends Controller
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
-        if(count($counts) == 0) {
+        if(count($counts) === 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = $this->translator->trans('no_records_for_this_field');
         } else {
@@ -675,7 +675,7 @@ class ReportController extends Controller
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
-        if(count($counts) == 0) {
+        if(count($counts) === 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = $this->translator->trans('no_terms_for_this_field');
         }
@@ -729,39 +729,99 @@ class ReportController extends Controller
         return $this->richTerms('displayed_event');
     }
 
+    private function generateOpennessTrendGraph($isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $header)
+    {
+        $trend = $this->getTrend('ReportBundle:CompletenessTrend');
+
+        $lineChartData = 'date,value';
+        foreach($trend as $dataPoint) {
+            if($isRightsWork) {
+                $value = $dataPoint->getRightsWork();
+            } elseif($isRightsDigitalRepresentation) {
+                $value = $dataPoint->getRightsDigitalRepresentation();
+            } elseif($isRightsData) {
+                $value = $dataPoint->getRightsData();
+            }
+            $lineChartData .= '\n' . $dataPoint->getTimestamp()->format('Y-m-d') . ' 00:00:00,' . $value;
+        }
+        return new Graph('linegraph', $lineChartData, $header);
+    }
+
+    private function opennessRecs($isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $title, $description) {
+        $reports = $this->getDocumentManager()->getRepository('ReportBundle:CompletenessReport')->findBy(array('provider' => $this->provider));
+        $done = 0;
+        $total = 0;
+        if($reports && count($reports) > 0) {
+            $report = $reports[0];
+            $total = $report->getTotal();
+            if($isRightsWork) {
+                $done = $report->getRightsWork();
+            } elseif($isRightsDigitalRepresentation) {
+                $done = $report->getRightsDigitalRepresentation();
+            } elseif($isRightsData) {
+                $done = $report->getRightsData();
+            }
+        }
+        $pieces = array($this->translator->trans('complete_records') => $done, $this->translator->trans('incomplete_records') => $total - $done);
+        $pieChart = $this->generatePieChart($pieces);
+        if($total - $done === 0 && $done > 0) {
+            $pieChart->isFull = true;
+            $pieChart->fullText = $this->translator->trans('all_records_complete');
+        }
+        elseif($done === 0) {
+            $pieChart->isEmpty = true;
+            $pieChart->emptyText = $this->translator->trans('no_complete_records');
+        }
+
+        $lineGraph = $this->generateOpennessTrendGraph(
+            $isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $this->translator->trans('complete_records')
+        );
+
+        return new Report($title, $title, $description, array($pieChart, $lineGraph));
+    }
+
     private function openWorkRecords()
     {
         $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_work')) . ' - ' . strtolower($this->translator->trans('label_openness_work_records'));
-        return new Report($title, $title, $this->translator->trans('description_openness_work_records'), array());
+        return $this->opennessRecs(
+            true,
+            false,
+            false,
+            $title, $this->translator->trans('description_openness_work_records'));
     }
 
     private function openWorkTerms()
     {
-        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_terms')) . ' - ' . strtolower($this->translator->trans('label_openness_work_terms'));
-        return new Report($title, $title, $this->translator->trans('description_openness_work_terms'), array());
+        return $this->ambigTerms('rights_work');
     }
 
     private function openDigRepRecords()
     {
         $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_digital_representation')) . ' - ' . strtolower($this->translator->trans('label_openness_digital_representation_records'));
-        return new Report($title, $title, $this->translator->trans('description_openness_digital_representation_records'), array());
+        return $this->opennessRecs(
+            false,
+            true,
+            false,
+            $title, $this->translator->trans('description_openness_digital_representation_records'));
     }
 
     private function openDigRepTerms()
     {
-        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_digital_representation')) . ' - ' . strtolower($this->translator->trans('label_openness_digital_representation_terms'));
-        return new Report($title, $title, $this->translator->trans('description_openness_digital_representation_records'), array());
+        return $this->ambigTerms('rights_digital_representation');
     }
 
     private function openRecordRecords()
     {
         $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_records'));
-        return new Report($title, $title, $this->translator->trans('description_openness_record_records'), array());
+        return $this->opennessRecs(
+            false,
+            false,
+            true,
+            $title, $this->translator->trans('description_openness_record_records'));
     }
 
     private function openRecordTerms()
     {
-        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_terms'));
-        return new Report($title, $title, $this->translator->trans('description_openness_record_records'), array());
+        return $this->ambigTerms('rights_data');
     }
 }

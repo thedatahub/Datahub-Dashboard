@@ -39,11 +39,29 @@ class CompletenessTrend
      */
     private $basic;
 
+    /**
+     * @ODM\Field(type="int")
+     */
+    private $rightsWork;
+
+    /**
+     * @ODM\Field(type="int")
+     */
+    private $rightsDigitalRepresentation;
+
+    /**
+     * @ODM\Field(type="int")
+     */
+    private $rightsData;
+
     public function __construct()
     {
         $this->total = 0;
         $this->minimum = 0;
         $this->basic = 0;
+        $this->rightsWork = 0;
+        $this->rightsDigitalRepresentation = 0;
+        $this->rightsData = 0;
     }
 
     public function getId()
@@ -104,5 +122,35 @@ class CompletenessTrend
     public function setBasic($basic)
     {
         $this->basic = $basic;
+    }
+
+    public function getRightsWork()
+    {
+        return $this->rightsWork;
+    }
+
+    public function setRightsWork($rightsWork)
+    {
+        $this->rightsWork = $rightsWork;
+    }
+
+    public function getRightsDigitalRepresentation()
+    {
+        return $this->rightsDigitalRepresentation;
+    }
+
+    public function setRightsDigitalRepresentation($rightsDigitalRepresentation)
+    {
+        $this->rightsDigitalRepresentation = $rightsDigitalRepresentation;
+    }
+
+    public function getRightsData()
+    {
+        return $this->rightsData;
+    }
+
+    public function setRightsData($rightsData)
+    {
+        $this->rightsData = $rightsData;
     }
 }

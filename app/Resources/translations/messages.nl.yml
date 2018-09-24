@@ -91,9 +91,9 @@ csv_object_category: objectcategorie
 label_term_object_category: Term objectcategorie
 label_id_object_category: Identificatie objectcategorie
 
-csv_rights: rechten_status
-label_term_rights: Term rechten status
-label_id_rights: Identificatie rechten status
+csv_rights_data: rechten_status
+label_term_rights_data: Term rechten status
+label_id_rights_data: Identificatie rechten status
 
 csv_rights_work: rechten_werk
 label_term_rights_work: Term rechten werk

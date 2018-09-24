@@ -129,7 +129,7 @@ class DownloadController extends Controller
             } else {
                 return 1;
             }
-        } else if($b['filled_in']) {
+        } elseif($b['filled_in']) {
             return -1;
         } else {
             return 0;
@@ -181,16 +181,16 @@ class DownloadController extends Controller
 
     private function ambigIdsCmp($a, $b)
     {
-        if($a['count'] == 0) {
+        if($a['count'] === 0) {
             return 1;
-        } elseif($b['count'] == 0) {
+        } elseif($b['count'] === 0) {
             return -1;
-        } elseif ($a['count'] == $b['count']) {
+        } elseif ($a['count'] === $b['count']) {
             $aLen = strlen($a['id']);
             $bLen = strlen($b['id']);
             if($aLen > $bLen) {
                 return 1;
-            } else if($aLen < $bLen) {
+            } elseif($aLen < $bLen) {
                 return -1;
             } else {
                 return strcmp($a['id'], $b['id']);
@@ -274,13 +274,13 @@ class DownloadController extends Controller
                 break;
             }
         }
-        if($aLen == 0) {
-            if($bLen == 0) {
+        if($aLen === 0) {
+            if($bLen === 0) {
                 return 0;
             } else {
                 return -1;
             }
-        } else if($bLen == 0) {
+        } elseif($bLen === 0) {
             return 1;
         } else {
             return 0;
@@ -415,7 +415,7 @@ class DownloadController extends Controller
                                 if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
                                     $ids = $fieldValue['id'];
                                     foreach ($ids as $termId) {
-                                        if ($termId['source'] == $this->field) {
+                                        if ($termId['source'] === $this->field) {
                                             $authority = $this->getAuthority($termId);
                                             $id = $termId['id'];
                                             if (!array_key_exists($term, $termsWithId)) {
@@ -608,21 +608,21 @@ class DownloadController extends Controller
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                if($this->field == 0) {
+                if($this->field === 0) {
                     $add = false;
                     if (!array_key_exists($field, $data)) {
                         $add = true;
-                    } else if(!$data[$field]) {
+                    } elseif(!$data[$field]) {
                         $add = true;
-                    } else if(count($data[$field]) == 0) {
+                    } elseif(count($data[$field]) === 0) {
                         $add = true;
                     }
                     if($add) {
                         $recordIds = $this->getRecordIds($data);
                         $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
                     }
-                } else if (array_key_exists($field, $data)) {
-                    if($data[$field] && count($data[$field]) == $this->field) {
+                } elseif (array_key_exists($field, $data)) {
+                    if($data[$field] && count($data[$field]) === $this->field) {
                         $recordIds = $this->getRecordIds($data);
                         foreach ($data[$field] as $term) {
                             if (is_array($term)) {
@@ -763,11 +763,11 @@ class DownloadController extends Controller
                             $recordIds = $this->getRecordIds($data);
                             $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->field);
                         }
-                    } else if($this->field === '(undefined)') {
+                    } elseif($this->field === '(undefined)') {
                         $recordIds = $this->getRecordIds($data);
                         $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
                     }
-                } else if($this->field === '(undefined)') {
+                } elseif($this->field === '(undefined)') {
                     $recordIds = $this->getRecordIds($data);
                     $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
                 }

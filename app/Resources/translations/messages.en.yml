@@ -91,9 +91,9 @@ csv_object_category: object_category
 label_term_object_category: Term object category
 label_id_object_category: Identification object category
 
-csv_rights: rights_status
-label_term_rights: Term rights status
-label_id_rights: Identification rights status
+csv_rights_data: rights_status
+label_term_rights_data: Term rights status
+label_id_rights_data: Identification rights status
 
 csv_rights_work: rights_work
 label_term_rights_work: Term rights work
@@ -171,7 +171,7 @@ label_openness_digital_representation_records: Records
 label_openness_digital_representation_terms: Terms
 label_openness_record: Record
 label_openness_record_records: Records
-label_openness_record_terms: Termen
+label_openness_record_terms: Terms
 
 # ReportController.php
 description_completeness_minimum_overview: An overview of the amount of records for which a certain field has been filled in, according to the requirements of the minimum registration.
