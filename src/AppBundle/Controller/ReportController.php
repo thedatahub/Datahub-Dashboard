@@ -383,6 +383,52 @@ class ReportController extends Controller
         return $this->ambigIds('data_pid', $this->translator->trans('data_pids'), $this->translator->trans('description_ambiguity_records_data_pids'));
     }
 
+    private function checkIdsAndAuthoritiesForTerm($term, $fieldValue, &$authorities, &$termsWithId, &$termsWithoutId)
+    {
+        $firstPurlId = null;
+        if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+            foreach ($fieldValue['id'] as $termId) {
+                if (array_key_exists('source', $termId)) {
+                    $id = $termId['id'];
+                    $authority = $termId['source'];
+                    if ($termId['type'] === 'purl') {
+                        if (!$firstPurlId) {
+                            $firstPurlId = $id;
+                        }
+                        if (array_key_exists($authority, $authorities)) {
+                            if (!in_array($id, $authorities[$authority])) {
+                                $authorities[$authority][] = $id;
+                            }
+                        } else {
+                            $authorities[$authority] = array($id);
+                        }
+                    } elseif($termId['type'] === 'local') {
+                        if (array_key_exists($authority, $authorities)) {
+                            if (!in_array($id, $authorities[$authority])) {
+                                $authorities[$authority][] = $id;
+                            }
+                        } else {
+                            $authorities[$authority] = array($id);
+                        }
+                    }
+                }
+            }
+            if ($firstPurlId) {
+                if(!array_key_exists($term, $termsWithId)) {
+                    $termsWithId[$term] = $firstPurlId;
+                }
+            } else {
+                if (!array_key_exists($term, $termsWithoutId)) {
+                    $termsWithoutId[$term] = '';
+                }
+            }
+        } else {
+            if (!array_key_exists($term, $termsWithoutId)) {
+                $termsWithoutId[$term] = '';
+            }
+        }
+    }
+
     private function ambigTerms($field)
     {
         $allRecords = $this->getAllRecords();
@@ -398,48 +444,7 @@ class ReportController extends Controller
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
                             $term = RecordUtil::getPreferredTerm($fieldValue['term']);
                             if($term) {
-                                $firstPurlId = null;
-                                if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
-                                    foreach ($fieldValue['id'] as $termId) {
-                                        if (array_key_exists('source', $termId)) {
-                                            $id = $termId['id'];
-                                            $authority = $termId['source'];
-                                            if ($termId['type'] === 'purl') {
-                                                if (!$firstPurlId) {
-                                                    $firstPurlId = $id;
-                                                }
-                                                if (array_key_exists($authority, $authorities)) {
-                                                    if (!in_array($id, $authorities[$authority])) {
-                                                        $authorities[$authority][] = $id;
-                                                    }
-                                                } else {
-                                                    $authorities[$authority] = array($id);
-                                                }
-                                            } elseif($termId['type'] === 'local') {
-                                                if (array_key_exists($authority, $authorities)) {
-                                                    if (!in_array($id, $authorities[$authority])) {
-                                                        $authorities[$authority][] = $id;
-                                                    }
-                                                } else {
-                                                    $authorities[$authority] = array($id);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if ($firstPurlId) {
-                                        if(!array_key_exists($term, $termsWithId)) {
-                                            $termsWithId[$term] = $firstPurlId;
-                                        }
-                                    } else {
-                                        if (!array_key_exists($term, $termsWithoutId)) {
-                                            $termsWithoutId[$term] = '';
-                                        }
-                                    }
-                                } else {
-                                    if (!array_key_exists($term, $termsWithoutId)) {
-                                        $termsWithoutId[$term] = '';
-                                    }
-                                }
+                                $this->checkIdsAndAuthoritiesForTerm($term, $fieldValue, $authorities, $termsWithId, $termsWithoutId);
                             }
                         }
                     }
@@ -769,7 +774,8 @@ class ReportController extends Controller
         return new Graph('linegraph', $lineChartData, $header);
     }
 
-    private function opennessRecs($isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $title, $description) {
+    private function opennessRecs($isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $title, $description)
+    {
         $reports = $this->getDocumentManager()->getRepository('ReportBundle:CompletenessReport')->findBy(array('provider' => $this->provider));
         $done = 0;
         $total = 0;

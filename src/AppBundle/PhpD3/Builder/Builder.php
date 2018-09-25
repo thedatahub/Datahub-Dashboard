@@ -18,12 +18,12 @@ class Builder
         $this->prepData = new DataPrep();
     }
 
-    public function resize($render_element_id, $chart, $margins = false){
-
-            $margin_top = isset($margins['margin_top']) ? $margins['margin_top'] : 0;
-            $margin_bottom = isset($margins['margin_bottom']) ? $margins['margin_bottom'] : 0;
-            $margin_right = isset($margins['margin_right']) ? $margins['margin_right'] : 0;
-            $margin_left = isset($margins['margin_left']) ? $margins['margin_left'] : 0;
+    public function resize($render_element_id, $chart, $margins = false)
+    {
+        $margin_top = isset($margins['margin_top']) ? $margins['margin_top'] : 0;
+        $margin_bottom = isset($margins['margin_bottom']) ? $margins['margin_bottom'] : 0;
+        $margin_right = isset($margins['margin_right']) ? $margins['margin_right'] : 0;
+        $margin_left = isset($margins['margin_left']) ? $margins['margin_left'] : 0;
 
         $return = "function redraw(){
             var chartDiv = document.getElementById(\"".$render_element_id."\");

@@ -292,6 +292,59 @@ class DownloadController extends Controller
         }
     }
 
+    private function checkIdsAndAuthorityForTermPie($term, $fieldValue, $localAuthority, &$termsWithId, &$termsWithoutId)
+    {
+        if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
+            $ids = $fieldValue['id'];
+            $localId = '';
+            foreach ($ids as $termId) {
+                if ($termId['type'] === 'local') {
+                    $localId = $termId['id'];
+                    $localAuthority_ = $termId['source'];
+                    if ($localAuthority) {
+                        if ($localAuthority_ !== $localAuthority) {
+                            $localAuthority = '';
+                        }
+                    } else {
+                        $localAuthority = $localAuthority_;
+                    }
+                    break;
+                }
+            }
+            $isEmpty = true;
+            foreach ($ids as $termId) {
+                if ($termId['type'] === 'purl') {
+                    $isEmpty = false;
+                    $authority = $this->getAuthority($termId);
+                    if (!array_key_exists($term, $termsWithId)) {
+                        $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority));
+                    } else {
+                        $isIn = false;
+                        foreach ($termsWithId[$term] as $knownId) {
+                            if ($knownId['concept_id'] === $termId['id']) {
+                                $isIn = true;
+                                break;
+                            }
+                        }
+                        if (!$isIn) {
+                            $termsWithId[$term][] = array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority);
+                        }
+                    }
+                }
+            }
+            if ($isEmpty) {
+                if (!array_key_exists($term, $termsWithId)) {
+                    $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
+                }
+            }
+        } else {
+            if (!array_key_exists($term, $termsWithoutId)) {
+                $termsWithoutId[$term] = '';
+            }
+        }
+        return $localAuthority;
+    }
+
     private function ambigtermPie($field)
     {
         $records = $this->getAllRecords();
@@ -308,54 +361,7 @@ class DownloadController extends Controller
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
                             $term = RecordUtil::getPreferredTerm($fieldValue['term']);
                             if ($term) {
-                                if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
-                                    $ids = $fieldValue['id'];
-                                    $localId = '';
-                                    foreach ($ids as $termId) {
-                                        if ($termId['type'] === 'local') {
-                                            $localId = $termId['id'];
-                                            $localAuthority_ = $termId['source'];
-                                            if ($localAuthority) {
-                                                if ($localAuthority_ !== $localAuthority) {
-                                                    $localAuthority = '';
-                                                }
-                                            } else {
-                                                $localAuthority = $localAuthority_;
-                                            }
-                                            break;
-                                        }
-                                    }
-                                    $isEmpty = true;
-                                    foreach ($ids as $termId) {
-                                        if ($termId['type'] === 'purl') {
-                                            $isEmpty = false;
-                                            $authority = $this->getAuthority($termId);
-                                            if (!array_key_exists($term, $termsWithId)) {
-                                                $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority));
-                                            } else {
-                                                $isIn = false;
-                                                foreach ($termsWithId[$term] as $knownId) {
-                                                    if ($knownId['concept_id'] === $termId['id']) {
-                                                        $isIn = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (!$isIn) {
-                                                    $termsWithId[$term][] = array('local_id' => $localId, 'concept_id' => $termId['id'], 'authority' => $authority);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if ($isEmpty) {
-                                        if (!array_key_exists($term, $termsWithId)) {
-                                            $termsWithId[$term] = array(array('local_id' => $localId, 'concept_id' => '', 'authority' => ''));
-                                        }
-                                    }
-                                } else {
-                                    if (!array_key_exists($term, $termsWithoutId)) {
-                                        $termsWithoutId[$term] = '';
-                                    }
-                                }
+                                $localAuthority = $this->checkIdsAndAuthorityForTermPie($term, $fieldValue, $localAuthority, $termsWithId, $termsWithoutId);
                             }
                         }
                     }
@@ -401,6 +407,64 @@ class DownloadController extends Controller
         return $authority;
     }
 
+    private function checkIdsAndAuthorityForTermBar($termId, $term, $idTerms, &$termsWithId)
+    {
+        $authority = $this->getAuthority($termId);
+        $id = $termId['id'];
+        if (!array_key_exists($term, $termsWithId)) {
+            $count = 1;
+            if(!array_key_exists($id, $idTerms)) {
+                $idTerms[$id] = array($term);
+            }
+            else {
+                $isIn = false;
+                foreach ($idTerms[$id] as $term) {
+                    if($term === $term) {
+                        $isIn = true;
+                        break;
+                    }
+                }
+                if(!$isIn) {
+                    $idTerms[$id][] = $term;
+                }
+                $count = count($idTerms[$id]);
+            }
+            $termsWithId[$term] = array(array('id' => $id, 'authority' => $authority, 'count' => $count));
+        } else {
+            $isIn = false;
+            foreach ($termsWithId[$term] as $knownId) {
+                if ($knownId['id'] === $id) {
+                    $isIn = true;
+                    break;
+                }
+            }
+            if (!$isIn) {
+                $count = 1;
+                if(!array_key_exists($id, $idTerms)) {
+                    $idTerms[$id] = array($term);
+                }
+                else {
+                    $isIn = false;
+                    foreach ($idTerms[$id] as $term) {
+                        if($term === $term) {
+                            $isIn = true;
+                            break;
+                        }
+                    }
+                    if(!$isIn) {
+                        $idTerms[$id][] = $term;
+                    }
+                    if(array_key_exists('id', $idTerms)) {
+                        $count = count($idTerms['id']);
+                    } else {
+                        $count = 0;
+                    }
+                }
+                $termsWithId[$term][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
+            }
+        }
+    }
+
     private function ambigtermBar($field)
     {
         $records = $this->getAllRecords();
@@ -421,60 +485,7 @@ class DownloadController extends Controller
                                     $ids = $fieldValue['id'];
                                     foreach ($ids as $termId) {
                                         if ($termId['source'] === $this->field) {
-                                            $authority = $this->getAuthority($termId);
-                                            $id = $termId['id'];
-                                            if (!array_key_exists($term, $termsWithId)) {
-                                                $count = 1;
-                                                if(!array_key_exists($id, $idTerms)) {
-                                                    $idTerms[$id] = array($term);
-                                                }
-                                                else {
-                                                    $isIn = false;
-                                                    foreach ($idTerms[$id] as $term) {
-                                                        if($term === $term) {
-                                                            $isIn = true;
-                                                            break;
-                                                        }
-                                                    }
-                                                    if(!$isIn) {
-                                                        $idTerms[$id][] = $term;
-                                                    }
-                                                    $count = count($idTerms[$id]);
-                                                }
-                                                $termsWithId[$term] = array(array('id' => $id, 'authority' => $authority, 'count' => $count));
-                                            } else {
-                                                $isIn = false;
-                                                foreach ($termsWithId[$term] as $knownId) {
-                                                    if ($knownId['id'] === $id) {
-                                                        $isIn = true;
-                                                        break;
-                                                    }
-                                                }
-                                                if (!$isIn) {
-                                                    $count = 1;
-                                                    if(!array_key_exists($id, $idTerms)) {
-                                                        $idTerms[$id] = array($term);
-                                                    }
-                                                    else {
-                                                        $isIn = false;
-                                                        foreach ($idTerms[$id] as $term) {
-                                                            if($term === $term) {
-                                                                $isIn = true;
-                                                                break;
-                                                            }
-                                                        }
-                                                        if(!$isIn) {
-                                                            $idTerms[$id][] = $term;
-                                                        }
-                                                        if(array_key_exists('id', $idTerms)) {
-                                                            $count = count($idTerms['id']);
-                                                        } else {
-                                                            $count = 0;
-                                                        }
-                                                    }
-                                                    $termsWithId[$term][] = array('id' => $id, 'authority' => $authority, 'count' => $count);
-                                                }
-                                            }
+                                            $this->checkIdsAndAuthorityForTermBar($termId, $term, $idTerms, $termsWithId);
                                         }
                                     }
                                 } else {

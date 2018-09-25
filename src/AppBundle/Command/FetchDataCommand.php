@@ -96,7 +96,8 @@ class FetchDataCommand extends ContainerAwareCommand
         $this->generateAndStoreReport($dataDef, $providers);
     }
 
-    private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef, $verbose) {
+    private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef, $verbose)
+    {
         $result = array();
         foreach ($dataDef as $key => $value) {
             if(RecordUtil::excludeKey($key)) {
