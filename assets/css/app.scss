@@ -346,9 +346,36 @@ h1 {
   padding-right: 20px;
 }
 
-.bar {
+.bar0 {
   fill: $color2;
   shape-rendering: crispEdges;
+}
+
+.bar1 {
+  fill: $color3;
+  shape-rendering: crispEdges;
+}
+
+.color-boxes {
+  padding: 5px;
+}
+
+.color0-box {
+  height: 13px;
+  width: 60px;
+  display: inline-block;
+  background-color: $color2;
+}
+
+.color1-box {
+  height: 13px;
+  width: 60px;
+  display: inline-block;
+  background-color: $color3;
+}
+
+.legend-box {
+  margin: 5px;
 }
 
 .clickable-bar:hover {

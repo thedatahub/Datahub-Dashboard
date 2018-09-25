@@ -106,7 +106,7 @@ class ReportController extends Controller
 
     private function generateBarChart($csvData, $header)
     {
-        $csvData = '"field","name","value"' . $csvData;
+        $csvData = '"field","name","value","col"' . $csvData;
         return new Graph('barchart', $csvData, $header);
     }
 
@@ -176,10 +176,8 @@ class ReportController extends Controller
         if($reports && count($reports) > 0) {
             $report = $reports[0];
             $total = $report->getTotal();
-            if($isMinimum) {
+            if($isMinimum || $isBasic) {
                 $data = $report->getMinimum();
-            } elseif($isBasic) {
-                $data = $report->getBasic() + $report->getMinimum();
             } elseif($isExtended) {
                 $data = $report->getExtended();
             }
@@ -193,12 +191,31 @@ class ReportController extends Controller
                     $label = $this->dataDef[$key]['label'];
                 }
                 $label = $this->translator->trans($label);
-                $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '"';
+                $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","' . ($isBasic ? '1"' : '0"');
+            }
+            if($isBasic) {
+                $data = $report->getBasic();
+                foreach ($data as $key => $value) {
+                    $label = null;
+                    if (strpos($key, '/')) {
+                        $parts = explode('/', $key);
+                        $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
+                        $key = $parts[0];
+                    } else {
+                        $label = $this->dataDef[$key]['label'];
+                    }
+                    $label = $this->translator->trans($label);
+                    $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","0"';
+                }
             }
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('filled_in_records'));
         $barChart->canDownload = true;
         $barChart->max = $total;
+        if($isBasic) {
+            $barChart->bottomLegend = '<div class="color-boxes"><div><div class="color1-box"></div> ' . $this->translator->trans('label_completeness_minimum') . '</div><div><div class="color0-box"></div> ' . $this->translator->trans('label_completeness_basic') . '</div></div>';
+        }
+
         return new Report($title, $title, $description, array($barChart));
     }
 
@@ -449,7 +466,7 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($authorities as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '","0"';
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('ids_for_this_authority'));
         $barChart->canDownload = true;
@@ -542,7 +559,7 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '","0"';
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
@@ -673,9 +690,9 @@ class ReportController extends Controller
         $csvData = '';
         foreach($counts as $key => $value) {
             if($key === '(undefined)') {
-                $csvData .= PHP_EOL . '"' . $key . '","' . $this->translator->trans('undefined') . '","' . $value . '"';
+                $csvData .= PHP_EOL . '"' . $key . '","' . $this->translator->trans('undefined') . '","' . $value . '","0"';
             } else {
-                $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '"';
+                $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '","0"';
             }
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));

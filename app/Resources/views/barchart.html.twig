@@ -1,5 +1,9 @@
 
-<div id="barchart"></div>
+<div>
+    <div id="barchart">
+    </div>
+    {{ graph.bottomLegend | raw }}
+</div>
 <script>
 
     //Set font-sizes of labels
@@ -23,13 +27,16 @@
         }
     }
     else {
-        var hasLegend = "{{ graph.legendText | raw }}".length > 0;
+        var colours = ["#00BCE4", "#087D93"];
+        var legendText = "{{ graph.legendText | raw }}";
+        var hasLegend = legendText.length > 0;
         var canDownload = {{ graph.canDownload | json_encode | raw }};
         data = d3.csv.parse({{ graph.data | json_encode | raw }}, function(d) {
             return {
                 field:d.field.replace(";", ","),
                 name:d.name.replace(";", ","),
-                value:+d.value
+                value:+d.value,
+                col:d.col
             };
         });
         data.reverse();
@@ -185,7 +192,10 @@
 
         //append rects
         bars.append("rect")
-            .attr("class", canDownload ? "bar clickable-bar" : "bar")
+            .attr("class", function(d) {
+                var className = "bar" + d.col;
+                return className + (canDownload ? " clickable-bar" : "");
+            })
             .attr("y", function (d) {
                 return y(d.name);
             })
@@ -236,7 +246,7 @@
                 .style("text-anchor", "end")
                 .style("font-size", bigFontSize)
                 .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
-                .text("{{ graph.legendText | raw }}");
+                .text(legendText);
         }
     }
 
