@@ -7,7 +7,8 @@ class RecordUtil
     {
         return $terms[0]['term'];
 
-        // Uncomment to only return terms where pref="preferred"
+        // Uncomment to only return terms where pref="preferred".
+        // It is however recommended to use proper xpath filters in dashboard.yml instead.
 //        foreach($terms as $term) {
 //            if($term['pref'] === 'preferred') {
 //                return $term['term'];
@@ -32,5 +33,10 @@ class RecordUtil
             }
         }
         return $label;
+    }
+
+    public static function excludeKey($key)
+    {
+        return $key === 'parent_xpath' || $key === 'csv' || $key === 'exclude';
     }
 }

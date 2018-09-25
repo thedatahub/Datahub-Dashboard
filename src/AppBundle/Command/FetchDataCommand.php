@@ -12,22 +12,21 @@ use Phpoaipmh\Endpoint;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * This command fetches data from a datahub repository, for which the URL is defined in parameters.yml.
+ * The data to be fetched is defined in dashboard.yml and stored in a local database.
+ * Lastly, the command generates a report & trend base on this data and stores these in a local database
+ */
 class FetchDataCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            // the name of the command (the part after "bin/console")
             ->setName('app:fetch-data')
             ->addArgument("url", InputArgument::OPTIONAL, "The URL of the Datahub")
-            // the short description shown while running "php bin/console list"
             ->setDescription('Fetches all data from the Datahub and stores the relevant information in a local database.')
-
-            // the full command description shown when running the command with
-            // the "--help" option
             ->setHelp('This command fetches all data from the Datahub and stores the relevant information in a local database.\nOptional parameter: the URL of the datahub. If the URL equals "skip", it will not fetch data and use whatever is currently in the database.')
         ;
     }
@@ -55,10 +54,15 @@ class FetchDataCommand extends ContainerAwareCommand
 
         $providers = null;
         if(!$skip) {
+            // Build the OAI-PMH client
             $myEndpoint = Endpoint::build($url);
+
+            // List the OAI-PMH records
             $recs = $myEndpoint->listRecords($metadataPrefix);
 
             $dm = $this->getDocumentManager();
+
+            // Remove all current data in the local database
             $dm->getDocumentCollection('RecordBundle:Record')->remove([]);
 
             $providers = array();
@@ -66,7 +70,11 @@ class FetchDataCommand extends ContainerAwareCommand
             foreach ($recs as $rec) {
                 $i++;
                 $data = $rec->metadata->children($namespace, true);
+
+                //Fetch the data from this record based on data_definition in dashboard.yml
                 $fetchedData = $this->fetchData($dataDef, $namespace, $data, $providers, $providerDef, $verbose);
+
+                // Create & store a new record based on this data
                 if(array_key_exists('provider', $fetchedData) && count($fetchedData['provider']) > 0) {
                     $record = new Record();
                     $record->setProvider($fetchedData['provider'][0]);
@@ -84,13 +92,14 @@ class FetchDataCommand extends ContainerAwareCommand
             $providers = $this->getDocumentManager()->getRepository('ProviderBundle:Provider')->findAll();
         }
 
+        // Generate & store the report & trends
         $this->generateAndStoreReport($dataDef, $providers);
     }
 
     private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef, $verbose) {
         $result = array();
         foreach ($dataDef as $key => $value) {
-            if($key === 'parent_xpath' || $key === 'csv' || $key === 'exclude') {
+            if(RecordUtil::excludeKey($key)) {
                 continue;
             }
             if(array_key_exists('xpath', $value)) {
@@ -149,6 +158,7 @@ class FetchDataCommand extends ContainerAwareCommand
         return $result;
     }
 
+    // Build the xpath based on the provided namespace
     private function buildXpath($xpath, $namespace)
     {
         $xpath = str_replace('[@', '[@' . $namespace . ':', $xpath);
@@ -161,6 +171,7 @@ class FetchDataCommand extends ContainerAwareCommand
         return $xpath;
     }
 
+    // Add a newly found provider to the list of known data providers
     private function addToProviders($providerName, &$providers, $providerDef, $verbose)
     {
         foreach ($providers as $provider) {
@@ -168,9 +179,10 @@ class FetchDataCommand extends ContainerAwareCommand
                 return $provider->getIdentifier();
             }
         }
-        if(array_key_exists($providerName, $providerDef))
+        if(array_key_exists($providerName, $providerDef)) {
             $providerId = $providerDef[$providerName];
-        else {
+        } else {
+            // Generate a new ID for this provider by removing non-alphanumeric characters and cutting off at 25 characters
             $providerId = preg_replace("/[^A-Za-z0-9 ]/", '', $providerName);
             while(strpos($providerId, '  ') > -1) {
                 $providerId = str_replace('  ', ' ', $providerId);
@@ -225,7 +237,14 @@ class FetchDataCommand extends ContainerAwareCommand
             $completenessReport = new CompletenessReport();
             $completenessReport->setProvider($providerId);
 
-            $fields = array('minimum' => array(), 'basic' => array(), 'extended' => array(), 'rights_work' => array(), 'rights_digital_representation' => array(), 'rights_data' => array());
+            $fields = array(
+                'minimum' => array(),
+                'basic' => array(),
+                'extended' => array(),
+                'rights_data' => array(),
+                'rights_work' => array(),
+                'rights_digital_representation' => array()
+            );
 
             foreach ($dataDef as $key => $value) {
                 if (array_key_exists('xpath', $value)) {
@@ -235,7 +254,7 @@ class FetchDataCommand extends ContainerAwareCommand
                 }
                 elseif (array_key_exists('parent_xpath', $value)) {
                     foreach ($value as $k => $v) {
-                        if ($k === 'parent_xpath' || $k === 'csv' || $k === 'exclude' || !array_key_exists('class', $v)) {
+                        if (RecordUtil::excludeKey($k) || !array_key_exists('class', $v)) {
                             continue;
                         }
                         if (array_key_exists('xpath', $v)) {
@@ -255,9 +274,9 @@ class FetchDataCommand extends ContainerAwareCommand
                 $data = $record->getData();
                 $minimumComplete = true;
                 $basicComplete = true;
+                $rightsDataComplete = true;
                 $rightsWorkComplete = true;
                 $rightsDigitalRepresentationComplete = true;
-                $rightsDataComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
                         //TODO check why this failed
@@ -279,18 +298,18 @@ class FetchDataCommand extends ContainerAwareCommand
                                     $basicComplete = false;
                                 } elseif ($value['class'] === 'basic') {
                                     $basicComplete = false;
+                                } elseif($value['class'] === 'rights_data') {
+                                    $rightsDataComplete = false;
                                 } elseif($value['class'] === 'rights_work') {
                                     $rightsWorkComplete = false;
                                 } elseif($value['class'] === 'rights_digital_representation') {
                                     $rightsDigitalRepresentationComplete = false;
-                                } elseif($value['class'] === 'rights_data') {
-                                    $rightsDataComplete = false;
                                 }
                             }
                         }
                     } elseif (array_key_exists('parent_xpath', $value)) {
                         foreach ($value as $k => $v) {
-                            if ($k === 'parent_xpath' || $k === 'csv' || $k === 'exclude') {
+                            if (RecordUtil::excludeKey($k)) {
                                 continue;
                             }
                             if (array_key_exists('xpath', $v)) {
@@ -341,12 +360,12 @@ class FetchDataCommand extends ContainerAwareCommand
                                             $basicComplete = false;
                                         } elseif ($v['class'] === 'basic') {
                                             $basicComplete = false;
+                                        } elseif($v['class'] === 'rights_data') {
+                                            $rightsDataComplete = false;
                                         } elseif($v['class'] === 'rights_work') {
                                             $rightsWorkComplete = false;
                                         } elseif($v['class'] === 'rights_digital_representation') {
                                             $rightsDigitalRepresentationComplete = false;
-                                        } elseif($v['class'] === 'rights_data') {
-                                            $rightsDataComplete = false;
                                         }
                                     }
                                 }

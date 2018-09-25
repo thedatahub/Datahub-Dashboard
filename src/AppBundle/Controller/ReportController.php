@@ -802,6 +802,21 @@ class ReportController extends Controller
         return new Report($title, $title, $description, array($pieChart, $lineGraph));
     }
 
+    private function openRecordRecords()
+    {
+        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_records'));
+        return $this->opennessRecs(
+            false,
+            false,
+            true,
+            $title, $this->translator->trans('description_openness_record_records'));
+    }
+
+    private function openRecordTerms()
+    {
+        return $this->ambigTerms('rights_data');
+    }
+
     private function openWorkRecords()
     {
         $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_work')) . ' - ' . strtolower($this->translator->trans('label_openness_work_records'));
@@ -830,20 +845,5 @@ class ReportController extends Controller
     private function openDigRepTerms()
     {
         return $this->ambigTerms('rights_digital_representation');
-    }
-
-    private function openRecordRecords()
-    {
-        $title = $this->translator->trans('label_openness') . ' ' . strtolower($this->translator->trans('label_openness_record')) . ' - ' . strtolower($this->translator->trans('label_openness_record_records'));
-        return $this->opennessRecs(
-            false,
-            false,
-            true,
-            $title, $this->translator->trans('description_openness_record_records'));
-    }
-
-    private function openRecordTerms()
-    {
-        return $this->ambigTerms('rights_data');
     }
 }
