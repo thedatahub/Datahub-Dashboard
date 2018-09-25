@@ -613,7 +613,7 @@ class DownloadController extends Controller
         if($records) {
             foreach ($records as $record) {
                 $data = $record->getData();
-                if($this->field === 0) {
+                if($this->field == 0) {
                     $add = false;
                     if (!array_key_exists($field, $data)) {
                         $add = true;
@@ -627,7 +627,7 @@ class DownloadController extends Controller
                         $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
                     }
                 } elseif (array_key_exists($field, $data)) {
-                    if($data[$field] && count($data[$field]) === $this->field) {
+                    if($data[$field] && count($data[$field]) == $this->field) {
                         $recordIds = $this->getRecordIds($data);
                         foreach ($data[$field] as $term) {
                             if (is_array($term)) {
