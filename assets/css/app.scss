@@ -346,14 +346,16 @@ h1 {
   padding-right: 20px;
 }
 
+.bar {
+  shape-rendering: crispEdges;
+}
+
 .bar0 {
   fill: $color2;
-  shape-rendering: crispEdges;
 }
 
 .bar1 {
   fill: $color3;
-  shape-rendering: crispEdges;
 }
 
 .color-boxes {

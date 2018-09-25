@@ -209,6 +209,7 @@ class FetchDataCommand extends ContainerAwareCommand
         $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
 
+        //TODO comment these lines when going to production
         $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
 

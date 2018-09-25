@@ -193,7 +193,7 @@
         //append rects
         bars.append("rect")
             .attr("class", function(d) {
-                var className = "bar" + d.col;
+                var className = "bar bar" + d.col;
                 return className + (canDownload ? " clickable-bar" : "");
             })
             .attr("y", function (d) {
