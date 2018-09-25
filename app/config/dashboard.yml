@@ -237,6 +237,17 @@ parameters:
                 class: 'extended'
                 label: 'label_id_object_category'
                 xpath: 'conceptID'
+        data_provider:
+            parent_xpath: 'administrativeMetadata/recordWrap/recordSource'
+            csv: 'csv_data_provider'
+            term:
+                class: 'extended'
+                label: 'label_term_data_provider'
+                xpath: 'legalBodyName/appellationValue'
+            id:
+                class: 'extended'
+                label: 'label_id_data_provider'
+                xpath: 'legalBodyID'
         rights_data:
             parent_xpath: 'administrativeMetadata/recordWrap/recordRights/rightsType'
             csv: 'csv_rights_data'
@@ -267,17 +278,6 @@ parameters:
             id:
                 label: 'label_id_rights_digital_representation'
                 xpath: 'conceptID'
-        data_provider:
-            parent_xpath: 'administrativeMetadata/recordWrap/recordSource'
-            csv: 'csv_data_provider'
-            term:
-                class: 'extended'
-                label: 'label_term_data_provider'
-                xpath: 'legalBodyName/appellationValue'
-            id:
-                class: 'extended'
-                label: 'label_id_data_provider'
-                xpath: 'legalBodyID'
 
     terms_with_ids:
       - 'object_name'
@@ -289,9 +289,9 @@ parameters:
       - 'displayed_subject'
       - 'displayed_location'
       - 'displayed_event'
+      - 'rights_data'
       - 'rights_work'
       - 'rights_digital_representation'
-      - 'rights_data'
 
 
     # Function values are defined in ReportController.php
@@ -500,6 +500,18 @@ parameters:
         openness:
             label: 'label_openness'
             parameters:
+                record:
+                    url: 'record'
+                    label: 'label_openness_record'
+                    questions:
+                        records:
+                            url: 'records'
+                            label: 'label_openness_record_records'
+                            function: 'openRecordRecords'
+                        terms:
+                            url: 'terms'
+                            label: 'label_openness_record_terms'
+                            function: 'openRecordTerms'
                 work:
                     label: 'label_openness_work'
                     url: 'work'
@@ -524,15 +536,3 @@ parameters:
                             url: 'terms'
                             label: 'label_openness_digital_representation_terms'
                             function: 'openDigRepTerms'
-                record:
-                    url: 'record'
-                    label: 'label_openness_record'
-                    questions:
-                        records:
-                            url: 'records'
-                            label: 'label_openness_record_records'
-                            function: 'openRecordRecords'
-                        terms:
-                            url: 'terms'
-                            label: 'label_openness_record_terms'
-                            function: 'openRecordTerms'

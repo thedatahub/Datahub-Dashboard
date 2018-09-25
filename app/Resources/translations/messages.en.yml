@@ -186,15 +186,15 @@ label_richness_terms_displayed_location: Displayed location
 label_richness_terms_displayed_event: Displayed event
 
 label_openness: Openness
+label_openness_record: Record
+label_openness_record_records: Records
+label_openness_record_terms: Terms
 label_openness_work: Work
 label_openness_work_records: Records
 label_openness_work_terms: Terms
 label_openness_digital_representation: Digital representation
 label_openness_digital_representation_records: Records
 label_openness_digital_representation_terms: Terms
-label_openness_record: Record
-label_openness_record_records: Records
-label_openness_record_terms: Terms
 
 
 # IndexController.php
@@ -217,9 +217,9 @@ description_ambiguity_terms: An overview of all terms within this field that hav
 description_richness_occurrences: The amount of records that have zero, one, two or more occurrences of this field.
 description_richness_terms: An overview of all terms within this field and how many times they occur in the entire dataset.
 
+description_openness_record_records: The amount of records that have the field 'rights data' filled in and its historic trend.
 description_openness_work_records: The amount of records that have the field 'rights work' filled in and its historic trend.
 description_openness_digital_representation_records: The amount of records that have the field 'rights digital representation' filled in and its historic trend.
-description_openness_record_records: The amount of records that have the field 'rights data' filled in and its historic trend.
 
 filled_in_records: Filled in records
 complete_records: Complete records
