@@ -1,4 +1,19 @@
 
+// Colors available
+$color0: #ffffff; // White
+$color1: #000000; // Black
+$color2: #00bce4; // Blue (logo)
+$color3: #087d93; // Dark blue
+$color4: #fafafa; // Lightest grey
+$color5: #e4e4e4; // Lighter grey
+$color6: #cccccc; // Grey
+$color7: #adadad; // Darker grey
+$color8: #5f585d; // Darkest grey (logo)
+$color9: #333333; // Text color
+
+// Font-family
+$font-family: "Gotham", Helvetica, Arial, sans-serif;
+
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 $fa-font-path: "~font-awesome/fonts";
 
@@ -11,8 +26,19 @@ html {
 }
 
 body {
-  font-family: "Gotham", Helvetica, Arial, sans-serif;
-  background-color: #fafafa;
+  font-family: $font-family;
+  background-color: $color4;
+  color: $color9;
+}
+
+a {
+  color: $color3;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: $color9;
 }
 
 .content {
@@ -31,7 +57,7 @@ body {
   bottom: 0;
   width: 100%;
   line-height: 35px;
-  background-color: #f5f5f5;
+  background-color: $color5;
 }
 
 .footer-content {
@@ -57,16 +83,16 @@ body {
 }
 
 .navbar-default {
-  background: #00bce4;
+  background: $color2;
 }
 
 .navbar-default .navbar-nav > li a {
-  color: white;
+  color: $color0;
   font-size: 1.25em;
 }
 
 .navbar-default .navbar-nav > li.active a {
-  color: #5F585D;
+  color: $color1;
   background-color: transparent;
 }
 
@@ -75,7 +101,7 @@ body {
 }
 
 .navbar-default .navbar-nav > li a:hover {
-  color: #5F585D;
+  color: $color1;
 }
 
 .navbar-default .navbar-nav > li div {
@@ -94,7 +120,7 @@ body {
 }
 
 .navbar-default .navbar-nav > li div a.active {
-  color: #5F585D;
+  color: $color1;
   text-decoration: underline;
 }
 
@@ -126,7 +152,7 @@ h1 {
   min-width: 400px;
   margin-left: auto;
   margin-right: auto;
-  background-color: rgb(220, 220, 220);
+  background-color: $color5;
   border-radius: 4px;
 }
 
@@ -136,6 +162,11 @@ h1 {
   padding-bottom: 10px;
 }
 
+.btn-default {
+  color: $color9;
+  border-color: $color6;
+}
+
 .select-provider > ul {
   width: 100%;
 }
@@ -143,19 +174,19 @@ h1 {
 #dropdownMenuButton {
   width: 100%;
   text-align:left;
-  background: white;
+  background: $color0;
 }
 
 #dropdownMenuButton:hover {
-  background: white;
+  background: $color0;
 }
 
 #dropdownMenuButton:active {
-  background: white;
+  background: $color0;
 }
 
 #main-container {
-  font-size: 120%;
+  font-size: 16px;
   width: 1180px;
   margin-top: 30px;
   margin-left: auto;
@@ -163,7 +194,7 @@ h1 {
 }
 
 .provider-div-report {
-  background-color: rgb(220, 220, 220);
+  background-color: $color5;
 }
 
 .provider-div-report .select-provider {
@@ -172,6 +203,11 @@ h1 {
   margin-right: auto;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.dropdown-toggle:focus {
+  outline: none !important;
+  box-shadow: none;
 }
 
 .print-provider {
@@ -205,8 +241,8 @@ h1 {
 }
 
 .parameter, .parameter:focus {
-  background-color: rgb(220, 220, 220);
-  border-color: #adadad;
+  background-color: $color5;
+  border-color: $color7;
 }
 
 .parameter:focus, .question:focus {
@@ -214,20 +250,26 @@ h1 {
   box-shadow: none;
 }
 
+.question {
+  background-color: $color0;
+  color: $color1;
+  border-color: $color7;
+}
+
 .question-active {
-  background-color: #5F585D;
-  color: white;
-  border-color: #adadad;
+  background-color: $color8;
+  color: $color0;
+  border-color: $color7;
 }
 
 .parameter:hover, .question:hover {
-  background-color: #00BCE4;
-  color: white;
-  border-color: #adadad;
+  background-color: $color2;
+  color: $color0;
+  border-color: $color7;
 }
 
 .left-menu > button:hover {
-  background-color: rgb(220, 220, 220);
+  background-color: $color5;
 }
 
 .collapsed-buttons {
@@ -252,8 +294,8 @@ h1 {
 #graphs {
   float: right;
   width: 800px;
-  border: solid 1px rgb(220, 220, 220);
-  background-color: white;
+  border: solid 1px $color5;
+  background-color: $color0;
   margin-right: 20px;
 }
 
@@ -261,7 +303,7 @@ h1 {
   margin-bottom: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  background-color: #fafafa;
+  background-color: $color4;
 }
 
 .graph p {
@@ -293,6 +335,7 @@ h1 {
 
 .description {
   margin-left: 20px;
+  margin-right: 20px;
   margin-bottom: 20px;
 }
 
@@ -304,12 +347,12 @@ h1 {
 }
 
 .bar {
-  fill: #00BCE4;
+  fill: $color2;
   shape-rendering: crispEdges;
 }
 
 .clickable-bar:hover {
-  fill: #5F585D;
+  fill: $color8;
 }
 
 .axis > g > text {
@@ -329,19 +372,18 @@ h1 {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: $color9;
   stroke-width: 1.5px;
-  shape-rendering: crispEdges;
 }
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: $color2;
   stroke-width: 3.5px;
 }
 
 .dot {
-  stroke: #000;
+  stroke: $color9;
 }
 
 div.tooltip {
@@ -351,25 +393,25 @@ div.tooltip {
   height: 50px;
   padding: 4px;
   font: 16px sans-serif;
-  color: white;
+  color: $color0;
   font-weight: 500;
-  background: black;
+  background: $color8;
   border: 0;
   border-radius: 4px;
   pointer-events: none;
 }
 
 .grid .tick {
-  stroke: lightgrey;
+  stroke: $color5;
   opacity: 0.7;
 }
 
 .download-button .btn {
-  background-color: gainsboro;
+  background-color: $color5;
   border: none;
-  color: #333;
+  color: $color1;
   padding: 6px 8px;
-  font-family: "Gotham", Helvetica, Arial, sans-serif;
+  font-family: $font-family;
   font-size: 13px;
   cursor: pointer;
   margin-right: 20px;
@@ -378,8 +420,8 @@ div.tooltip {
 
 /* Darker background on mouse-over */
 .download-button .btn:hover {
-  background-color: #5F585D;
-  color: white;
+  background-color: $color8;
+  color: $color0;
 }
 
  /* Is this one used?
@@ -411,6 +453,6 @@ div.tooltip {
     border: none;
   }
   .graph {
-    border: solid 1px rgb(220, 220, 220);
+    border: solid 1px $color5;
   }
 }

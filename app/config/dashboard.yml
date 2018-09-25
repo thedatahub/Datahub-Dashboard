@@ -162,7 +162,7 @@ parameters:
                 label: 'label_unit_measurement'
                 xpath: 'measurementsSet/measurementUnit'
         displayed_concept:
-            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@type="concept"]/subjectConcept'
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectConcept'
             csv: 'csv_displayed_concept'
             term:
                 class: 'basic'
