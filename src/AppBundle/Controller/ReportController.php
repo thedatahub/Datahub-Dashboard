@@ -179,7 +179,7 @@ class ReportController extends Controller
             if($isMinimum) {
                 $data = $report->getMinimum();
             } elseif($isBasic) {
-                $data = $report->getBasic();
+                $data = $report->getBasic() + $report->getMinimum();
             } elseif($isExtended) {
                 $data = $report->getExtended();
             }

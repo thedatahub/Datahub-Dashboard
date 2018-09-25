@@ -123,6 +123,7 @@ parameters:
                 xpath: 'conceptID'
         condition:
             class: 'basic'
+            exclude: true
             csv: 'csv_condition'
             label: 'label_condition'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="check"]/eventDescriptionSet/descriptiveNoteValue'
