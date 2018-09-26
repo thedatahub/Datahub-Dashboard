@@ -212,7 +212,7 @@ description_completeness_extended_overview: De hoeveelheid records waarvoor een 
 
 description_ambiguity_records_work_pids: De hoeveelheid Work PID's exact eenmaal voorkomen en hoeveel Work PID's meerdere malen voorkomen in de records.
 description_ambiguity_records_data_pids: De hoeveelheid Data PID's exact eenmaal voorkomen en hoeveel Data PID's meerdere malen voorkomen in de records.
-description_ambiguity_terms: Een overzicht van alle termen in dit veld die een externe ID hebben, welke authorities deze ID's toe behoren en de historische trend van de hoeveelheid termen met een externe ID.
+description_ambiguity_terms: Een overzicht van alle termen in dit veld die een persistente ID hebben, welke authorities deze ID's toe behoren en de historische trend van de hoeveelheid termen met een persistente ID.
 
 description_richness_occurrences: De hoeveelheid records die nul, een, twee of meer voorkomens voor dit veld.
 description_richness_terms: Een overzicht van alle termen in dit veld en hoe vaak ze voorkomen in de volledige dataset.

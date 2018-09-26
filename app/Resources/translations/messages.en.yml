@@ -212,7 +212,7 @@ description_completeness_extended_overview: The amount of records for which a ce
 
 description_ambiguity_records_work_pids: The amount of Work PIDs which occur exacly once and how many Work PIDs occur multiple times within the records.
 description_ambiguity_records_data_pids: The amount of Data PIDs which occur exacly once and how many Work PIDs occur multiple times within the records.
-description_ambiguity_terms: An overview of all terms within this field that have an external ID, which authorities these IDs belong to and the historic trend of how many terms have an external ID.
+description_ambiguity_terms: An overview of all terms within this field that have a persistent ID, which authorities these IDs belong to and the historic trend of how many terms have a persistent ID.
 
 description_richness_occurrences: The amount of records that have zero, one, two or more occurrences of this field.
 description_richness_terms: An overview of all terms within this field and how many times they occur in the entire dataset.
