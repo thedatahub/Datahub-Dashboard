@@ -465,7 +465,7 @@ class ReportController extends Controller
                 $pieChart->emptyText = $this->translator->trans('no_records_for_this_field');
                 $pieChart->canDownload = false;
             } else {
-                $pieChart->emptyText = $this->translator->trans('no_terms_with_id');
+                $pieChart->emptyText = $this->translator->trans('no_terms_with_id_%x%', array('%x%' => count($termsWithoutId)));
             }
         }
 

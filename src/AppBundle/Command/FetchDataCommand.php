@@ -321,8 +321,18 @@ class FetchDataCommand extends ContainerAwareCommand
                                             if ($fieldValue) {
                                                 if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
                                                     if (count($fieldValue[$k]) > 0) {
-                                                        $found = true;
-                                                        if ($k === 'term' && is_array($fieldValue)) {
+                                                        if($k === 'id') {
+                                                            foreach($fieldValue[$k] as $id) {
+                                                                if($id['type'] === 'purl') {
+                                                                    $found = true;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        else {
+                                                            $found = true;
+                                                        }
+                                                        if ($k === 'term') {
                                                             $term = RecordUtil::getPreferredTerm($fieldValue['term']);
                                                             if ($term && array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
                                                                 if (count($fieldValue['id']) > 0 && !array_key_exists($term, $termIds[$key])) {

@@ -101,7 +101,7 @@ class DownloadController extends Controller
             $parts = explode('/', $field);
             if($record[$parts[0]] && count($record[$parts[0]]) > 0) {
                 foreach($record[$parts[0]] as $part) {
-                    if($part[$parts[1]] && count($part[$parts[1]])) {
+                    if($part[$parts[1]] && count($part[$parts[1]]) > 0) {
                         return $part[$parts[1]];
                     }
                 }
@@ -407,7 +407,7 @@ class DownloadController extends Controller
         return $authority;
     }
 
-    private function checkIdsAndAuthorityForTermBar($termId, $term, $idTerms, &$termsWithId)
+    private function checkIdsAndAuthorityForTermBar($termId, $term, &$idTerms, &$termsWithId)
     {
         $authority = $this->getAuthority($termId);
         $id = $termId['id'];
@@ -418,8 +418,8 @@ class DownloadController extends Controller
             }
             else {
                 $isIn = false;
-                foreach ($idTerms[$id] as $term) {
-                    if($term === $term) {
+                foreach ($idTerms[$id] as $term_) {
+                    if($term_ === $term) {
                         $isIn = true;
                         break;
                     }
@@ -445,8 +445,8 @@ class DownloadController extends Controller
                 }
                 else {
                     $isIn = false;
-                    foreach ($idTerms[$id] as $term) {
-                        if($term === $term) {
+                    foreach ($idTerms[$id] as $term_) {
+                        if($term_ === $term) {
                             $isIn = true;
                             break;
                         }
