@@ -236,6 +236,8 @@ data_pids: Data PID's
 terms_with_id: Termen met ID
 terms_without_id: Termen zonder ID
 all_terms_have_an_id: Alle termen hebben een ID.
+occurrence: occurrence
+occurrences: occurrences
 no_records_for_this_field: Er zijn geen records waarvoor dit veld is ingevuld.
 no_terms_with_id: Er zijn geen termen met een ID.
 ids_for_this_authority: ID's voor deze authority
@@ -251,4 +253,4 @@ filled_in: ingevuld
 not_filled_in: niet ingevuld
 application_id: Applicatie ID
 object_number: Objectnummer
-occurrences: Aantal voorkomens
+occurrence_amount: Aantal voorkomens

@@ -564,15 +564,13 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . $value . '","0"';
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . ' ' . $this->translator->transChoice('{1} occurrence|[0,Inf[ occurrences', $key) . '","' . $value . '","0"';
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
         if(count($counts) === 0) {
             $barChart->isEmpty = true;
             $barChart->emptyText = $this->translator->trans('no_records_for_this_field');
-        } else {
-            $barChart->legendText = $this->translator->trans('occurrences');
         }
 
         $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef)) . ' in records';

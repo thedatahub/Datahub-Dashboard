@@ -246,7 +246,7 @@ class DownloadController extends Controller
 
         $applicationId = $this->translator->trans('application_id');
         $objectNumber = $this->translator->trans('object_number');
-        $occurrences = $this->translator->trans('occurrences');
+        $occurrences = $this->translator->trans('occurrence_amount');
 
         return $applicationId . ',' . $objectNumber . ',' . $label . ',' . $occurrences . $csvData;
     }

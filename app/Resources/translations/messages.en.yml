@@ -236,6 +236,8 @@ data_pids: Data PIDs
 terms_with_id: Terms with ID
 terms_without_id: Terms without ID
 all_terms_have_an_id: All terms have an ID.
+occurrence: occurrence
+occurrences: occurrences
 no_records_for_this_field: There are no records for which this field is filled in.
 no_terms_with_id: There are no terms with an ID.
 ids_for_this_authority: IDs for this authority
@@ -245,10 +247,11 @@ undefined: undefined
 no_terms_for_this_field: There are no terms for this field.
 
 
+
 # DownloadController.php
 persistent_id: Persistent ID
 filled_in: filled in
 not_filled_in: not filled in
 application_id: Application ID
 object_number: Object number
-occurrences: Occurrences
+occurrence_amount: Occurrences
