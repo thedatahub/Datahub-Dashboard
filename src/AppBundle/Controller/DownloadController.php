@@ -539,12 +539,12 @@ class DownloadController extends Controller
 
     private function ambigCategoryPiechart()
     {
-        return $this->ambigtermPie('category');
+        return $this->ambigtermPie('object_category');
     }
 
     private function ambigCategoryBarchart()
     {
-        return $this->ambigtermBar('category');
+        return $this->ambigtermBar('object_category');
     }
 
     private function ambigMainMotifPiechart()

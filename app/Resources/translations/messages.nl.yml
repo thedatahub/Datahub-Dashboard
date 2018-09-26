@@ -145,8 +145,8 @@ label_completeness_extended_overview: Overzicht van alle velden
 
 label_ambiguity: Ondubbelzinnigheid
 label_ambiguity_records: Records
-label_ambiguity_records_work_pids: Verdeling van work PID's over de records
-label_ambiguity_records_data_pids: Verdeling van data PID's over de records
+label_ambiguity_records_work_pids: Verdeling van Work PID's over de records
+label_ambiguity_records_data_pids: Verdeling van Data PID's over de records
 label_ambiguity_terms: Termen
 label_ambiguity_terms_object_name: Objectnaam
 label_ambiguity_terms_object_category: Objectcategorie
@@ -231,6 +231,7 @@ history: Historiek
 which_occur_%x%_time: die %x%x voorkomen
 which_occur_%x%_times: die %x%x voorkomen
 all_%label%_occur_once: Alle %label% komen exact eenmaal voor.
+no_records_with_%label%: Er zijn geen records met %label%.
 work_pids: Work PID's
 data_pids: Data PID's
 terms_with_id: Termen met ID

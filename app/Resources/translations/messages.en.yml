@@ -145,8 +145,8 @@ label_completeness_extended_overview: Overview of all fields
 
 label_ambiguity: Ambiguity
 label_ambiguity_records: Records
-label_ambiguity_records_work_pids: Distribution of work PID's among records
-label_ambiguity_records_data_pids: Distribution of data PID's among records
+label_ambiguity_records_work_pids: Distribution of Work PID's among records
+label_ambiguity_records_data_pids: Distribution of Data PID's among records
 label_ambiguity_terms: Terms
 label_ambiguity_terms_object_name: Object name
 label_ambiguity_terms_object_category: Object category
@@ -231,6 +231,7 @@ history: History
 which_occur_%x%_time: which occur %x% time
 which_occur_%x%_times: which occur %x% times
 all_%label%_occur_once: All %label% occur exactly once.
+no_records_with_%label%: There are no records with %label%.
 work_pids: Work PIDs
 data_pids: Data PIDs
 terms_with_id: Terms with ID

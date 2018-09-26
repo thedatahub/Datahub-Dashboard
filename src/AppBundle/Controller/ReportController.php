@@ -351,6 +351,7 @@ class ReportController extends Controller
             }
         }
         $isGood = false;
+        $counts = array();
         if(count($counts) === 1 && array_key_exists(1, $counts)) {
             $isGood = true;
         }
@@ -363,11 +364,15 @@ class ReportController extends Controller
             }
         }
 
+
         $pieChart = $this->generatePieChart($countsPie);
         $pieChart->canDownload = true;
         if($isGood) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_%label%_occur_once', array('%label%' => $label));
+        } elseif(count($counts) === 0) {
+            $pieChart->isEmpty = true;
+            $pieChart->emptyText = $this->translator->trans('no_records_with_%label%', array('%label%' => $label));
         }
         $title = $this->translator->trans('label_ambiguity'). ' ' . $label;
         return new Report($title, $title, $description, array($pieChart));
