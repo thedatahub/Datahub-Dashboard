@@ -68,6 +68,10 @@
             if(data[i].value > maxValue)
                 maxValue = data[i].value;
         }
+        var maxChartWidth = max;
+        if(maxValue > maxChartWidth) {
+            maxChartWidth = maxValue;
+        }
         var widthValue = textSize(maxValue, smallFontSize);
         var rightLabelWidth = widthValue.width;
 
@@ -139,14 +143,14 @@
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         var x = d3.scale.linear()
-            .range([0, max > 0 ? dataRange / max * width : width ])
+            .range([0, maxChartWidth > 0 ? dataRange / maxChartWidth * width : width ])
             .domain([0, d3.max(data, function (d) {
                 return d.value;
             })]);
 
         var xScale = d3.scale.linear()
             .range([0, width ])
-            .domain([0, max]);
+            .domain([0, maxChartWidth]);
 
         var y = d3.scale.ordinal()
             .rangeBands([height, 0], .1)

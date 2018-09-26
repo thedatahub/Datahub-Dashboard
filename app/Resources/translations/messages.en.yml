@@ -160,9 +160,9 @@ label_ambiguity_terms_displayed_event: Displayed event
 
 label_richness: Richness
 label_richness_occurrences: Occurrences
-label_richness_occurrences_storage_institution: Name storage institution
-label_richness_occurrences_object_number: Object number / Inventory number
-label_richness_occurrences_data_pid: Object number / Data PID
+label_richness_occurrences_storage_institution: Storage institution
+label_richness_occurrences_object_number: Object number
+label_richness_occurrences_data_pid: Data PID
 label_richness_occurrences_title: Title
 label_richness_occurrences_short_description: Short description
 label_richness_occurrences_object_name: Object name

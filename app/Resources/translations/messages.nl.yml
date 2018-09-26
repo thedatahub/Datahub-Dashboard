@@ -160,9 +160,9 @@ label_ambiguity_terms_displayed_event: Afgebeelde gebeurtenis
 
 label_richness: Rijkheid
 label_richness_occurrences: Occurrences
-label_richness_occurrences_storage_institution: Naam bewaarinstelling
-label_richness_occurrences_object_number: Objectnummer / Inventarisnummer
-label_richness_occurrences_data_pid: Objectnummer / Data PID
+label_richness_occurrences_storage_institution: Bewaarinstelling
+label_richness_occurrences_object_number: Objectnummer
+label_richness_occurrences_data_pid: Data PID
 label_richness_occurrences_title: Titel
 label_richness_occurrences_short_description: Korte beschrijving
 label_richness_occurrences_object_name: Objectnaam

@@ -475,16 +475,8 @@ class ReportController extends Controller
         }
 
         $csvData = '';
-        if(count($authorities) === 0) {
-            $max = 0;
-        } else {
-            $max = count($termsWithId) + count($termsWithoutId);
-        }
         foreach($authorities as $key => $value) {
             $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '","0"';
-            if($max > 0 && count($value) > $max) {
-                $max = count($value);
-            }
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('ids_for_this_authority'));
         $barChart->canDownload = true;
@@ -494,7 +486,7 @@ class ReportController extends Controller
                 $barChart->emptyText = $this->translator->trans('no_authorities_for_these_terms');
             }
         } else {
-            $barChart->max = $max;
+            $barChart->max = count($termsWithId) + count($termsWithoutId);
         }
 
         $lineChart = $this->generateFieldTrendGraph($field, $this->translator->trans('terms_with_id'));
