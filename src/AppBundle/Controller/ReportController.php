@@ -351,7 +351,6 @@ class ReportController extends Controller
             }
         }
         $isGood = false;
-        $counts = array();
         if(count($counts) === 1 && array_key_exists(1, $counts)) {
             $isGood = true;
         }
@@ -795,6 +794,7 @@ class ReportController extends Controller
         }
         $pieces = array($this->translator->trans('complete_records') => $done, $this->translator->trans('incomplete_records') => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
+        $pieChart->canDownload = true;
         if($total - $done === 0 && $done > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_records_complete');

@@ -845,4 +845,14 @@ class DownloadController extends Controller
     {
         return $this->richTermBar('displayed_event');
     }
+
+    private function openRecordRecordsPiechart()
+    {
+
+    }
+
+    private function openRecordTermsPiechart()
+    {
+
+    }
 }
