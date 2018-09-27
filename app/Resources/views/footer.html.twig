@@ -1,0 +1,70 @@
+<div id="footer" class="container">
+
+    <div id="carouselLogoWrapperUp" class="carousel row1" data-ride="carousel" data-interval="false">
+        <div class="row">
+            <ul class="logos carousel-inner">
+                <li class="carouselLogo item active"><a href="http://www.kmska.be/nl" title="Koninklijk Museum voor Schone Kunsten Antwerpen" target="_blank"><img alt="Koninklijk Museum voor Schone Kunsten Antwerpen" src="{{ asset('images/kmska.jpg') }}" /></a></li>
+                <li class="carouselLogo item"><a href="https://bezoekers.brugge.be/nl/groeningemuseum" title="Groeningemuseum Brugge" target="_blank"><img alt="Groeningemuseum Brugge" src="{{ asset('images/groeninge.jpg') }}" /></a></li>
+                <li class="carouselLogo item"><a href="https://www.mskgent.be" title="Museum voor Schone Kunsten Gent" target="_blank"><img alt="Museum voor Schone Kunsten Gent" src="{{ asset('images/msk.jpg') }}" /></a></li>
+                <li class="carouselLogo item"><a href="https://www.mleuven.be/index.jsp" title="M - Museum Leuven" target="_blank"><img alt="M - Museum Leuven" src="{{ asset('images/mleuven.jpg') }}" /></a></li>
+                <li class="carouselLogo item"><a href="http://www.muzee.be/index.jsp?lang=nl" title="Mu.ZEE Oostende" target="_blank"><img alt="Mu.ZEE Oostende" src="{{ asset('images/muzee.jpg') }}" /></a></li>
+            </ul>
+            <div class="buttons">
+                <button id="prevButton" href="#carouselLogoWrapperUp" type="button" class="btn btn-default btn-xs carouselButton" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button>
+
+                <button id="nextButton" href="#carouselLogoWrapperUp" type="button" class="btn btn-default btn-xs carouselButton" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="carouselLogoWrapperDown" class="carousel row2" data-ride="carousel" data-interval="false">
+        <div class="row">
+            <ul class="logos carousel-inner">
+                <li class="carouselLogo item active"><a href="http://www.vlaamsekunstcollectie.be/" title="Vlaamse Kunstcollectie" target="_blank"><img alt="Vlaamse Kunstcollectie" src="{{ asset('images/vkc.png') }}" /></a></li>
+                <li class="carouselLogo item"><a href="http://www.packed.be" title="Packed. Expertisecentrum Digitaal Erfgoed." target="_blank"><img alt="Packed. Expertisecentrum Digitaal Erfgoed." src="{{ asset('images/packed.png') }}" /></a></li>
+                <li class="carouselLogo item"><a href="http://www.kunstenerfgoed.be/nl" title="Vlaanderen. Verbeelding werkt." target="_blank"><img alt="Vlaanderen. Verbeelding werkt." src="{{ asset('images/flanders.png') }}" /></a></li>
+            </ul>
+            <div class="buttons">
+                <button id="prevButton" href="#carouselLogoWrapperDown" type="button" class="btn btn-default btn-xs carouselButton" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button>
+
+                <button id="nextButton" href="#carouselLogoWrapperDown" type="button" class="btn btn-default btn-xs carouselButton" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    (function($) {
+        var $window = $(window),
+            $div = $('.carouselLogoWrapper'),
+            $li = $('.carouselLogo');
+
+        function resize() {
+            if ($window.width() <= 402) {
+                return ($div.addClass('carousel'), $li.addClass('carousel-item'));
+            }
+
+            $div.removeClass('carousel');
+            $li.removeClass('carousel-item');
+        }
+
+        $window
+            .resize(resize)
+            .trigger('resize');
+    })(jQuery);
+</script>
+
+<script>
+    $("a:contains('http')").css("word-break","break-all");
+    $("dd:contains('http')").css("word-break","break-all");
+</script>

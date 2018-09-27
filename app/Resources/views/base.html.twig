@@ -28,19 +28,16 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav main-nav navbar-right">
                     <li class="first {% if current_page == 'home' %}active{% endif %}">
-                        <a href="{{ route_home }}">Dashboard</a>
+                        <a href="{{ route_home }}">{% trans %}menu_home{% endtrans %}</a>
                     </li>
                     <li {% if current_page == 'manual' %}class="active"{% endif %}>
-                        <a href="{{ route_manual }}">Manual</a>
-                    </li>
-                    <li {% if current_page == 'about' %}class="active"{% endif %}>
-                        <a href="{{ route_about }}">About</a>
-                    </li>
-                    <li {% if current_page == 'open_source' %}class="active"{% endif %}>
-                        <a href="{{ route_open_source }}">Open Source</a>
+                        <a href="{{ route_manual }}">{% trans %}menu_manual{% endtrans %}</a>
                     </li>
                     <li {% if current_page == 'open_data' %}class="active"{% endif %}>
-                        <a href="{{ route_open_data }}">Open Data</a>
+                        <a href="{{ route_open_data }}">{% trans %}menu_open_data{% endtrans %}</a>
+                    </li>
+                    <li {% if current_page == 'open_source' %}class="active"{% endif %}>
+                        <a href="{{ route_open_source }}">{% trans %}menu_open_source{% endtrans %}</a>
                     </li>
                     <li>
                         <div>

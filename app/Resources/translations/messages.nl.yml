@@ -1,9 +1,12 @@
+# base.html.twig
+menu_home: Dashboard
+menu_manual: Handleiding
+menu_open_data: Open data
+menu_open_source: Open source
+
+
 # home.html.twig
 dashboard_description: Een korte beschrijving van de dashboard-applicatie.
-
-
-# about.html.twig
-about_description: Hier komt de 'about' pagina.
 
 
 # manual.html.twig

@@ -85,9 +85,8 @@ class ReportController extends Controller
             'report' => $report,
             'route_home' => $this->generateUrl('home'),
             'route_manual' => $this->generateUrl('manual'),
-            'route_about' => $this->generateUrl('about'),
-            'route_open_source' => $this->generateUrl('open_source'),
             'route_open_data' => $this->generateUrl('open_data'),
+            'route_open_source' => $this->generateUrl('open_source'),
             'current_page' => 'home',
             'translated_routes' => $translatedRoutes
         );

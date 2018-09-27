@@ -25,9 +25,8 @@ class IndexController extends Controller
             'service_address' => $this->getParameter('service_address'),
             'route_home' => $this->generateUrl('home'),
             'route_manual' => $this->generateUrl('manual'),
-            'route_about' => $this->generateUrl('about'),
-            'route_open_source' => $this->generateUrl('open_source'),
             'route_open_data' => $this->generateUrl('open_data'),
+            'route_open_source' => $this->generateUrl('open_source'),
             'current_page' => $currentPage,
             'translated_routes'=> $translatedRoutes
         );
@@ -57,11 +56,11 @@ class IndexController extends Controller
     }
 
     /**
-     * @Route("/{_locale}/about", name="about", requirements={"_locale" = "%app.locales%"})
+     * @Route("/{_locale}/open_data", name="open_data", requirements={"_locale" = "%app.locales%"})
      */
-    public function about(Request $request)
+    public function openData(Request $request)
     {
-        return $this->render("about.html.twig", $this->getBasicData('about', $request));
+        return $this->render("open_data." . $request->getLocale() . ".html.twig", $this->getBasicData('open_data', $request));
     }
 
     /**
@@ -69,14 +68,6 @@ class IndexController extends Controller
      */
     public function openSource(Request $request)
     {
-        return $this->render("open_source.html.twig", $this->getBasicData('open_source', $request));
-    }
-
-    /**
-     * @Route("/{_locale}/open_data", name="open_data", requirements={"_locale" = "%app.locales%"})
-     */
-    public function openData(Request $request)
-    {
-        return $this->render("open_data.html.twig", $this->getBasicData('open_data', $request));
+        return $this->render("open_source." . $request->getLocale() . ".html.twig", $this->getBasicData('open_source', $request));
     }
 }
