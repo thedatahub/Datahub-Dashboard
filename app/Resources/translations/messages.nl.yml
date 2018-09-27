@@ -162,21 +162,36 @@ label_ambiguity_terms_displayed_location: Afgebeelde locatie
 label_ambiguity_terms_displayed_event: Afgebeelde gebeurtenis
 
 label_richness: Rijkheid
+# Also in ReportController.yml (single/plural nouns)
 label_richness_occurrences: Occurrences
 label_richness_occurrences_storage_institution: Bewaarinstelling
+label_richness_occurrences_storage_institutions: Bewaarinstellingen
 label_richness_occurrences_object_number: Objectnummer
+label_richness_occurrences_object_numbers: Objectnummers
 label_richness_occurrences_data_pid: Data PID
+label_richness_occurrences_data_pids: Data PID's
 label_richness_occurrences_title: Titel
+label_richness_occurrences_titles: Titels
 label_richness_occurrences_short_description: Korte beschrijving
+label_richness_occurrences_short_descriptions: Korte beschrijvingen
 label_richness_occurrences_object_name: Objectnaam
+label_richness_occurrences_object_names: Objectnamen
 label_richness_occurrences_object_category: Objectcategorie
+label_richness_occurrences_object_categorys: Objectcategorieën
 label_richness_occurrences_main_motif: Hoofdmotief
+label_richness_occurrences_main_motifs: Hoofdmotieven
 label_richness_occurrences_creator: Vervaardiger
+label_richness_occurrences_creators: Vervaardigers
 label_richness_occurrences_material: Materiaal
+label_richness_occurrences_materials: Materialen
 label_richness_occurrences_displayed_concept: Afgebeeld concept
+label_richness_occurrences_displayed_concepts: Afgebeeld concepten
 label_richness_occurrences_displayed_subject: Afgebeelde persoon of instelling
+label_richness_occurrences_displayed_subjects: Afgebeelde personen of instellingen
 label_richness_occurrences_displayed_location: Afgebeelde locatie
+label_richness_occurrences_displayed_locations: Afgebeelde locaties
 label_richness_occurrences_displayed_event: Afgebeelde gebeurtenis
+label_richness_occurrences_displayed_events: Afgebeelde gebeurtenissen
 label_richness_terms: Termen
 label_richness_terms_object_name: Objectnaam
 label_richness_terms_object_category: Objectcategorie
@@ -240,8 +255,6 @@ data_pids: Data PID's
 terms_with_id: Termen met ID
 terms_without_id: Termen zonder ID
 all_terms_have_an_id: Alle termen hebben een persistente ID.
-occurrence: occurrence
-occurrences: occurrences
 no_records_for_this_field: Er zijn geen records waarvoor dit veld is ingevuld.
 no_terms_with_id_%x%: Er zijn geen termen met een persistente ID (%x% termen in totaal).
 ids_for_this_authority: ID's voor deze authority

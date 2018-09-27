@@ -676,7 +676,7 @@ class DownloadController extends Controller
         return $this->richOccurrencesBar('storage_institution');
     }
 
-    private function richOccurrencesObjectIdBarChart()
+    private function richOccurrencesObjectNumberBarChart()
     {
         return $this->richOccurrencesBar('object_number');
     }

@@ -567,7 +567,12 @@ class ReportController extends Controller
 
         $csvData = '';
         foreach($counts as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . ' ' . $this->translator->transChoice('{1} occurrence|[0,Inf[ occurrences', $key) . '","' . $value . '","0"';
+            if($key == 1) {
+                $label = $this->translator->trans('label_richness_occurrences_' . $field);
+            } else {
+                $label = $this->translator->trans('label_richness_occurrences_' . $field . 's');
+            }
+            $csvData .= PHP_EOL . '"' . $key . '","' . $key . ' ' . lcfirst($label) . '","' . $value . '","0"';
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('amount_of_records'));
         $barChart->canDownload = true;
@@ -585,9 +590,9 @@ class ReportController extends Controller
         return $this->richOccurrences('storage_institution');
     }
 
-    private function richOccurrencesObjectId()
+    private function richOccurrencesObjectNumber()
     {
-        return $this->richOccurrences('database_id');
+        return $this->richOccurrences('object_number');
     }
 
     private function richOccurrencesDataPid()

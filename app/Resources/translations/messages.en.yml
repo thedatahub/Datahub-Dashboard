@@ -162,21 +162,36 @@ label_ambiguity_terms_displayed_location: Displayed location
 label_ambiguity_terms_displayed_event: Displayed event
 
 label_richness: Richness
+# Also in ReportController.yml (single/plural nouns)
 label_richness_occurrences: Occurrences
 label_richness_occurrences_storage_institution: Storage institution
+label_richness_occurrences_storage_institutions: Storage institutions
 label_richness_occurrences_object_number: Object number
+label_richness_occurrences_object_numbers: Object numbers
 label_richness_occurrences_data_pid: Data PID
+label_richness_occurrences_data_pids: Data PIDs
 label_richness_occurrences_title: Title
+label_richness_occurrences_titles: Titles
 label_richness_occurrences_short_description: Short description
+label_richness_occurrences_short_descriptions: Short descriptions
 label_richness_occurrences_object_name: Object name
+label_richness_occurrences_object_names: Object names
 label_richness_occurrences_object_category: Object category
+label_richness_occurrences_object_categorys: Object categories
 label_richness_occurrences_main_motif: Main motif
+label_richness_occurrences_main_motifs: Main motifs
 label_richness_occurrences_creator: Creator
+label_richness_occurrences_creators: Creators
 label_richness_occurrences_material: Material
+label_richness_occurrences_materials: Materials
 label_richness_occurrences_displayed_concept: Displayed concept
+label_richness_occurrences_displayed_concepts: Displayed concepts
 label_richness_occurrences_displayed_subject: Displayed subject
+label_richness_occurrences_displayed_subjects: Displayed subjects
 label_richness_occurrences_displayed_location: Displayed location
+label_richness_occurrences_displayed_locations: Displayed locations
 label_richness_occurrences_displayed_event: Displayed event
+label_richness_occurrences_displayed_events: Displayed events
 label_richness_terms: Terms
 label_richness_terms_object_name: Object name
 label_richness_terms_object_category: Object category
@@ -240,8 +255,6 @@ data_pids: Data PIDs
 terms_with_id: Terms with ID
 terms_without_id: Terms without ID
 all_terms_have_an_id: All terms have a persistent ID.
-occurrence: occurrence
-occurrences: occurrences
 no_records_for_this_field: There are no records for which this field is filled in.
 no_terms_with_id_%x%: There are no terms with a persistent ID (%x% terms in total).
 ids_for_this_authority: IDs for this authority

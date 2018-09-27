@@ -212,7 +212,7 @@ parameters:
             label: 'label_work_pid'
             xpath: 'objectPublishedID'
         database_id:
-            class: 'minimum'
+            class: 'extended'
             csv: 'csv_database_id'
             label: 'label_database_id'
             xpath: 'administrativeMetadata/recordWrap/recordID[@type="local"]'
@@ -408,7 +408,7 @@ parameters:
                         object_number:
                             url: 'object-number'
                             label: 'label_richness_occurrences_object_number'
-                            function: 'richOccurrencesObjectId'
+                            function: 'richOccurrencesObjectNumber'
                         data_pid:
                             url: 'data-pid'
                             label: 'label_richness_occurrences_data_pid'
