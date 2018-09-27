@@ -55,7 +55,7 @@
 </div>
 <footer class="footer">
     <div class="footer-content">
-        <span>Contact: <a href="mailto:{{ service_address }}?Subject={{ service_name }}" target="_top">{{ service_address }}</a></span>
+        <a href="mailto:{{ service_address }}?Subject={{ service_name }}" target="_top">{% trans %}contact{% endtrans %}</a> <a href="/{{ app.request.locale }}/legal">{% trans %}legal_notification{% endtrans %}</a>
     </div>
 </footer>
 {% block javascripts %}

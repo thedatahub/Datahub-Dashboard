@@ -3,6 +3,8 @@ menu_home: Dashboard
 menu_manual: Handleiding
 menu_open_data: Open data
 menu_open_source: Open source
+contact: Contact
+legal_notification: Juridische kennisgeving
 
 
 # home.html.twig

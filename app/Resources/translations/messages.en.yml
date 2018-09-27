@@ -3,6 +3,8 @@ menu_home: Dashboard
 menu_manual: Manual
 menu_open_data: Open data
 menu_open_source: Open source
+contact: Contact
+legal_notification: Legal notification
 
 
 # home.html.twig

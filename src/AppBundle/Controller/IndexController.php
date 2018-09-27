@@ -27,6 +27,7 @@ class IndexController extends Controller
             'route_manual' => $this->generateUrl('manual'),
             'route_open_data' => $this->generateUrl('open_data'),
             'route_open_source' => $this->generateUrl('open_source'),
+            'route_legal' => $this->generateUrl('legal'),
             'current_page' => $currentPage,
             'translated_routes'=> $translatedRoutes
         );
@@ -69,5 +70,13 @@ class IndexController extends Controller
     public function openSource(Request $request)
     {
         return $this->render("open_source." . $request->getLocale() . ".html.twig", $this->getBasicData('open_source', $request));
+    }
+
+    /**
+     * @Route("/{_locale}/legal", name="legal", requirements={"_locale" = "%app.locales%"})
+     */
+    public function legal(Request $request)
+    {
+        return $this->render("legal." . $request->getLocale() . ".html.twig", $this->getBasicData('legal', $request));
     }
 }
