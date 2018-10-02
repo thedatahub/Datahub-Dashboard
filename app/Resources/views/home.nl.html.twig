@@ -2,17 +2,49 @@
 
 {% block body %}
     <h1>Dashboard</h1>
-    <div class="center-block provider-div-home">
-        <div class="dropdown select-provider">
-            <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ provider }}<span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                {% for provider in providers %}
-                    <li><a class="dropdown-item" href="{{ app.request.locale }}/report/{{ provider.identifier }}">{{  provider.name }}</a></li>
-                {% endfor %}
-            </ul>
+    <div class="container">
+        <div class="center-block provider-div-home">
+            <div class="dropdown select-provider">
+                <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>{{ provider }}</button>
+                <ul class="dropdown-menu">
+                    {% for provider in providers %}
+                        <li><a class="dropdown-item" href="{{ app.request.locale }}/report/{{ provider.identifier }}">{{  provider.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-    </div>
-    <div id="main-container">
-        <p>{% trans %}dashboard_description{% endtrans %}</p>
+        <div id="main-container" class="dashboard-home">
+            <div class="row">
+                <div class="row0 text-center">
+                    <p>Het Dashboard analyseert collectiemetadata van Vlaamse musea voor Schone en Hedendaagse Kunsten. Per museum worden de meetresultaten op een gebruiksvriendelijke wijze digitaal gevisualiseerd. De rapporteringen zijn bedoeld om de museale medewerkers inzicht te bieden op de staat van de collectiemetadata en de impact van de door hen uitgevoerde acties op deze gegevens.
+                    </p>
+                </div>
+            </div>
+
+             <div class="row">
+                <div id="row1">
+                    <div class="col-sm-12 col-md-4 col1">
+                        <span class="fa icon featured fa-users"></span>
+                        <h3>Voor wie</h3>
+                        <p>Het Dashboard is een instrument bedoeld om museale medewerkers inzicht te bieden in de actuele staat van de eigen collectiemetadata en de impact van hun acties op deze metadata.</p>
+                        <p><a href="/nl/manual" class="btn btn-default" role="button">Meer weten</a></p>
+                    </div>
+
+                    <div class="col-sm-12 col-md-4 col2">
+                        <span class="fa icon featured fa-database"></span>
+                        <h3>Open data</h3>
+                        <p>Het Dashboard stelt alle gepubliceerde informatie ter beschikking als open data. Ze hanteert open formaten en open licenties om de drempel tot hergebruik van gegevens zo laag mogelijk te leggen.</p>
+                        <p><a href="/nl/open_data" class="btn btn-default" role="button">Meer weten</a></p>
+                    </div>
+
+                    <div class="col-sm-12 col-md-4 col3">
+                        <span class="fa icon featured fa-code-fork"></span>
+                        <h3>Open source</h3>
+                        <p>Het Dashboard maakt, als onderdeel van het Arthub Flanders platform, gebruik van open source software. Discussieer en bouw mee aan de programmacode en help zo het volledige platform te groeien.</p>
+                        <p><a href="/nl/open_source" class="btn btn-default" role="button">Meer weten</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
