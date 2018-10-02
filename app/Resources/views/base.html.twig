@@ -23,27 +23,34 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ route_home }}"></a>
+                <a class="navbar-brand" href="{{ path('home') }}"></a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav main-nav navbar-right">
                     <li class="first {% if current_page == 'home' %}active{% endif %}">
-                        <a href="{{ route_home }}">{% trans %}menu_home{% endtrans %}</a>
+                        <a href="{{ path('home') }}">{% trans %}menu_home{% endtrans %}</a>
                     </li>
                     <li {% if current_page == 'manual' %}class="active"{% endif %}>
-                        <a href="{{ route_manual }}">{% trans %}menu_manual{% endtrans %}</a>
+                        <a href="{{ path('manual') }}">{% trans %}menu_manual{% endtrans %}</a>
                     </li>
                     <li {% if current_page == 'open_data' %}class="active"{% endif %}>
-                        <a href="{{ route_open_data }}">{% trans %}menu_open_data{% endtrans %}</a>
+                        <a href="{{ path('open_data') }}">{% trans %}menu_open_data{% endtrans %}</a>
                     </li>
                     <li {% if current_page == 'open_source' %}class="active"{% endif %}>
-                        <a href="{{ route_open_source }}">{% trans %}menu_open_source{% endtrans %}</a>
+                        <a href="{{ path('open_source') }}">{% trans %}menu_open_source{% endtrans %}</a>
                     </li>
                     <li>
                         <div>
-                            {% for translated_route in translated_routes %}
-                                <a {% if translated_route.active is defined %}class="active" {% endif %}href="{{ translated_route.route }}">{{ translated_route.locale }}</a>
-                            {% endfor %}
+                            {% if translated_routes is defined %}
+                                {% for translated_route in translated_routes %}
+                                    <a {% if translated_route.active is defined %}class="active" {% endif %}href="{{ translated_route.route }}">{{ translated_route.locale }}</a>
+                                {% endfor %}
+                            {% elseif error is defined %}
+                                {% set locales_list = locales|split('|') %}
+                                {% for locale in locales_list %}
+                                    <a {% if locale == app.request.locale %}class="active" {% endif %}href="{{ path(error, { '_locale': locale }) }}">{{ locale }}</a>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </li>
                 </ul>
@@ -56,6 +63,9 @@
 {% include "footer.html.twig" %}
 {% block javascripts %}
     <script src="{{ asset('build/js/app.js') }}"></script>
+    {% for locale in locales %}
+        <p>{{ locale }}</p>
+    {% endfor %}
 {% endblock %}
 </body>
 </html>

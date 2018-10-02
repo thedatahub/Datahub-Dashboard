@@ -29,6 +29,10 @@ framework:
 twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+    globals:
+        locales: '%app.locales%'
+        service_name: '%service_name%'
+        service_address: '%service_address%'
 
 doctrine_mongodb:
     default_database: %mongodb_database%

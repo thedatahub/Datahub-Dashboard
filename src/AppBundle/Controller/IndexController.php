@@ -21,13 +21,6 @@ class IndexController extends Controller
             $translatedRoutes[] = $translatedRoute;
         }
         return array(
-            'service_name' => $this->getParameter('service_name'),
-            'service_address' => $this->getParameter('service_address'),
-            'route_home' => $this->generateUrl('home'),
-            'route_manual' => $this->generateUrl('manual'),
-            'route_open_data' => $this->generateUrl('open_data'),
-            'route_open_source' => $this->generateUrl('open_source'),
-            'route_legal' => $this->generateUrl('legal'),
             'current_page' => $currentPage,
             'translated_routes'=> $translatedRoutes
         );
@@ -78,5 +71,29 @@ class IndexController extends Controller
     public function legal(Request $request)
     {
         return $this->render("legal." . $request->getLocale() . ".html.twig", $this->getBasicData('legal', $request));
+    }
+
+    /**
+     * @Route("/{_locale}/500", name="500", requirements={"_locale" = "%app.locales%"})
+     */
+    public function error500(Request $request)
+    {
+        return $this->render("error.html.twig", $this->getBasicData('500', $request));
+    }
+
+    /**
+     * @Route("/{_locale}/403", name="403", requirements={"_locale" = "%app.locales%"})
+     */
+    public function error403(Request $request)
+    {
+        return $this->render("error403.html.twig", $this->getBasicData('403', $request));
+    }
+
+    /**
+     * @Route("/{_locale}/404", name="404", requirements={"_locale" = "%app.locales%"})
+     */
+    public function error404(Request $request)
+    {
+        return $this->render("error404.html.twig", $this->getBasicData('404', $request));
     }
 }

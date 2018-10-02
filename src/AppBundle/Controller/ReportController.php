@@ -8,6 +8,7 @@ use MongoDB\BSON\UTCDateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ReportController extends Controller
 {
@@ -29,8 +30,6 @@ class ReportController extends Controller
         $this->translator = $this->get('translator');
         $this->translator->setLocale($_locale);
 
-        $serviceName = $this->getParameter('service_name');
-        $serviceAddress = $this->getParameter('service_address');
         $leftMenu = $this->getParameter('left_menu');
         $this->dataDef = $this->getParameter('data_definition');
 
@@ -40,6 +39,10 @@ class ReportController extends Controller
             if($provider->getIdentifier() === $this->provider) {
                 $providerName = $provider->getName();
             }
+        }
+
+        if($providerName == null) {
+            throw new NotFoundHttpException();
         }
 
         $route = $this->generateUrl('report', array('_locale' => $_locale, 'provider' => $this->provider));
@@ -71,8 +74,6 @@ class ReportController extends Controller
 
         $report = $this->$functionCall();
         $data = array(
-            'service_name' => $serviceName,
-            'service_address' => $serviceAddress,
             'route' => $route,
             'download' => $download,
             'provider_id' => $this->provider,
@@ -83,11 +84,6 @@ class ReportController extends Controller
             'active_parameter' => $parameter,
             'active_question' => $question,
             'report' => $report,
-            'route_home' => $this->generateUrl('home'),
-            'route_manual' => $this->generateUrl('manual'),
-            'route_open_data' => $this->generateUrl('open_data'),
-            'route_open_source' => $this->generateUrl('open_source'),
-            'route_legal' => $this->generateUrl('legal'),
             'current_page' => 'home',
             'translated_routes' => $translatedRoutes
         );
