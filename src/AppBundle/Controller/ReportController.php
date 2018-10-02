@@ -402,19 +402,19 @@ class ReportController extends Controller
                             $firstPurlId = $id;
                         }
                         if (array_key_exists($authority, $authorities)) {
-                            if (!in_array($id, $authorities[$authority])) {
-                                $authorities[$authority][] = $id;
+                            if (!in_array($term, $authorities[$authority])) {
+                                $authorities[$authority][] = $term;
                             }
                         } else {
-                            $authorities[$authority] = array($id);
+                            $authorities[$authority] = array($term);
                         }
                     } elseif($termId['type'] === 'local') {
                         if (array_key_exists($authority, $authorities)) {
-                            if (!in_array($id, $authorities[$authority])) {
-                                $authorities[$authority][] = $id;
+                            if (!in_array($term, $authorities[$authority])) {
+                                $authorities[$authority][] = $term;
                             }
                         } else {
-                            $authorities[$authority] = array($id);
+                            $authorities[$authority] = array($term);
                         }
                     }
                 }
