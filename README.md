@@ -4,6 +4,8 @@
 
 The Datahub Dashboard is an application which allows users and data providers to measure the completeness, unambiguity, richness and openness of their metadata. The metadata is retrieved from an OAI-PMH endpoint, for example a [Datahub](https://github.com/thedatahub/Datahub) application.
 
+The application can currently only handle LIDO data schemes, but can be easily extended to handle other, similar schemes as well.
+
 ## Requirements
 
 This project requires following dependencies:
@@ -28,8 +30,7 @@ $ cd Datahub-Dashboard
 $ composer install # Composer will ask you to fill in any missing parameters before it continues
 ```
 
-You will be asked to configure the connection to your MongoDB database. You 
-will need to provide these details (but can currently be skipped due to still being in development):
+You will be asked to configure the connection to your MongoDB database. You will need to provide these details (but can currently be skipped due to still being in development):
 
 * The connection to your MongoDB instance (i.e. mongodb://127.0.0.1:27017)
 * The username of the user (i.e. datahub_dashboard)

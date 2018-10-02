@@ -223,7 +223,7 @@ class ReportController extends Controller
             $barChart->bottomLegend = '<div class="color-boxes"><div><div class="color1-box"></div> ' . $this->translator->trans('label_completeness_minimum') . '</div><div><div class="color0-box"></div> ' . $this->translator->trans('label_completeness_basic') . '</div></div>';
         }
 
-        return new Report($title, $title, $description, array($barChart));
+        return new Report($title, $description, array($barChart));
     }
 
     private function fullRecords($isBasic, $isMinimum, $title, $description)
@@ -250,7 +250,7 @@ class ReportController extends Controller
             $pieChart->isEmpty = true;
             $pieChart->emptyText = $this->translator->trans('no_complete_records');
         }
-        return new Report($title, $title, $description, array($pieChart));
+        return new Report($title, $description, array($pieChart));
     }
 
     private function minFieldOverview()
@@ -276,10 +276,8 @@ class ReportController extends Controller
 
     private function minTrend()
     {
-        $title = $this->translator->trans('label_completeness_minimum') . ' - ' . $this->translator->trans('history');
         return new Report(
-            $title,
-            $title,
+            $this->translator->trans('label_completeness_minimum') . ' - ' . $this->translator->trans('history'),
             $this->translator->trans('description_completeness_minimum_trend'),
             array($this->generateCompletenessTrendGraph(
                 true, false, $this->translator->trans('complete_records')
@@ -310,10 +308,8 @@ class ReportController extends Controller
 
     private function basicTrend()
     {
-        $title = $this->translator->trans('label_completeness_basic') . ' - ' . $this->translator->trans('history');
         return new Report(
-            $title,
-            $title,
+            $this->translator->trans('label_completeness_basic') . ' - ' . $this->translator->trans('history'),
             $this->translator->trans('description_completeness_basic_trend'),
             array($this->generateCompletenessTrendGraph(
                 false, true, $this->translator->trans('complete_records')
@@ -380,7 +376,7 @@ class ReportController extends Controller
             $pieChart->emptyText = $this->translator->trans('no_records_with_%label%', array('%label%' => $label));
         }
         $title = $this->translator->trans('label_ambiguity'). ' ' . $label;
-        return new Report($title, $title, $description, array($pieChart));
+        return new Report($title, $description, array($pieChart));
     }
 
     private function ambigWorkPids()
@@ -497,7 +493,7 @@ class ReportController extends Controller
         $lineChart = $this->generateFieldTrendGraph($field, $this->translator->trans('terms_with_id'));
 
         $title = $this->translator->trans('label_ambiguity') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
-        return new Report($title, $title, $this->translator->trans('description_ambiguity_terms'), array($pieChart, $barChart, $lineChart));
+        return new Report($title, $this->translator->trans('description_ambiguity_terms'), array($pieChart, $barChart, $lineChart));
     }
 
     private function ambigObjectName()
@@ -589,7 +585,7 @@ class ReportController extends Controller
         }
 
         $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef)) . ' in records';
-        return new Report($title, $title, $this->translator->trans('description_richness_occurrences'), array($barChart));
+        return new Report($title, $this->translator->trans('description_richness_occurrences'), array($barChart));
     }
 
     private function richOccurrencesStorageInstitution()
@@ -721,7 +717,7 @@ class ReportController extends Controller
         }
 
         $title = $this->translator->trans('label_richness') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
-        return new Report($title, $title, $this->translator->trans('description_richness_terms'), array($barChart));
+        return new Report($title, $this->translator->trans('description_richness_terms'), array($barChart));
     }
 
     private function richTermObjectName()
@@ -819,7 +815,7 @@ class ReportController extends Controller
             $isRightsWork, $isRightsDigitalRepresentation, $isRightsData, $this->translator->trans('complete_records')
         );
 
-        return new Report($title, $title, $description, array($pieChart, $lineGraph));
+        return new Report($title, $description, array($pieChart, $lineGraph));
     }
 
     private function openRecordRecords()
