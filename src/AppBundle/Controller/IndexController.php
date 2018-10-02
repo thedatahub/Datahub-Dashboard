@@ -45,7 +45,7 @@ class IndexController extends Controller
             'providers' => $providers,
             'provider' => $this->get('translator')->trans('choose_provider')
         );
-        return $this->render("home.html.twig", $data + $this->getBasicData('home', $request));
+        return $this->render("home." . $request->getLocale() . ".html.twig", $data + $this->getBasicData('home', $request));
     }
 
     /**
@@ -53,7 +53,7 @@ class IndexController extends Controller
      */
     public function manual(Request $request)
     {
-        return $this->render("manual.html.twig", $this->getBasicData('manual', $request));
+        return $this->render("manual." . $request->getLocale() . ".html.twig", $this->getBasicData('manual', $request));
     }
 
     /**

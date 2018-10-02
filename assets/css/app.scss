@@ -41,9 +41,22 @@ a:active {
   color: $color9;
 }
 
-.content {
-  padding-bottom: 35px;
-  margin-bottom: 30px;
+h2 {
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 25px;
+}
+
+h3, h4 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+h4 {
+  font-size: 20px;
 }
 
 .content::after {
@@ -52,24 +65,152 @@ a:active {
   display: table;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  line-height: 35px;
-  background-color: $color5;
+#footer {
+    margin-top: 4em;
+    padding: 0;
+
+    .row {
+      width: 100% !important;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+
+    .logos {
+        border-top: 1px solid #eee;
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0;
+
+        li {
+            float: left;
+            margin: 2em;
+            @media screen and (max-width: 561px) {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+
+        img {
+            height: 80px;
+            @media screen and (max-width: 1199px) {
+                height: 60px;
+            }
+            @media screen and (max-width: 991px) {
+                height: 40px;
+            }
+            @media screen and (max-width: 417px) {
+                height: 80px;
+            }
+            @media screen and (max-width: 340px) {
+                height: 60px;
+            }
+            @media screen and (max-width: 270px) {
+                height: 40px;
+            }
+            @media screen and (max-width: 220px) {
+                height: 20px;
+            }
+        }
+    }
+
+    .carousel-inner {
+      max-width: 1140px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .carousel-inner > .item {
+        @media screen and (min-width: 417px) {
+            display: block;
+        }
+    }
+
+    .row2 .logos {
+        border-bottom: 1px solid #eee;
+    }
+
+    .menu {
+        display: table;
+        margin: 0 auto;
+        list-style: none;
+        padding: 0;
+        margin-top: 2em;
+        margin-bottom: 2em;
+
+        li {
+            display: inline;
+            margin-left: 2em;
+            margin-right: 2em;
+            @media screen and (max-width: 340px) {
+                display: block;
+                text-align: center;
+            }
+           
+            a {
+                color: $color8;
+            }
+        }
+    }
+
+    .buttons {
+        display: none;
+        @media screen and (max-width: 417px) {
+            display: block;
+        }
+    }
+
+    #prevButton, #nextButton {
+        color: $color8;
+    }
 }
 
-.footer-content {
-  max-width: 1140px;
-  margin-left: auto;
-  margin-right: auto;
+#prevButton, #nextButton {
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 30px;
+    background-color: transparent;
+}
+
+#prevButton {
+    left: 10px;
+}
+
+#nextButton {
+    right: 10px;
+}
+
+.carouselButton {
+    position: absolute;
+    background-color: transparent;
+    border:none;
+    font-size:20px;
+}
+
+.carouselButton:hover {
+    background-color: transparent;
+    color: $color2 !important;
+}
+
+.carouselButton:focus{
+    outline: none;
+}
+
+.carouselButton:active{
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline: none !important;
 }
 
 .navbar {
   margin-bottom: 0;
   border-style: hidden;
-  padding-right: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .container-fluid {
@@ -92,16 +233,18 @@ a:active {
 }
 
 .navbar-default .navbar-nav > li.active a {
-  color: $color1;
+  color: $color8;
   background-color: transparent;
 }
 
 .navbar-default .navbar-nav > li.active a:hover {
+  color: $color8;
   background-color: transparent;
 }
 
-.navbar-default .navbar-nav > li a:hover {
-  color: $color1;
+.navbar-default .navbar-nav > li a:hover,
+.navbar-default .navbar-nav > li div a:hover {
+  color: $color8;
 }
 
 .navbar-default .navbar-nav > li div {
@@ -120,13 +263,12 @@ a:active {
 }
 
 .navbar-default .navbar-nav > li div a.active {
-  color: $color1;
+  color: $color8;
   text-decoration: underline;
 }
 
 .navbar-default .navbar-brand {
   padding: 0;
-  margin-left: 10px;
   width: 150px;
   height: 50px;
   background: url(../dashboard.png) no-repeat;
@@ -134,10 +276,8 @@ a:active {
   background-position: left center; 
 }
 
-@media screen and (max-width: 1155px) {
-  .dropdown {
-      width: 100% !important;
-  }
+.navbar-toggle {
+  margin-right: 0;
 }
 
 h1 {
@@ -148,8 +288,7 @@ h1 {
 }
 
 .provider-div-home {
-  max-width: 1140px;
-  min-width: 400px;
+  max-width: 1180px;
   margin-left: auto;
   margin-right: auto;
   background-color: $color5;
@@ -185,9 +324,14 @@ h1 {
   background: $color0;
 }
 
+.container {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 #main-container {
   font-size: 16px;
-  width: 1180px;
+  max-width: 1180px;
   margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
@@ -198,11 +342,18 @@ h1 {
 }
 
 .provider-div-report .select-provider {
-  width: 1140px;
+  max-width: 1140px;
   margin-left: auto;
   margin-right: auto;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+@media screen and (max-width: 1195px) {
+  .provider-div-report .select-provider {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 }
 
 .dropdown-toggle:focus,
@@ -211,6 +362,122 @@ h1 {
 button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.dashboard-home {
+
+  .row0 {
+    padding-bottom: 50px;
+  }
+
+  .row {
+    width: 100% !important;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .col-sm-12 {
+    padding: 0px;
+  }
+
+  .fa.icon.featured {
+    color: $color8;
+    opacity: 0.5;
+    float: left;
+    display: block;
+    font-size: 4em;
+    line-height: 1em;
+    -webkit-font-smoothing: antialiased;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-transform: none;
+  }
+
+  .fa.icon.featured.fa-database {
+    padding-left: 13.72px;
+  }
+
+  .fa.icon.featured.fa-code-fork {
+    padding-left: 32px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  .col-sm-12 h3,
+  .col-sm-12 p {
+    margin-left: 90px;
+  }
+
+  .col1 {
+    padding-right: 10px;
+  }
+
+  .col2 {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .col3 {
+    padding-left: 10px;
+  }
+
+  #row1 {
+    overflow: auto;
+  }
+
+  @media screen and (max-width: 1199px) {
+
+    .fa.icon.featured {
+      font-size: 3em;
+    }
+
+    .col-sm-12 h3,
+    .col-sm-12 p {
+      margin-left: 70px !important;
+    }
+
+    .fa.icon.featured.fa-database {
+      padding-left: 10.28px;
+    }
+
+    .fa.icon.featured.fa-code-fork {
+      padding-left: 24px;
+    }
+
+  }
+
+  @media screen and (max-width: 991px) {
+
+    .fa.icon.featured {
+      font-size: 2em;
+    }
+
+    .col-sm-12 h3,
+    .col-sm-12 p {
+      margin-left: 50px !important;
+    }
+
+    .fa.icon.featured.fa-database,
+    .fa.icon.featured.fa-code-fork {
+      padding-left: 0px;
+    }
+
+    .col1,
+    .col2 {
+      padding-left: 0px;
+      padding-left: 0px;
+      padding-bottom: 20px;
+    }
+
+    .col3 {
+      padding: 0px;
+    }
+
+  }
+
 }
 
 .print-provider {
@@ -223,7 +490,6 @@ button:focus {
 .left-menu {
   float: left;
   width: 320px;
-  margin-left: 20px;
   margin-right: 20px;
 }
 
@@ -280,9 +546,8 @@ button:focus {
 
 .caret {
   float: right;
-  position: absolute;
   right: 6px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
 .left-menu button[aria-expanded='false'] > .caret {
@@ -291,10 +556,9 @@ button:focus {
 
 #graphs {
   float: right;
-  width: 800px;
+  max-width: 800px;
   border: solid 1px $color5;
   background-color: $color0;
-  margin-right: 20px;
 }
 
 .graph {
@@ -445,7 +709,7 @@ div.tooltip {
 .download-button .btn {
   background-color: $color5;
   border: none;
-  color: $color1;
+  color: $color9;
   padding: 6px 8px;
   font-family: $font-family;
   font-size: 13px;
@@ -466,7 +730,58 @@ div.tooltip {
 }
  */
 
+@media screen and (min-width: 1200px) {
+  .container {
+    width: 1180px;
+  }
 
+  #main-container .dropdown-toggle {
+    display: none;
+  }
+
+  .left-menu {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  #main-container .dropdown-toggle {
+    max-width: 1199px;
+    background-color: $color5;
+    border: none;
+    color: $color9;
+    padding: 6px 8px;
+    font-family: $font-family;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .left-menu {
+    width: auto;
+    max-width: 1199px;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #graphs {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    max-width: 1199px;
+  }
+
+  svg {
+    width: auto !important;
+    max-width: 1199px;
+  }
+}
+
+svg {
+  width: 758px;
+}
 
 
 

@@ -136,9 +136,11 @@
         var width = 758 - margin.left - margin.right,
             height = data.length * 26;
 
+        var viewBoxWidth = width + margin.left + margin.right;
+        var viewBoxHeight = height + margin.top + margin.bottom;
+
         var svg = d3.select("#barchart{{ index }}").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewBox", "0 0 " + viewBoxWidth + " " + viewBoxHeight)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 

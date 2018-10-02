@@ -32,8 +32,7 @@
         var vis = d3.select('#piechart{{ index }}')
             .append("svg:svg")
             .data([data])
-            .attr("width", w)
-            .attr("height", h)
+            .attr("viewBox", "0 0 " + w + " " + h)
             .append("svg:g")
             .attr("transform", "translate(" + (w / 2) + "," + (r + marginSize) + ")");
 

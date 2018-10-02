@@ -7,12 +7,12 @@ contact: Contact
 legal_notification: Juridische kennisgeving
 
 
-# home.html.twig
-dashboard_description: Een korte beschrijving van de dashboard-applicatie.
-
-
 # manual.html.twig
 manual_description: Hier komt de 'manual' pagina.
+
+
+# menu_left.html.twig
+choose_report: Kies rapport
 
 
 # open_data.html.twig
@@ -273,3 +273,18 @@ not_filled_in: niet ingevuld
 application_id: Applicatie ID
 object_number: Objectnummer
 occurrence_amount: Aantal voorkomens
+
+
+# error.html.twig
+500_title: "Er ging iets mis"
+500_message: "Er is een onverwacht probleem opgetreden. Probeer het later opnieuw."
+
+
+# error404.html.twig
+404_title: "Pagina niet gevonden"
+404_message: "De opgevraagde pagina kon niet gevonden worden."
+
+
+# error403.html.twig
+403_title: "De gevraagde wijziging werd afgewezen"
+403_message: "Misschien probeerde je iets te wijzigen waar je geen toegang toe hebt."

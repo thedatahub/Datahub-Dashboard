@@ -1,0 +1,18 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <h1>Dashboard</h1>
+    <div class="center-block provider-div-home">
+        <div class="dropdown select-provider">
+            <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ provider }}<span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                {% for provider in providers %}
+                    <li><a class="dropdown-item" href="{{ app.request.locale }}/report/{{ provider.identifier }}">{{  provider.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div id="main-container">
+        <p>{% trans %}dashboard_description{% endtrans %}</p>
+    </div>
+{% endblock %}
