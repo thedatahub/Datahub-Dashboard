@@ -482,9 +482,6 @@ button:focus {
 
 .print-provider {
   display: none;
-  position: absolute;
-  top: -20px;
-  left: 20px;
 }
 
 .left-menu {
@@ -789,10 +786,19 @@ div.tooltip {
 
 
 @media print {
+  body, .content, .print-provider, .container, #graphs, .graph, .description {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .container {
+    margin-top: 0 !important;
+  }
   a[href]:after {
     content: none !important;
   }
-  .left-menu, .download-button, .title, .print-icon, .provider-div-report, .sf-toolbar, footer {
+  .left-menu, .dropdown-toggle, .download-button, .print-icon, .provider-div-report, .sf-toolbar, #footer {
     display: none !important;
   }
   .print-provider {
@@ -803,7 +809,7 @@ div.tooltip {
     margin: 40px;  /* this affects the margin in the printer settings */
   }
   #graphs {
-    transform: translateX(-340px);
+    zoom: 94%;
     border: none;
   }
   .graph {
