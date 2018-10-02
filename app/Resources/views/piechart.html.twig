@@ -1,5 +1,5 @@
 
-<div><div id="piechart">
+<div><div id="piechart{{ index }}">
 </div>
     {% if graph.canDownload %}
         {% include 'download.html.twig' %}
@@ -11,6 +11,7 @@
 
     var bigFontSize = "16px";
     var smallFontSize = "13px";
+    var pieChart = document.getElementById("piechart{{ index }}");
 
     if({{ graph.isEmpty | json_encode | raw }}) {
         var para = document.createElement("p");
@@ -18,7 +19,6 @@
         para.setAttribute("class", "empty-text");
         para.setAttribute("align", "center");
         para.appendChild(node);
-        var pieChart = document.getElementById("piechart");
         pieChart.appendChild(para);
     }
     else {
@@ -29,7 +29,7 @@
         var cols = ["#00BCE4", "#FFFFFF", "#5F585D"];
 
         var data = {{ graph.data | raw }};
-        var vis = d3.select('#piechart')
+        var vis = d3.select('#piechart{{ index }}')
             .append("svg:svg")
             .data([data])
             .attr("width", w)
@@ -80,7 +80,6 @@
             var node = document.createTextNode("{{ graph.fullText | raw }}");
             para.setAttribute("align", "center");
             para.appendChild(node);
-            var pieChart = document.getElementById("piechart");
             pieChart.appendChild(para);
         }
     }

@@ -1,0 +1,151 @@
+
+<div><div id="piecharts{{ index }}">
+    </div>
+    {% if graph.canDownload %}
+        {% include 'download.html.twig' %}
+    {% endif %}
+</div>
+<script>
+
+    //Set font-sizes of labels
+
+    var bigFontSize = "16px";
+    var smallFontSize = "13px";
+    var pieChart = document.getElementById("piecharts{{ index }}");
+
+    if({{ graph.isEmpty | json_encode | raw }}) {
+        var para = document.createElement("p");
+        var node = document.createTextNode("{{ graph.emptyText|raw }}");
+        para.setAttribute("class", "empty-text");
+        para.setAttribute("align", "center");
+        para.appendChild(node);
+        pieChart.appendChild(para);
+    }
+    else {
+/*        var w = 758;
+        var r = 75;
+        var marginSize = 20;
+        var h = r * 2 + marginSize * 2;
+        var cols = ["#00BCE4", "#FFFFFF", "#5F585D"];
+        var x = [ r + marginSize, 3*(r + marginSize), 5*(r + marginSize), 7*(r + marginSize)];
+        var y = [ r + marginSize, (r + marginSize) - 100, (r + marginSize), (r + marginSize)];
+
+*/// Define the data as a two-dimensional array of numbers. If you had other
+// data to associate with each number, replace each number with an object, e.g.,
+// `{key: "value"}`.
+        var data = [
+            [11975,  5871, 8916, 2868],
+            [ 1951, 10048, 2060, 6171],
+            [ 8010, 16145, 8090, 8045],
+            [ 1013,   990,  940, 6907]
+        ];
+
+// Define the margin, radius, and color scale. The color scale will be
+// assigned by index, but if you define your data using objects, you could pass
+// in a named field from the data object instead, such as `d.name`. Colors
+// are assigned lazily, so if you want deterministic behavior, define a domain
+// for the color scale.
+        var m = 19,
+            r = 75,
+            z = d3.scale.category20c();
+
+// Insert an svg element (with margin) for each row in our dataset. A child g
+// element translates the origin to the pie center.
+        var svg = d3.select('#piecharts{{ index }}').selectAll("svg")
+            .data(data)
+            .enter().append("svg")
+            .attr("width", (r + m) * 2)
+            .attr("height", (r + m) * 2)
+            .append("g")
+            .attr("transform", "translate(" + (r + m) + "," + (r + m) + ")");
+
+        // Declare an arc generator function
+        var arc = d3.svg.arc().outerRadius(r);
+
+// The data for each svg element is a row of numbers (an array). We pass that to
+// d3.layout.pie to compute the angles for each arc. These start and end angles
+// are passed to d3.svg.arc to draw arcs! Note that the arc radius is specified
+// on the arc, not the layout.
+        svg.selectAll("path")
+            .data(d3.layout.pie().sort(null))
+            .enter().append("path")
+            .attr("d", function (d) {
+                return arc(d);
+            })
+            .style("fill", function(d, i) { return z(i); });
+
+
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+        for(var j = 0; j < 4; j++) {
+            var subData = data[0];
+
+            var vis = d3.select('#piecharts')
+                .append("svg:svg")
+                .data([subData])
+                .attr("width", h * 2)
+                .attr("height", h * 2)
+                .append("svg:g");
+
+            var pie = d3.layout.pie().value(function (d) {
+                return d.value;
+            }).sort(null);
+
+            // Declare an arc generator function
+            var arc = d3.svg.arc().outerRadius(r)
+                .attr("transform", "translate(" + x[j] + "," + y[j] + ")");
+
+            // Select paths, use arc generator to draw
+            var arcs = vis.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
+            // Add the text (behind the slices, but to be redrawn at the end)
+            arcs.append("svg:text")
+                .attr("transform", function (d) {
+                    d.innerRadius = 0;
+                    d.outerRadius = r;
+                    return "translate(" + arc.centroid(d) + ")";
+                })
+                .attr("text-anchor", "middle")
+                .attr("id", function (d, i) {
+                    return "txt" + j + i;
+                })
+                .style("font-size", smallFontSize)
+                .style("font-family", "'Gotham', Helvetica, Arial, sans-serif")
+                .text(function (d, i) {
+                    return subData[i].value > 0 ? subData[i].label : "";
+                });
+            arcs.append("svg:path")
+                .attr("fill", function (d, i) {
+                    return i < cols.length ? cols[i] : color(i - cols.length);
+                })
+                .attr("d", function (d) {
+                    return arc(d);
+                });
+            // Redraw the labels so they are displayed on top of everything else
+            for (var i = 0; i < subData.length; i++) {
+                vis.append("use").attr("xlink:href", "#txt" + j + i);
+            }
+        }
+*/
+
+        if({{ graph.isFull | json_encode | raw }}) {
+            var para = document.createElement("p");
+            var node = document.createTextNode("{{ graph.fullText | raw }}");
+            para.setAttribute("align", "center");
+            para.appendChild(node);
+            pieChart.appendChild(para);
+        }
+    }
+</script>
+

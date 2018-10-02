@@ -53,11 +53,7 @@
     {% block body %}
     {% endblock %}
 </div>
-<footer class="footer">
-    <div class="footer-content">
-        <a href="mailto:{{ service_address }}?Subject={{ service_name }}" target="_top">{% trans %}contact{% endtrans %}</a> <a href="/{{ app.request.locale }}/legal">{% trans %}legal_notification{% endtrans %}</a>
-    </div>
-</footer>
+{% include "footer.html.twig" %}
 {% block javascripts %}
     <script src="{{ asset('build/js/app.js') }}"></script>
 {% endblock %}

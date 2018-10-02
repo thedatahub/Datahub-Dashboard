@@ -122,6 +122,18 @@ class ReportController extends Controller
         return new Graph('piechart', '[' . $pieChartData . ']');
     }
 
+    private function generatePieCharts($pieces)
+    {
+        $pieChartData = '';
+        foreach($pieces as $key => $value) {
+            if(strlen($pieChartData) > 0) {
+                $pieChartData .= ",";
+            }
+            $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
+        }
+        return new Graph('piecharts', '[[' . $pieChartData . ']]');
+    }
+
     private function generateLineGraph($lineChartData, $header)
     {
         return new Graph('linegraph', $lineChartData, $header);
@@ -363,8 +375,7 @@ class ReportController extends Controller
             }
         }
 
-
-        $pieChart = $this->generatePieChart($countsPie);
+        $pieChart = $this->generatePieCharts($countsPie);
         $pieChart->canDownload = true;
         if($isGood) {
             $pieChart->isFull = true;

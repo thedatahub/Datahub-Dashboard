@@ -1,5 +1,5 @@
 
-<div id="linegraph"></div>
+<div id="linegraph{{ index }}"></div>
 <script>
 
     //Set font-sizes of labels
@@ -142,11 +142,11 @@
         .x(function(d) { return x(d.date); })
         .y(function(d) { return y(d.value); });
 
-    var div = d3.select("#linegraph").append("div")
+    var div = d3.select("#linegraph{{ index }}").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var svg = d3.select("#linegraph").append("svg")
+    var svg = d3.select("#linegraph{{ index }}").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")

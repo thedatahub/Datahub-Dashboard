@@ -1,6 +1,6 @@
 
 <div>
-    <div id="barchart">
+    <div id="barchart{{ index }}">
     </div>
     {{ graph.bottomLegend | raw }}
 </div>
@@ -22,7 +22,7 @@
             para.setAttribute("class", "empty-text");
             para.setAttribute("align", "center");
             para.appendChild(node);
-            var barChart = document.getElementById("barchart");
+            var barChart = document.getElementById("barchart{{ index }}");
             barChart.appendChild(para);
         }
     }
@@ -136,7 +136,7 @@
         var width = 758 - margin.left - margin.right,
             height = data.length * 26;
 
-        var svg = d3.select("#barchart").append("svg")
+        var svg = d3.select("#barchart{{ index }}").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")

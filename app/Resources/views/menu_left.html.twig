@@ -1,7 +1,7 @@
 <!-- use class="active" for proper background for active buttons-->
 <div class="left-menu">
     <div class="btn-group-vertical">
-        {% set loopI = 1 %}
+        {% set index = 1 %}
 
         {% for aspect_name, aspect in left_menu %}
             {% set aspect_url = aspect_name|lower %}
@@ -20,15 +20,15 @@
                     {% set is_active_parameter = 0 %}
                 {% endif %}
 
-                {% set loopI = loopI + 1 %}
-                <div id="accordion{{ loopI }}">
+                {% set index = index + 1 %}
+                <div id="accordion{{ index }}">
                     <div class="card">
-                        <div class="card-header" id="heading{{ loopI }}">
+                        <div class="card-header" id="heading{{ index }}">
                             <button class="btn btn-default not-rounded parameter {% if is_active_parameter %}parameter-active{% endif %}" data-toggle="collapse"
-                                    data-target="#collapse{{ loopI }}" aria-expanded="{% if is_active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ loopI }}">{{ parameter.label|trans }}<span class="caret"></span></button>
+                                    data-target="#collapse{{ index }}" aria-expanded="{% if is_active_parameter %}true{% else %}false{% endif %}" aria-controls="collapse{{ index }}">{{ parameter.label|trans }}<span class="caret"></span></button>
                         </div>
 
-                        <div id="collapse{{ loopI }}" class="collapse {% if is_active_parameter %}in{% endif %}" aria-labelledby="heading{{ loopI }}" data-parent="#accordion{{ loopI }}">
+                        <div id="collapse{{ index }}" class="collapse {% if is_active_parameter %}in{% endif %}" aria-labelledby="heading{{ index }}" data-parent="#accordion{{ index }}">
                             <div class="card-body">
                                 <div class="btn-group-vertical collapse collapsed-buttons">
 
