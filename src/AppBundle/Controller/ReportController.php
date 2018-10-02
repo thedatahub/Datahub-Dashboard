@@ -126,10 +126,9 @@ class ReportController extends Controller
     {
         $pieChartData = '';
         foreach($pieces as $key => $value) {
-            if(strlen($pieChartData) > 0) {
-                $pieChartData .= ",";
+            foreach($value as $k => $v) {
+                $pieChartData .= (strlen($pieChartData) == 0 ? '' : ',') . $v;
             }
-            $pieChartData .= '{"label":"' . $key . ' (' . $value . ')", "value":"' . $value . '"}';
         }
         return new Graph('piecharts', '[[' . $pieChartData . ']]');
     }
@@ -375,7 +374,7 @@ class ReportController extends Controller
             }
         }
 
-        $pieChart = $this->generatePieCharts($countsPie);
+        $pieChart = $this->generatePieChart($countsPie);
         $pieChart->canDownload = true;
         if($isGood) {
             $pieChart->isFull = true;
