@@ -264,6 +264,7 @@ terms_without_id: Termen zonder persistente ID
 ids: ID's
 all_terms_have_an_id: Alle termen hebben een persistente ID.
 no_records_for_this_field: Er zijn geen records waarvoor dit veld is ingevuld.
+no_terms_with_id_1: Er zijn geen termen met een persistente ID (1 term in totaal).
 no_terms_with_id_%x%: Er zijn geen termen met een persistente ID (%x% termen in totaal).
 ids_for_this_authority: Termen met ID's voor deze authority
 no_authorities_for_these_terms: Er zijn geen authorities voor deze termen.

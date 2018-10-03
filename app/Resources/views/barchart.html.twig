@@ -16,9 +16,10 @@
     var marginSize = 20;
 
     if({{ graph.isEmpty | json_encode | raw }}) {
-        if("{{ graph.emptyText | raw }}".length > 0) {
+        var emptyText = "{{ graph.emptyText | raw }}";
+        if(emptyText.length > 0) {
             var para = document.createElement("p");
-            var node = document.createTextNode("{{ graph.emptyText|raw }}");
+            var node = document.createTextNode(emptyText);
             para.setAttribute("class", "empty-text");
             para.setAttribute("align", "center");
             para.appendChild(node);

@@ -553,7 +553,11 @@ class ReportController extends Controller
                 $termsPieChart->emptyText = $this->translator->trans('no_records_for_this_field');
                 $termsPieChart->canDownload = false;
             } else {
-                $termsPieChart->emptyText = $this->translator->trans('no_terms_with_id_%x%', array('%x%' => count($termsWithoutId)));
+                if(count($termsWithoutId) == 1) {
+                    $termsPieChart->emptyText = $this->translator->trans('no_terms_with_id_1');
+                } else {
+                    $termsPieChart->emptyText = $this->translator->trans('no_terms_with_id_%x%', array('%x%' => count($termsWithoutId)));
+                }
             }
         }
 
@@ -567,6 +571,7 @@ class ReportController extends Controller
             }
         }
         ksort($pieces);
+        $emptyIdsPie = count($pieces) == 0;
         $pieces[0] = 0;
 
         $pieces_ = array();
@@ -579,6 +584,9 @@ class ReportController extends Controller
             $pieces_[$k] = $value;
         }
         $idsPieChart = $this->generatePieChart($pieces_);
+        if($emptyIdsPie) {
+            $idsPieChart->isEmpty = true;
+        }
 
         $authorityPieces = array();
         foreach($authorityCounts as $authority => $terms) {
@@ -939,7 +947,6 @@ class ReportController extends Controller
         }
         $pieces = array($this->translator->trans('complete_records') => $done, $this->translator->trans('incomplete_records') => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
-        $pieChart->canDownload = true;
         if($total - $done === 0 && $done > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_records_complete');

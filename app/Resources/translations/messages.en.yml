@@ -264,6 +264,7 @@ terms_without_id: Terms without persistent ID
 ids: IDs
 all_terms_have_an_id: All terms have a persistent ID.
 no_records_for_this_field: There are no records for which this field is filled in.
+no_terms_with_id_1: There are no terms with a persistent ID (1 term in total).
 no_terms_with_id_%x%: There are no terms with a persistent ID (%x% terms in total).
 ids_for_this_authority: Terms with IDs for this authority
 no_authorities_for_these_terms: There are no authorities for these terms.

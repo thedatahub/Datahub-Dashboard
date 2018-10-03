@@ -14,12 +14,15 @@
     var pieChart = document.getElementById("piechart{{ index }}");
 
     if({{ graph.isEmpty | json_encode | raw }}) {
-        var para = document.createElement("p");
-        var node = document.createTextNode("{{ graph.emptyText|raw }}");
-        para.setAttribute("class", "empty-text");
-        para.setAttribute("align", "center");
-        para.appendChild(node);
-        pieChart.appendChild(para);
+        var emptyText = "{{ graph.emptyText | raw }}";
+        if(emptyText.length > 0) {
+            var para = document.createElement("p");
+            var node = document.createTextNode(emptyText);
+            para.setAttribute("class", "empty-text");
+            para.setAttribute("align", "center");
+            para.appendChild(node);
+            pieChart.appendChild(para);
+        }
     }
     else {
         var w = 758;
