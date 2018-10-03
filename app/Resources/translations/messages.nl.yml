@@ -7,10 +7,6 @@ contact: Contact
 legal_notification: Juridische kennisgeving
 
 
-# manual.html.twig
-manual_description: Hier komt de 'manual' pagina.
-
-
 # menu_left.html.twig
 choose_report: Kies rapport
 

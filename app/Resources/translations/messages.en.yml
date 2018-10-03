@@ -7,10 +7,6 @@ contact: Contact
 legal_notification: Legal notification
 
 
-# manual.html.twig
-manual_description: Here comes the 'manual' page.
-
-
 # menu_left.html.twig
 choose_report: Choose report
 
