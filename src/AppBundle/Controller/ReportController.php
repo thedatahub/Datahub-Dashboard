@@ -122,11 +122,15 @@ class ReportController extends Controller
     {
         $pieChartData = '';
         foreach($pieces as $key => $value) {
+            $data = '';
             foreach($value as $k => $v) {
-                $pieChartData .= (strlen($pieChartData) == 0 ? '' : ',') . $v;
+                $data .= (strlen($data) == 0 ? '' : ',') . '"' . $k . ' (' . $v . ')": "' . $v . '"';
+            }
+            if(strlen($data) > 0) {
+                $pieChartData .= (strlen($pieChartData) == 0 ? '' : ',') . '{ ' . $data . ' }';
             }
         }
-        return new Graph('piecharts', '[[' . $pieChartData . ']]');
+        return new Graph('piecharts', '[' . $pieChartData . ']');
     }
 
     private function generateLineGraph($lineChartData, $header)
@@ -358,12 +362,19 @@ class ReportController extends Controller
             $isGood = true;
         }
         $countsPie = array();
+        $hasZero = false;
         foreach($counts as $key => $value) {
-            if($key === 1) {
-                $countsPie[$label . ' ' . $this->translator->trans('which_occur_%x%_time', array('%x%' => $key))] = $value;
+            if($key == 1) {
+                $countsPie[$label . ' ' . $this->translator->trans('which_occur_1_time')] = $value;
             } else {
                 $countsPie[$label . ' ' . $this->translator->trans('which_occur_%x%_times', array('%x%' => $key))] = $value;
             }
+            if($key == 0) {
+                $hasZero = true;
+            }
+        }
+        if(!$hasZero) {
+            $countsPie[$label . ' ' . $this->translator->trans('which_occur_%x%_times', array('%x%' => 0))] = 0;
         }
 
         $pieChart = $this->generatePieChart($countsPie);
@@ -389,7 +400,7 @@ class ReportController extends Controller
         return $this->ambigIds('data_pid', $this->translator->trans('data_pids'), $this->translator->trans('description_ambiguity_records_data_pids'));
     }
 
-    private function checkIdsAndAuthoritiesForTerm($term, $fieldValue, &$authorities, &$termsWithId, &$termsWithoutId)
+    private function checkIdsAndAuthoritiesForTerm($term, $fieldValue, &$authorities, &$localIds, &$termsWithId, &$termsWithoutId)
     {
         $firstPurlId = null;
         if ($fieldValue['id'] && count($fieldValue['id']) > 0) {
@@ -397,50 +408,57 @@ class ReportController extends Controller
                 if (array_key_exists('source', $termId)) {
                     $id = $termId['id'];
                     $authority = $termId['source'];
+                    $purlId = null;
                     if ($termId['type'] === 'purl') {
-                        if (!$firstPurlId) {
+                        $purlId = $id;
+                        if($firstPurlId == null) {
                             $firstPurlId = $id;
                         }
                         if (array_key_exists($authority, $authorities)) {
-                            if (!in_array($id, $authorities[$authority])) {
-                                $authorities[$authority][] = $id;
+                            if (!in_array($term, $authorities[$authority])) {
+                                $authorities[$authority][] = $term;
                             }
                         } else {
-                            $authorities[$authority] = array($id);
+                            $authorities[$authority] = array($term);
                         }
-                    } elseif($termId['type'] === 'local') {
+                    } elseif ($termId['type'] === 'local') {
                         if (array_key_exists($authority, $authorities)) {
-                            if (!in_array($id, $authorities[$authority])) {
-                                $authorities[$authority][] = $id;
+                            if (!in_array($term, $authorities[$authority])) {
+                                $authorities[$authority][] = $term;
                             }
                         } else {
-                            $authorities[$authority] = array($id);
+                            $authorities[$authority] = array($term);
+                        }
+                        $key = $authority . '::' . $id;
+                        if (!array_key_exists($term, $localIds)) {
+                            $localIds[$term] = array($key);
+                        } else if (!in_array($key, $localIds[$term])) {
+                            $localIds[$term][] = $key;
+                        }
+                    }
+                    if($purlId != null) {
+                        $key = $authority . '::' . $id;
+                        if (!array_key_exists($term, $termsWithId)) {
+                            $termsWithId[$term] = array($key);
+                        } else if (!in_array($key, $termsWithId[$term])) {
+                            $termsWithId[$term][] = $key;
                         }
                     }
                 }
             }
-            if ($firstPurlId) {
-                if(!array_key_exists($term, $termsWithId)) {
-                    $termsWithId[$term] = $firstPurlId;
-                }
-            } else {
-                if (!array_key_exists($term, $termsWithoutId)) {
-                    $termsWithoutId[$term] = '';
-                }
-            }
-        } else {
-            if (!array_key_exists($term, $termsWithoutId)) {
-                $termsWithoutId[$term] = '';
-            }
+        }
+        if ($firstPurlId == null && !array_key_exists($term, $termsWithoutId) && !array_key_exists($term, $termsWithId)) {
+            $termsWithoutId[$term] = '';
         }
     }
 
     private function ambigTerms($field)
     {
         $allRecords = $this->getAllRecords();
+        $authorities = array();
+        $localIds = array();
         $termsWithId = array();
         $termsWithoutId = array();
-        $authorities = array();
         if($allRecords) {
             foreach ($allRecords as $record) {
                 $data = $record->getData();
@@ -450,7 +468,7 @@ class ReportController extends Controller
                         if ($fieldValue['term'] && count($fieldValue['term']) > 0) {
                             $term = RecordUtil::getPreferredTerm($fieldValue['term']);
                             if($term) {
-                                $this->checkIdsAndAuthoritiesForTerm($term, $fieldValue, $authorities, $termsWithId, $termsWithoutId);
+                                $this->checkIdsAndAuthoritiesForTerm($term, $fieldValue, $authorities, $localIds, $termsWithId, $termsWithoutId);
                             }
                         }
                     }
@@ -458,26 +476,154 @@ class ReportController extends Controller
             }
         }
 
-        $pieces = array($this->translator->trans('terms_with_id') => count($termsWithId), $this->translator->trans('terms_without_id') => count($termsWithoutId));
-        $pieChart = $this->generatePieChart($pieces);
-        $pieChart->canDownload = true;
-        if(count($termsWithoutId) === 0 && count($termsWithId) > 0) {
-            $pieChart->isFull = true;
-            $pieChart->fullText = $this->translator->trans('all_terms_have_an_id');
-        }
-        elseif(count($termsWithId) === 0) {
-            $pieChart->isEmpty = true;
-            if(count($termsWithoutId) === 0) {
-                $pieChart->emptyText = $this->translator->trans('no_records_for_this_field');
-                $pieChart->canDownload = false;
-            } else {
-                $pieChart->emptyText = $this->translator->trans('no_terms_with_id_%x%', array('%x%' => count($termsWithoutId)));
+        $totalTerms = count($termsWithId) + count($termsWithoutId);
+
+        $counts = array();
+        $idCounts = array();
+        $authorityCounts = array();
+        foreach($localIds as $term => $ids) {
+            foreach($ids as $id) {
+                if(!array_key_exists($id, $idCounts)) {
+                    $idCounts[$id] = array($term);
+                } else {
+                    $idCounts[$id][] = $term;
+                }
+
+                $authority = explode('::', $id)[0];
+                if(!array_key_exists($authority, $authorityCounts)) {
+                    $authorityCounts[$authority] = array($term => array($id));
+                } else if(!array_key_exists($term, $authorityCounts[$authority])) {
+                    $authorityCounts[$authority][$term] = array($id);
+                } else if(!in_array($id, $authorityCounts[$authority][$term])) {
+                    $authorityCounts[$authority][$term][] = $id;
+                }
             }
         }
 
+        foreach($termsWithId as $term => $ids) {
+            $count = count($ids);
+            if(array_key_exists($count, $counts)) {
+                $counts[$count]++;
+            } else {
+                $counts[$count] = 1;
+            }
+
+            foreach($ids as $id) {
+                if(!array_key_exists($id, $idCounts)) {
+                    $idCounts[$id] = array($term);
+                } else {
+                    $idCounts[$id][] = $term;
+                }
+
+                $authority = explode('::', $id)[0];
+                if(!array_key_exists($authority, $authorityCounts)) {
+                    $authorityCounts[$authority] = array($term => array($id));
+                } else if(!array_key_exists($term, $authorityCounts[$authority])) {
+                    $authorityCounts[$authority][$term] = array($id);
+                } else if(!in_array($id, $authorityCounts[$authority][$term])) {
+                    $authorityCounts[$authority][$term][] = $id;
+                }
+            }
+        }
+        ksort($counts);
+        $counts[0] = count($termsWithoutId);
+
+        $pieces = array();
+        $zeroes = null;
+        foreach($counts as $occurrences => $count) {
+            if($occurrences == 0) {
+                $zeroes = $count;
+            } else if($occurrences == 1) {
+                $pieces[$this->translator->trans('terms_with_1_id')] = $count;
+            } else {
+                $pieces[$this->translator->trans('terms_with_%x%_ids', array('%x%' => $occurrences))] = $count;
+            }
+        }
+        ksort($pieces);
+        $pieces[$this->translator->trans('terms_without_id')] = ($zeroes == null ? 0 : $zeroes);
+        $termsPieChart = $this->generatePieChart($pieces);
+        $termsPieChart->canDownload = true;
+        if(count($termsWithoutId) === 0 && count($termsWithId) > 0) {
+            $termsPieChart->isFull = true;
+            $termsPieChart->fullText = $this->translator->trans('all_terms_have_an_id');
+        }
+        elseif(count($termsWithId) === 0) {
+            $termsPieChart->isEmpty = true;
+            if(count($termsWithoutId) === 0) {
+                $termsPieChart->emptyText = $this->translator->trans('no_records_for_this_field');
+                $termsPieChart->canDownload = false;
+            } else {
+                if(count($termsWithoutId) == 1) {
+                    $termsPieChart->emptyText = $this->translator->trans('no_terms_with_id_1');
+                } else {
+                    $termsPieChart->emptyText = $this->translator->trans('no_terms_with_id_%x%', array('%x%' => count($termsWithoutId)));
+                }
+            }
+        }
+
+        $pieces = array();
+        foreach($idCounts as $key => $ids) {
+            $count = count($ids);
+            if(array_key_exists($count, $pieces)) {
+                $pieces[$count]++;
+            } else {
+                $pieces[$count] = 1;
+            }
+        }
+        ksort($pieces);
+        $emptyIdsPie = count($pieces) == 0;
+        $pieces[0] = 0;
+
+        $pieces_ = array();
+        foreach($pieces as $key => $value) {
+            if($key == 1) {
+                $k = $this->translator->trans('ids') . ' ' . $this->translator->trans('which_occur_1_time');
+            } else {
+                $k = $this->translator->trans('ids') . ' ' . $this->translator->trans('which_occur_%x%_times', array('%x%' => $key));
+            }
+            $pieces_[$k] = $value;
+        }
+        $idsPieChart = $this->generatePieChart($pieces_);
+        if($emptyIdsPie) {
+            $idsPieChart->isEmpty = true;
+        }
+
+        $authorityPieces = array();
+        foreach($authorityCounts as $authority => $terms) {
+            $termsForThisAuth = 0;
+            $authorityPieces[$authority] = array();
+            foreach($terms as $term => $ids) {
+                $termsForThisAuth++;
+                $count = count($ids);
+                if(!array_key_exists($count, $authorityPieces[$authority])) {
+                    $authorityPieces[$authority][$count] = 1;
+                } else {
+                    $authorityPieces[$authority][$count]++;
+                }
+            }
+            ksort($authorityPieces[$authority]);
+            $authorityPieces[$authority][0] = $totalTerms - $termsForThisAuth;
+        }
+
+        $authorityPieces_ = array();
+        foreach($authorityPieces as $authority => $values) {
+            $authorityPieces_[$authority] = array();
+            foreach($values as $key => $value) {
+                if($key == 0) {
+                    $k = $this->translator->trans('terms_without_%auth%_id', array('%auth%' => $authority));
+                } elseif($key == 1) {
+                    $k = $this->translator->trans('terms_with_1_%auth%_id', array('%auth%' => $authority));
+                } else {
+                    $k = $this->translator->trans('terms_with_%x%_%auth%_ids', array('%x%' => $key, '%auth%' => $authority));
+                }
+                $authorityPieces_[$authority][$k] = $value;
+            }
+        }
+        $authorityPieCharts = $this->generatePieCharts($authorityPieces_);
+
         $csvData = '';
-        foreach($authorities as $key => $value) {
-            $csvData .= PHP_EOL . '"' . $key . '","' . $key . '","' . count($value) . '","0"';
+        foreach($authorities as $term => $ids) {
+            $csvData .= PHP_EOL . '"' . $term . '","' . $term . '","' . count($ids) . '","0"';
         }
         $barChart = $this->generateBarChart($csvData, $this->translator->trans('ids_for_this_authority'));
         $barChart->canDownload = true;
@@ -487,13 +633,13 @@ class ReportController extends Controller
                 $barChart->emptyText = $this->translator->trans('no_authorities_for_these_terms');
             }
         } else {
-            $barChart->max = count($termsWithId) + count($termsWithoutId);
+            $barChart->max = $totalTerms;
         }
 
         $lineChart = $this->generateFieldTrendGraph($field, $this->translator->trans('terms_with_id'));
 
         $title = $this->translator->trans('label_ambiguity') . ' ' . $this->translator->trans(RecordUtil::getFieldLabel($field, $this->dataDef));
-        return new Report($title, $this->translator->trans('description_ambiguity_terms'), array($pieChart, $barChart, $lineChart));
+        return new Report($title, $this->translator->trans('description_ambiguity_terms'), array($termsPieChart, $idsPieChart, $authorityPieCharts, $barChart, $lineChart));
     }
 
     private function ambigObjectName()
@@ -801,7 +947,6 @@ class ReportController extends Controller
         }
         $pieces = array($this->translator->trans('complete_records') => $done, $this->translator->trans('incomplete_records') => $total - $done);
         $pieChart = $this->generatePieChart($pieces);
-        $pieChart->canDownload = true;
         if($total - $done === 0 && $done > 0) {
             $pieChart->isFull = true;
             $pieChart->fullText = $this->translator->trans('all_records_complete');

@@ -1,6 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+    {% include 'providers.html.twig' %}
     <div id="main-container" class="container">
         <h1 class="sr-only application-heading">Dashboard</h1>
 
@@ -25,7 +26,7 @@
                 <a name="technology"></a>
                 <h3>Technologie</h3>
 
-                <p>Het Dashboard is een applicatie die de collectiemetadata uit het platform analyseert op basis van een ontwikkelde <a href="{{ route_manual }}">meetmethodologie</a> en de resultaten hieruit op een gebruiksvriendelijke wijze digitaal visualiseert. Het platform is opgebouwd als een architectuur van 'loosely coupled' componenten die automatisch collectiematadata uitwisselen, transformeren en beschikbaar stellen via interfaces voor mensen of machines (<a href="https://nl.wikipedia.org/wiki/Application_programming_interface" target="_blank">API's</a>).</p>
+                <p>Het Dashboard is een applicatie die de collectiemetadata uit het platform analyseert op basis van een ontwikkelde <a href="{{ path('manual') ~ '#measurement' }}">meetmethodologie</a> en de resultaten hieruit op een gebruiksvriendelijke wijze digitaal visualiseert. Het platform is opgebouwd als een architectuur van 'loosely coupled' componenten die automatisch collectiematadata uitwisselen, transformeren en beschikbaar stellen via interfaces voor mensen of machines (<a href="https://nl.wikipedia.org/wiki/Application_programming_interface" target="_blank">API's</a>).</p>
 
                 <h4>Het Dashboard</h4>
 

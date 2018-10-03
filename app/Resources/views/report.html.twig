@@ -19,7 +19,7 @@
             {% for graph in report.graphs %}
                 {% set index = index + 1 %}
                 <div class="graph">
-                    {% include graph.template with {'route': download, 'active_aspect': active_aspect, 'active_parameter': active_parameter, 'active_question': active_question, 'graph': graph, 'index': index } only %}
+                    {% include graph.template with { 'route': download, 'active_aspect': active_aspect, 'active_parameter': active_parameter, 'active_question': active_question, 'graph': graph, 'index': index } only %}
                 </div>
             {% endfor %}
         </div>

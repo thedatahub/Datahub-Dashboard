@@ -846,13 +846,33 @@ class DownloadController extends Controller
         return $this->richTermBar('displayed_event');
     }
 
-    private function openRecordRecordsPiechart()
-    {
-
-    }
-
     private function openRecordTermsPiechart()
     {
+        return $this->ambigtermPie('rights_data');
+    }
 
+    private function openRecordTermsBarchart()
+    {
+        return $this->ambigtermBar('rights_data');
+    }
+
+    private function openWorkTermsPiechart()
+    {
+        return $this->ambigtermPie('rights_work');
+    }
+
+    private function openWorkTermsBarchart()
+    {
+        return $this->ambigtermBar('rights_work');
+    }
+
+    private function openDigRepTermsPiechart()
+    {
+        return $this->ambigtermPie('rights_digital_representation');
+    }
+
+    private function openDigRepTermsBarchart()
+    {
+        return $this->ambigtermBar('rights_digital_representation');
     }
 }

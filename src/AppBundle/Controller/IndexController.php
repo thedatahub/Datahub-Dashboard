@@ -20,9 +20,12 @@ class IndexController extends Controller
             }
             $translatedRoutes[] = $translatedRoute;
         }
+        $providers = $this->get('doctrine_mongodb')->getManager()->getRepository('ProviderBundle:Provider')->findAll();
         return array(
             'current_page' => $currentPage,
-            'translated_routes'=> $translatedRoutes
+            'translated_routes'=> $translatedRoutes,
+            'provider_name' => $this->get('translator')->trans('choose_provider'),
+            'providers' => $providers
         );
     }
 
@@ -32,13 +35,7 @@ class IndexController extends Controller
      */
     public function homeWithLocale(Request $request)
     {
-        $providers = $this->get('doctrine_mongodb')->getRepository('ProviderBundle:Provider')->findAll();
-
-        $data = array(
-            'providers' => $providers,
-            'provider' => $this->get('translator')->trans('choose_provider')
-        );
-        return $this->render("home." . $request->getLocale() . ".html.twig", $data + $this->getBasicData('home', $request));
+        return $this->render("home." . $request->getLocale() . ".html.twig", $this->getBasicData('home', $request));
     }
 
     /**
