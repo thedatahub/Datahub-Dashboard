@@ -3,6 +3,109 @@
 {% block body %}
     {% include 'providers.html.twig' %}
     <div id="main-container" class="container">
-        <p>{% trans %}manual_description{% endtrans %}</p>
+        <h1 class="sr-only application-heading">Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+		    	<h2>Handleiding voor het Dashboard</h2>
+
+		    	<p>Het Dashboard analyseert op basis van een ontwikkelde meetmethodologie de collectiemetadata van Vlaamse musea voor Schone en Hedendaagse Kunsten die aanwezig is in de Datahub. Per instelling worden de meetresultaten via grafieken digitaal gevisualiseerd. De finaliteit is het rapporteren van de impact van de door de museale medewerkers uitgevoerde acties op de collectiemetadata.</p>
+
+		    	<h3>Pagina-inhoud</h3>
+
+                <ul>
+                    <li><a href="#measurement">Meetmethodologie</a></li>
+                    <li><a href="#use">Het Dashboard gebruiken</a></li>
+                    <li><a href="#faq">F.A.Q.</a></li>
+                </ul>
+
+                <a name="measurement"></a>
+                <h3>Meetmethodologie</h3>
+
+                <p>De gehanteerde meetmethodologie vertrekt vanuit de vraagstelling: "Waarom is kwaliteitsvolle metadata belangrijk in een digitale context?" Kwaliteitsvol betekent hier: de collectiemetadata zijn bruikbaar in een digitale context. Om deze bruikbaarheid te kunnen bepalen, werden vijf "actionable" aspecten geïdentificeerd waaraan de data moet voldoen:</p>
+
+                <ul>
+                    <li><strong>Doorzoekbaar</strong>: Het is mogelijk op basis van een zoekopdracht, coherente en relevante zoekresultaten te verkrijgen.</li>
+                    <li><strong>Analyseerbaar</strong>: Het is mogelijk om een dataset te analyseren binnen het kader van diverse vraagstellingstypes (historisch onderzoek, materiaaltechnisch, maatschappelijk, politiek, sociaal ...).</li>
+                    <li><strong>Aggregeerbaar</strong>: Het is mogelijk om verschillende datasets te combineren tot een coherent geheel op basis van een gemeenschappelijk datamodel.</li>
+                    <li><strong>Betrouwbaar</strong>: Het is mogelijk om op basis van de afkomst van de data (provenance, autoriteit) te bepalen of de data al dan niet betrouwbaar is.</li>
+                    <li><strong>Houdbaar</strong>: Het is mogelijk om data op een systeemonafhankelijke wijze duurzaam te bewaren zodat ze ook op langere termijn bruikbaar blijft.</li>
+                </ul>
+
+                <p>Deze actionables bieden een goede context voor de interpretatie van volgende vier parameters:</p>
+
+                <ul>
+                	<li><strong>Volledigheid</strong></li>
+                    <li><strong>Ondubbelzinnigheid</strong></li>
+                    <li><strong>Rijkheid</strong></li>
+                    <li><strong>Openheid</strong></li>
+                </ul>
+
+                <p>Voor elk van deze parameters werd een set van concrete vragen opgesteld die een kwantificeerbaar antwoord opleveren (uitgedrukt in discrete cijfers). Er wordt bewust geen directe kwalitatieve appreciatie gemaakt over de inhoud van de collectiemetadata aangezien een dergelijke aanpak al te contextgevoelig is.</p>
+
+                <p>De velden die gemeten worden, zijn:</p>
+                
+                <ul>
+                	<li>De minimimale registratievelden volgens het Project CEST invulboek;</li>
+                    <li>De basisregistratievelden volgens het Project CEST invulboek;</li>
+                    <li>Een uitgerbeide set velden waarin naast de koppelingen met autoriteiten zoals AAT, RKD artist, Wikidata ... ook de rechtenstatus voor het fysieke object, de record en de digitale representaties is opgenomen.</li>
+                </ul>
+                
+                <p>Per veld werd geëvalueerd of een toepassing van de parameters en de vragen een zinvol resultaat zou opleveren. Het eindresultaat is een matrix met tientallen meetpunten die mogelijk waardevolle inzichten over de collectiemetadata kunnen opleveren. Een aantal bijkomende metingen over verschillende velden heen worden uitgevoerd in functie van het tijdsverloop. Het doel van deze geaggregeerde metingen is om de impact van acties op de registratie doorheen de tijd te kunnen visualiseren.</p>
+
+                <a name="use"></a>
+                <h3>Het Dashboard gebruiken</h3>
+
+                <p>Provider selecteren / menu gebruiken om specifiek rapport te kiezen / downloaden / printen</p>
+
+                <a name="faq"></a>
+                <h3>F.A.Q.</h3>
+
+                <p><em>Q: Wordt alle informatie die geregistreerd werd door de musea geanalyseerd?</em></p>
+
+                <p>Het Dashboard haalt de collectiemetadata op uit de Datahub. Een record in de Datahub bestaat uit een gecureerde reeks van basiseigenschappen die geregistreerd werden door de musea. De musea registreren veel verschillende aspecten van een cultureel erfgoedobject. Enkele aspecten worden niet gepubliceerd omwille van verscheidene redenen zoals copyright, vertrouwelijkheid, veiligheid en privacy. Andere eigenschappen, zoals tentoonstellingsgeschiedenis of herkomst, worden mogelijk op een later tijdstip toegevoegd aangezien kennis verzamelen over een cultureel erfgoedobject blijvende inspanning vergt.</p>
+                    
+                <p>Alle velden die behoren tot de minimale registratie, de basisregistratie of de uitgebreide set worden weergegeven in het overzicht van alle velden, ongeacht of deze al dan werden opgenomen in de Datahub. Velden die niet aanwezig zijn in de records in de Datahub, maar wel getoond worden in het overzicht van alle velden zijn:</p>
+                    
+                    <ul>
+                        <li>
+                            <strong>Minimale registratie</strong>
+                        	<ul>
+                        		<li>Term verwervingsmethode</li>
+                        	    <li>Naam verwervingsbron</li>
+                        	    <li>Waarde verwervingsdatum</li>
+                        	</ul>
+                        </li>
+                        <li>
+                            <strong>Basisregistratie</strong>
+                        	<ul>
+                        	    <li>Term verwervingsmethode</li>
+                        	    <li>Naam verwervingsbron</li>
+                        	    <li>Waarde verwervingsdatum</li>
+                        	    <li>Term conditie</li>
+                        	</ul>
+                        </li>
+                        <li>
+                            <strong>Uitgebreide set</strong>
+                        	<ul>
+                        	    <li>Identificatie verwervingsmethode</li>
+                        	    <li>Assessor conditie</li>
+                        	    <li>Begindatum conditie</li>
+                        	    <li>Einddatum conditie</li>
+                        	</ul>
+                        </li>
+                    </ul>
+
+                <p>De waarde voor deze velden in het Dashboard is steeds 0. Dit wil niet zeggen dat de musea hier geen metadata voor geregistreerd hebben, maar enkel dat deze niet aanwezig zijn in de gecureerde reeks van basiseigenschappen. In de analyse van het aantal volledig ingevulde records en de historische trend hiervan wordt geen rekening gehouden met deze velden.</p>
+
+                <p><em>Q: Hoe vaak worden de rapporten geüpdatet?</em></p>
+
+                <p>De rapporten van het Dashboard worden dagelijks geüpdatet. Updates bevatten aanpassingen van bestaande records en de toevoeging van nieuwe records.</p>
+
+            </div>
+		</div>  
     </div>
 {% endblock %}
