@@ -207,14 +207,14 @@ label_richness_terms_displayed_event: Afgebeelde gebeurtenis
 
 label_openness: Openheid
 label_openness_record: Record
-label_openness_record_records: Records
-label_openness_record_terms: Termen
+label_openness_record_records: Volledigheid
+label_openness_record_terms: Ondubbelzinnigheid
 label_openness_work: Werk
-label_openness_work_records: Records
-label_openness_work_terms: Termen
+label_openness_work_records: Volledigheid
+label_openness_work_terms: Ondubbelzinnigheid
 label_openness_digital_representation: Digitale representatie
-label_openness_digital_representation_records: Records
-label_openness_digital_representation_terms: Termen
+label_openness_digital_representation_records: Volledigheid
+label_openness_digital_representation_terms: Ondubbelzinnigheid
 
 
 # IndexController.php
@@ -237,9 +237,9 @@ description_ambiguity_terms: Een overzicht van alle termen in dit veld die een p
 description_richness_occurrences: De hoeveelheid records die nul, een, twee of meer voorkomens voor dit veld.
 description_richness_terms: Een overzicht van alle termen in dit veld en hoe vaak ze voorkomen in de volledige dataset.
 
-description_openness_record_records: De hoeveelheid records die het veld 'rechten data' hebben ingevuld en de historische trend hiervan.
-description_openness_work_records: De hoeveelheid records die het veld 'rechten werk' hebben ingevuld en de historische trend hiervan.
-description_openness_digital_representation_records: De hoeveelheid records die het veld 'rechten digitale representatie' hebben ingevuld en de historische trend hiervan.
+description_openness_record_records: De hoeveelheid records die het veld 'term rechten data' hebben ingevuld en de historische trend hiervan.
+description_openness_work_records: De hoeveelheid records die het veld 'term rechten werk' hebben ingevuld en de historische trend hiervan.
+description_openness_digital_representation_records: De hoeveelheid records die het veld 'term rechten digitale representatie' hebben ingevuld en de historische trend hiervan.
 
 filled_in_records: Ingevulde records
 complete_records: Volledige records

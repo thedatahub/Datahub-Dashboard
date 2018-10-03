@@ -26,7 +26,27 @@
                 <a name="technology"></a>
                 <h3>Technology</h3>
 
-                <p>Arthub Flanders is a public discovery interface. It is the visible part of the platform and provides direct, user-friendly access to the collection metadata. The platform is constructed as an architecture of loose-coupled components that automatically exchange, transform and make collection metadata available via interfaces for humans or machines (<a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API's</a>).</p>
+                <p>The Dashboard is an application which analyzes collection metadata from the platform based on a specially developed <a href="{{ path('manual') ~ '#measurement' }}">measurement methodology</a> and digitally visualizes this in a user-friendly way. The platform is built as an architecture of 'loosely coupled' components which automatically exchange and transform collection metadata and present this to people or machines through interfaces (<a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API's</a>).</p>
+
+                <h4>The Dashboard</h4>
+
+                <p>The Dashboard analyzes the aggregated collection metadata from the Datahub            en levert per data provider of bron een rapport welke een beeld geeft van de staat van de opgeladen gegevens.</p>
+
+                <p>De basis voor de toepassing is het op PHP gebaseerde <a href="https://symfony.com/" target="_blank">Symfony Framework</a>. Dagelijks haalt het Dashboard automatisch de collectiemetadata uit de Datahub op via de <a href="https://www.openarchives.org/pmh/" target="_blank">OAI-PMH API</a> en slaat de relevante gegevens op in een onderliggende <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>-database.</p>
+
+                <p><a href="https://github.com/thedatahub/datahub" target="_blank"> https://github.com/thedatahub/datahub</a></p>
+
+                <h4>De Datahub</h4>
+
+                <p>De Datahub is een webgebaseerde metadata-aggregator. Deze applicatie verzamelt en bewaart collectiemetadata van een of meerdere providers of bronnen, en publiceert de verzamelde metadata via webgebaseerde API's.</p>
+
+                <p>De Datahub implementeert twee soorten API's. De applicatie voorziet een <a href="https://nl.wikipedia.org/wiki/Representational_state_transfer" target="_blank">REST API</a> dat metadata aanbiedt in JSON-format. Metadata wordt ook beschikbaar gesteld via een OAI-PMH API.</p>
+
+                <p>De Datahub front-end werd, net zoals bij het Dashboard, gemaakt met behulp van het Symfony Framework. Verzamelde metadata wordt ook hier bewaard in een MongoDB-database.</p>
+
+                <p><a href="https://github.com/thedatahub/Datahub-Dashboard" target="_blank">https://github.com/thedatahub/Datahub-Dashboard</a></p>
+
+
 
                 <h4>Project Blacklight</h4>
 
