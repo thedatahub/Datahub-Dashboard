@@ -248,14 +248,20 @@ all_records_complete: Alle records zijn volledig ingevuld.
 no_complete_records: Er zijn geen volledig ingevulde records.
 overview_fields: Overzicht velden
 history: Historiek
-which_occur_%x%_time: die %x%x voorkomen
+which_occur_1_time: die 1x voorkomen
 which_occur_%x%_times: die %x%x voorkomen
 all_%label%_occur_once: Alle %label% komen exact eenmaal voor.
 no_records_with_%label%: Er zijn geen records met %label%.
 work_pids: Work PID's
 data_pids: Data PID's
-terms_with_id: Termen met ID
-terms_without_id: Termen zonder ID
+terms_with_id: Termen met persistente ID
+terms_with_1_id: Termen met 1 persistente ID
+terms_with_%x%_ids: Termen met %x% persistente ID's
+terms_with_1_%auth%_id: Termen met 1 %auth% ID
+terms_with_%x%_%auth%_ids: Termen met %x% %auth% ID's
+terms_without_%auth%_id: Termen zonder %auth% ID
+terms_without_id: Termen zonder persistente ID
+ids: ID's
 all_terms_have_an_id: Alle termen hebben een persistente ID.
 no_records_for_this_field: Er zijn geen records waarvoor dit veld is ingevuld.
 no_terms_with_id_%x%: Er zijn geen termen met een persistente ID (%x% termen in totaal).

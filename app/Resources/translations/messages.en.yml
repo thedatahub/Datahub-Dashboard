@@ -248,14 +248,20 @@ all_records_complete: All records are complete.
 no_complete_records: There are no complete records.
 overview_fields: Overview fields
 history: History
-which_occur_%x%_time: which occur %x% time
+which_occur_1_time: which occur 1 time
 which_occur_%x%_times: which occur %x% times
 all_%label%_occur_once: All %label% occur exactly once.
 no_records_with_%label%: There are no records with %label%.
 work_pids: Work PIDs
 data_pids: Data PIDs
-terms_with_id: Terms with ID
-terms_without_id: Terms without ID
+terms_with_id: Terms with persistent ID
+terms_with_1_id: Terms with 1 persistent ID
+terms_with_%x%_ids: Terms with %x% persistent IDs
+terms_with_1_%auth%_id: Terms with 1 %auth% ID
+terms_with_%x%_%auth%_ids: Terms with %x% %auth% IDs
+terms_without_%auth%_id: Terms without %auth% ID
+terms_without_id: Terms without persistent ID
+ids: IDs
 all_terms_have_an_id: All terms have a persistent ID.
 no_records_for_this_field: There are no records for which this field is filled in.
 no_terms_with_id_%x%: There are no terms with a persistent ID (%x% terms in total).
