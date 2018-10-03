@@ -5,7 +5,7 @@
     <div class="container">
         <div class="center-block provider-div-home">
             <div class="dropdown select-provider">
-                <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>{{ provider }}</button>
+                <button type="button" class="btn btn-default dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>{{ provider_name }}</button>
                 <ul class="dropdown-menu">
                     {% for provider in providers %}
                         <li><a class="dropdown-item" href="{{ app.request.locale }}/report/{{ provider.identifier }}">{{  provider.name }}</a></li>
