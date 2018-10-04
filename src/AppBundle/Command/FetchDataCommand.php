@@ -276,7 +276,6 @@ class FetchDataCommand extends ContainerAwareCommand
                 $rightsDigitalRepresentationComplete = true;
                 foreach ($dataDef as $key => $value) {
                     if (array_key_exists('xpath', $value)) {
-                        //TODO check why this failed
                         if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key])) {
                             if(count($data[$key]) > 0 && array_key_exists('class', $value)) {
                                 $fields[$value['class']][$key][] = $record->getId();
