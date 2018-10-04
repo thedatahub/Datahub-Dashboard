@@ -781,11 +781,11 @@ class DownloadController extends Controller
                         }
                     } elseif($this->field === '(undefined)') {
                         $recordIds = $this->getRecordIds($data);
-                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
+                        $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
                     }
                 } elseif($this->field === '(undefined)') {
                     $recordIds = $this->getRecordIds($data);
-                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => $this->translator->trans('undefined'));
+                    $csvArray[] = array('app_id' => $recordIds[0], 'obj_number' => $recordIds[1], 'term' => '');
                 }
             }
         }
