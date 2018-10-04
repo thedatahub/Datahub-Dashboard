@@ -119,14 +119,14 @@
         alpha = 0.5;
         spacing = 12;
 
-        function relaxPieCharts() {
+        function relaxPieCharts(txtLabels) {
             again = false;
-            textLabels.each(function (d, i) {
+            txtLabels.each(function (d, i) {
                 a = this;
                 da = d3.select(a);
                 y1 = da.attr("y");
                 val = d.value;
-                textLabels.each(function (d, j) {
+                txtLabels.each(function (d, j) {
                     b = this;
                     // a & b are the same element and don't collide.
                     if (a == b) return;
@@ -154,11 +154,11 @@
                 });
             });
             if(again) {
-                setTimeout(relaxPieCharts, 20)
+                setTimeout(relaxPieCharts, 20, txtLabels);
             }
         }
 
-        relaxPieCharts();
+        relaxPieCharts(textLabels);
     }
 </script>
 
