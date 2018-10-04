@@ -3,6 +3,109 @@
 {% block body %}
     {% include 'providers.html.twig' %}
     <div id="main-container" class="container">
-        <p>{% trans %}manual_description{% endtrans %}</p>
+        <h1 class="sr-only application-heading">Dashboard</h1>
+
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <h2>Dashboard manual</h2>
+
+                <p>The Dashboard analyzes collection metadata of the Flemish museums for Fine and Contemporary Arts present in the Datahub, based on a specially developed measurement methodology. For each institution, the measurement results are visualized digitally through the use of charts. The goal is providing reports about the impact of the actions of museum workers on the collection metadata, in function of its digital usability.
+
+                <h3>Page content</h3>
+
+                <ul>
+                    <li><a href="#measurement">Measurement methodology</a></li>
+                    <li><a href="#use">Using the Dashboard</a></li>
+                    <li><a href="#faq">F.A.Q.</a></li>
+                </ul>
+
+                <a name="measurement"></a>
+                <h3>Measurement methodology</h3>
+
+                <p>The used measurement methodology starts from the question: "Why is quality metadata important in a digital context?" Quality here means: the collection metadata is usable in a digital context. In order to determine this usability, five "actionable" aspects were identified to which the data needs to conform:</p>
+
+                <ul>
+                    <li><strong>Searchable</strong>: It is possible to retrieve coherent en relevant search results based on a search action.</li>
+                    <li><strong>Analyzable</strong>: It is possible to analyze a dataset within the context of several question types (historic research, material technical, social, political ...).</li>
+                    <li><strong>Aggregability</strong>: It is possible to combine different data sets toward a coherent unit, based on a common data model.</li>
+                    <li><strong>Reliability</strong>: It is possible to determine whether or not data is reliable, based on the origin of the data (provenance, authority).</li>
+                    <li><strong>Storable</strong>: It is possible to store data in a sustainable, system independent way in order to retain its usability in the long term.</li>
+                </ul>
+
+                <p>These actionables provide a good context for the interpretation of the following four parameters:</p>
+
+                <ul>
+                    <li><strong>Completeness</strong></li>
+                    <li><strong>Unambiguity</strong></li>
+                    <li><strong>Richness</strong></li>
+                    <li><strong>Openness</strong></li>
+                </ul>
+
+                <p>For each of these parameters, a set of specific questions was prepared which provides a quantifiable answer (expressed in discrete numbers). A conscious choice was made not to make a direct qualitative appreciation about the content of the collection metadata, considering such an approach is context sensitive.</p>
+
+                <p>The fields that are measured are:</p>
+
+                <ul>
+                    <li>The minimum registration fields according to the Project CEST fill-in book;</li>
+                    <li>The basic registration fields according to the Project CEST fill-in book;</li>
+                    <li>An extended set of fields in which, aside from links toward authorities like AAT, RKD artist, Wikidata ..., also the rights status for the physical object, the record and the digital representation have been included.</li>
+                </ul>
+
+                <p>Each field was evaluated on whether an application of the parameters and the questions would return a meaningful result. The end result is a matrix with dozens of measurement points which may provide useful insights about the collection metadata. A number of extra measurement are performed across certain fields in function of the time course. The goal of these aggregated measurements is to visualize the impact of actions on the registration through time.</p>
+
+                <a name="use"></a>
+                <h3>Using the Dashboard</h3>
+
+                <p>Om een rapportering van instelling op te vragen, kies je een organisatie uit via het dropdown menu. Vervolgens kom je terecht op het eerste rapport menu gebruiken om specifiek rapport te kiezen / downloaden / printen</p>
+
+                <a name="faq"></a>
+                <h3>F.A.Q.</h3>
+
+                <p><em>Q: Is all the information registered by the museums abalyzed?</em></p>
+
+                <p>The Dashboard fetches the collection metadata from the Datahub. A record in the Datahub consists of a curated set of basic proerties which were registered by the museums. The museums register lots of different aspects of a cultural heritage object. Some aspects are not made publicly available due to various reasons such as copyright, confidentiality, security and privacy. Other properties, such as exhibitoin history or origin, may be added at a later time considering the gathering of knowledge about a cultural heritage object requires a lasting effort.</p>
+
+                <p>All fields that belong to the minimum registration, the basic registration or the extended set are represented in the overview of all fields, whether or not these have already been included in the Datahub. Fields that are not present in the Datahub records, but displayed in the overview of all fields, are:</p>
+
+                <ul>
+                    <li>
+                        <strong>Minimum registration</strong>
+                        <ul>
+                            <li>Term acquisition method</li>
+                            <li>Name acquisition source</li>
+                            <li>Value acquisition date</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Basic registration</strong>
+                        <ul>
+                            <li>Term acquisition method</li>
+                            <li>Name acquisition source</li>
+                            <li>Value acquisition date</li>
+                            <li>Term condition</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Extended set</strong>
+                        <ul>
+                            <li>Identification acquisition method</li>
+                            <li>Condition assessor</li>
+                            <li>Condition start date</li>
+                            <li>Condition end date</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <p>The value for these fields in the Dashboard is always 0. This does not mean the museums did not register any metadata for these fields, they are simply not present in the curated set of basic properties. These fields are not taken into account in the analysis of the amount of completely filled in records and their historic trend.</p>
+
+                <p><em>Q: How often are these reports updated?</em></p>
+
+                <p>The Dashboard reports are updated daily. Updates consist of changes in existing records and additions of new records.</p>
+
+            </div>
+        </div>
     </div>
 {% endblock %}

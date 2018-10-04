@@ -144,7 +144,7 @@ label_completeness_basic_trend: Historic trend of complete records
 label_completeness_extended: Extended set
 label_completeness_extended_overview: Overview of all fields
 
-label_ambiguity: Ambiguity
+label_ambiguity: Unambiguity
 label_ambiguity_records: Records
 label_ambiguity_records_work_pids: Distribution of Work PID's among records
 label_ambiguity_records_data_pids: Distribution of Data PID's among records
@@ -204,13 +204,13 @@ label_richness_terms_displayed_event: Displayed event
 label_openness: Openness
 label_openness_record: Record
 label_openness_record_records: Completeness
-label_openness_record_terms: Ambiguity
+label_openness_record_terms: Unambiguity
 label_openness_work: Work
 label_openness_work_records: Completeness
-label_openness_work_terms: Ambiguity
+label_openness_work_terms: Unambiguity
 label_openness_digital_representation: Digital representation
 label_openness_digital_representation_records: Completeness
-label_openness_digital_representation_terms: Ambiguity
+label_openness_digital_representation_terms: Unambiguity
 
 
 # IndexController.php
