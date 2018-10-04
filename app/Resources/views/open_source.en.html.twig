@@ -12,7 +12,7 @@
 
                 <h2>Open source tools</h2>
 
-                <p>The Dashboard was designed and developed leveraging a set of open source software libraries, frameworks and applications. The <a href="http://www.flemishartcollection.be/" target="_blank">Flemish Art Collection</a>, in close coöperation with <a href="http://www.packed.be" target="_blank">PACKED vzw</a>, developed a set of tailor made tools which cater to the specific requirements of this platform. The entire toolset is made available to the <a href="https://en.wikipedia.org/wiki/GLAM_(industry_sector)" target="_blank">GLAM</a> community under an <a href="https://en.wikipedia.org/wiki/Free_and_open-source_software" target="_blank">open source</a> license. Cultural organisations whose digital strategy outlines opening up their collections are invited to include and adapt these tools in their own digital projects.<p>
+                <p>The Dashboard was designed and developed leveraging a set of open source software libraries, frameworks and applications. This tool is a part of the Arthub Flanders platform, designed by the <a href="http://www.flemishartcollection.be/" target="_blank">Flemish Art Collection</a>, in close cooperation with <a href="http://www.packed.be" target="_blank">PACKED vzw</a>. The Arthub Flanders platform consists of a set of tailor made tools with the primary goal of delivering collection metadata in an optimally reusable digital form. The entire toolset is made available to the <a href="https://en.wikipedia.org/wiki/GLAM_(industry_sector)" target="_blank">GLAM</a> community under an <a href="https://en.wikipedia.org/wiki/Free_and_open-source_software" target="_blank">open source</a> license. Cultural organisations whose digital strategy outlines opening up their collections are invited to include and adapt these tools in their own digital projects.<p>
 
                 <h3>Page contents</h3>
 
@@ -30,43 +30,29 @@
 
                 <h4>The Dashboard</h4>
 
-                <p>The Dashboard analyzes the aggregated collection metadata from the Datahub            en levert per data provider of bron een rapport welke een beeld geeft van de staat van de opgeladen gegevens.</p>
+                <p>The Dashboard analyzes the aggregated collection metadata from the Datahub and generates a report for each data provider or source, representing the state of the data they provide.</p>
 
-                <p>De basis voor de toepassing is het op PHP gebaseerde <a href="https://symfony.com/" target="_blank">Symfony Framework</a>. Dagelijks haalt het Dashboard automatisch de collectiemetadata uit de Datahub op via de <a href="https://www.openarchives.org/pmh/" target="_blank">OAI-PMH API</a> en slaat de relevante gegevens op in een onderliggende <a href="https://www.mongodb.com/" target="_blank">MongoDB</a>-database.</p>
+                <p>The basis for the application is the PHP-based <a href="https://symfony.com/" target="_blank">Symfony Framework</a>. Each day, the Dashboard automatically fetches the collection metadata from the Datahub through the <a href="https://www.openarchives.org/pmh/" target="_blank">OAI-PMH API</a> and stores the relevant data in an underlying <a href="https://www.mongodb.com/" target="_blank">MongoDB</a> database.</p>
 
                 <p><a href="https://github.com/thedatahub/datahub" target="_blank"> https://github.com/thedatahub/datahub</a></p>
-
-                <h4>De Datahub</h4>
-
-                <p>De Datahub is een webgebaseerde metadata-aggregator. Deze applicatie verzamelt en bewaart collectiemetadata van een of meerdere providers of bronnen, en publiceert de verzamelde metadata via webgebaseerde API's.</p>
-
-                <p>De Datahub implementeert twee soorten API's. De applicatie voorziet een <a href="https://nl.wikipedia.org/wiki/Representational_state_transfer" target="_blank">REST API</a> dat metadata aanbiedt in JSON-format. Metadata wordt ook beschikbaar gesteld via een OAI-PMH API.</p>
-
-                <p>De Datahub front-end werd, net zoals bij het Dashboard, gemaakt met behulp van het Symfony Framework. Verzamelde metadata wordt ook hier bewaard in een MongoDB-database.</p>
-
-                <p><a href="https://github.com/thedatahub/Datahub-Dashboard" target="_blank">https://github.com/thedatahub/Datahub-Dashboard</a></p>
-
-
-
-                <h4>Project Blacklight</h4>
-
-                <p>Blacklight is an open source Solr user interface discovery platform. You can use Blacklight to enable searching and browsing of your collections. Blacklight uses the <a href="http://lucene.apache.org/solr/" target="_blank">Apache Solr search engine</a> to search full text and/or metadata. Blacklight has a highly configurable <a href="http://rubyonrails.org/" target="_blank">Ruby on Rails</a> front end. Blacklight is made public under an Apache 2.0 license.<p>
-
-                <p><a href="http://projectblacklight.org/" target="_blank">http://projectblacklight.org/</a></p>
-
-                <p>Arthub Flanders is an instance of Project Blacklight tailored towards searching and browsing through cultural heritage objects. The code is made available through Github.</p>
-
-                <p><a href="https://github.com/VlaamseKunstcollectie/Arthub-Frontend" target="_blank">https://github.com/VlaamseKunstcollectie/Arthub-Frontend</a></p>
 
                 <h4>The Datahub</h4>
 
                 <p>The Datahub is a web-based metadata aggregator. This applicaton aggregates and stores collection metadata from one or more providers or sources, and publishes the aggregated metadata via web-based API's.</p>
 
-                <p>The Datahub implements two API types. The application features a <a href="https://en.wikipedia.org/wiki/REST" target="_blank">REST API</a> which serves metadata in the JSON format. Metadata is also made available via an <a href="https://www.openarchives.org/pmh/" target="_blank">OAI-PMH API</a>.</p>
+                <p>The Datahub implements two API types. The application features a<a href="https://en.wikipedia.org/wiki/REST" target="_blank">REST API</a> which serves metadata in the JSON format. Metadata is also made available via an OAI-PMH API.</p>
 
-                <p>The Datahub front end was build using the <a href="https://symfony.com/" target="_blank">Symfony Framework</a>. Aggregated metadata is persistently stored in a <a href="https://www.mongodb.com/" target="_blank">MongoDB</a> database.</p>
+                <p>The Datahub front end is, just like the Dashboard, built on the Symfony Framework. Aggregated metadata is here persistently stored in a MongoDB database as well.</p>
 
-                <p><a href="https://github.com/thedatahub/datahub" target="_blank">https://github.com/thedatahub/datahub</a></p>
+                <p><a href="https://github.com/thedatahub/Datahub-Dashboard" target="_blank">https://github.com/thedatahub/Datahub-Dashboard</a></p>
+
+                <h4>Arthub Flanders</h4>
+
+                <p>Arthub Flanders is a public discovery interface. It is the visual part of the platform and provides direct, user friendly access to the collection metadata.</p>
+
+                <p>Arthub Flanders is an instance of <a href="http://projectblacklight.org/" target="_blank">Project Blacklight</a> tailored towards searching and browsing through cultural heritage objects. Blacklight is an open source Solr user interface discovery platform. Blacklight uses the <a href="http://lucene.apache.org/solr/" target="_blank">Apache Solr search engine</a> to search full text and/or metadata and has a highly configurable <a href="http://rubyonrails.org/" target="_blank">Ruby on Rails</a> front-end. Blacklight is made public under an Apache 2.0 license.<p>
+
+                <p><a href="https://github.com/VlaamseKunstcollectie/Arthub-Frontend" target="_blank">https://github.com/VlaamseKunstcollectie/Arthub-Frontend</a></p>
 
                 <h4>Catmandu</h4>
 
