@@ -845,7 +845,12 @@ class ReportController extends Controller
             }
         }
 
+        $undefined = $counts[$undefinedKey];
+        unset($counts[$undefinedKey]);
         arsort($counts);
+        if($undefined > 0) {
+            $counts = array($undefinedKey => $undefined) + $counts;
+        }
 
         $csvData = '';
         foreach($counts as $key => $value) {
