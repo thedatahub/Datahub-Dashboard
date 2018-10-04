@@ -222,10 +222,6 @@ class FetchDataCommand extends ContainerAwareCommand
         $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
 
-        //TODO comment these lines when going to production
-        $dm->getDocumentCollection('ReportBundle:CompletenessTrend')->remove([]);
-        $dm->getDocumentCollection('ReportBundle:FieldTrend')->remove([]);
-
         foreach($providers as $provider) {
             $providerId = $provider->getIdentifier();
 
@@ -343,7 +339,7 @@ class FetchDataCommand extends ContainerAwareCommand
                                                                             break;
                                                                         }
                                                                     }
-                                                                    if ($firstPurlId) {
+                                                                    if ($firstPurlId != null) {
                                                                         $termIds[$key][$term] = $firstPurlId;
                                                                     }
                                                                 }
