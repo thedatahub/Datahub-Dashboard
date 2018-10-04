@@ -2,7 +2,7 @@
 
 {% block body %}
     {% include 'providers.html.twig' %}
-    <div id="main-container" class="container">
+    <div id="main-container" class="container manual">
         <h1 class="sr-only application-heading">Dashboard</h1>
 
         <div class="row">
@@ -51,7 +51,7 @@
                 <ul>
                 	<li>De minimimale registratievelden volgens het Project CEST invulboek;</li>
                     <li>De basisregistratievelden volgens het Project CEST invulboek;</li>
-                    <li>Een uitgerbeide set velden waarin naast de koppelingen met autoriteiten zoals AAT, RKD artist, Wikidata ... ook de rechtenstatus voor het fysieke object, de record en de digitale representaties is opgenomen.</li>
+                    <li>Een uitgebreide set velden waarin naast de koppelingen met autoriteiten zoals AAT, RKD artist, Wikidata ... ook de rechtenstatus voor het fysieke object, de record en de digitale representaties is opgenomen.</li>
                 </ul>
                 
                 <p>Per veld werd geëvalueerd of een toepassing van de parameters en de vragen een zinvol resultaat zou opleveren. Het eindresultaat is een matrix met tientallen meetpunten die mogelijk waardevolle inzichten over de collectiemetadata kunnen opleveren. Een aantal bijkomende metingen over verschillende velden heen worden uitgevoerd in functie van het tijdsverloop. Het doel van deze geaggregeerde metingen is om de impact van acties op de registratie doorheen de tijd te kunnen visualiseren.</p>
@@ -59,9 +59,33 @@
                 <a name="use"></a>
                 <h3>Het Dashboard gebruiken</h3>
 
-                <p>Om een rapportering van instelling op te vragen, kies je een organisatie uit via het dropdown menu. Vervolgens kom je terecht op het eerste rapport
+                <p>Om een rapportering van een bepaalde instelling op te vragen, kies je de betreffende organisatie via het dropdown-menu.<p>
 
-                menu gebruiken om specifiek rapport te kiezen / downloaden / printen</p>
+                <p><img alt="Dropdown-menu" src="{{ asset('images/dropdown-menu.' ~ app.request.locale ~ '.png') }}" /></p>
+
+                <br />
+
+                <p>Je komt terecht op het eerste onderdeel van de rapportering. Via het linkermenu kan je een ander onderdeel raadplegen.</p>
+
+                <p><img alt="Linkermenu" src="{{ asset('images/menu-left.' ~ app.request.locale ~ '.png') }}" /></p>
+
+                <br />
+
+                <p>Elk onderdeel kan afzonderlijk afgeprint worden door te klikken op het printicoontje.</p>
+
+                <p><img alt="Printknop" src="{{ asset('images/print_icon.png') }}" /></p>
+
+                <br />
+
+                <p>Van verschillende grafieken kunnen achterliggende gegevens gedownload worden in CSV formaat. Daarvoor is er onder bepaalde cirkeldiagrammen een download-knop voorzien.</p>
+
+                <p><img alt="Download-knop bij cirkeldiagram" src="{{ asset('images/download-button.png') }}" /></p>
+
+                <br />
+
+                <p>Bij de staafdiagrammen download je de gegevens achter een staaf door te klikken op die betreffende staaf of het label ervoor.</p>
+
+                <p><img alt="Aanklikbare staaf bij staafdiagram" src="{{ asset('images/bar-download.' ~ app.request.locale ~ '.png') }}" /></p>
 
                 <a name="faq"></a>
                 <h3>F.A.Q.</h3>
