@@ -9,9 +9,9 @@ The application can currently only handle LIDO data schemes, but can be easily e
 ## Requirements
 
 This project requires following dependencies:
-* PHP >= 5.5.9
+* PHP >= 7.1.3
   * With the php-cli and php-xml extensions.
-  * The [PECL Mongo](https://pecl.php.net/package/mongo) (PHP5) or [PECL Mongodb](https://pecl.php.net/package/mongodb) (PHP7) extension. Note that the _mongodb_ extension must be version 1.2.0 or higher. Notably, the package included in Ubuntu 16.04 (_php-mongodb_) is only at 1.1.5.
+  * The [PECL Mongodb](https://pecl.php.net/package/mongodb) (PHP7) extension. Note that the _mongodb_ extension must be version 1.2.0 or higher. Notably, the package included in Ubuntu 16.04 (_php-mongodb_) is only at 1.1.5.
 
     To install PECL and mongodb:
       ```bash
