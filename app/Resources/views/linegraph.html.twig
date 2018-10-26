@@ -302,11 +302,11 @@
                 .duration(500)
                 .style("opacity", 0);
 
-            d3.select(this.nextElementSibling).transition()
+            d3.select(this.previousElementSibling).transition()
                 .duration(500)
                 .style("opacity", 0);
 
-            d3.select(this.nextElementSibling.nextElementSibling).transition()
+            d3.select(this.previousElementSibling.previousElementSibling).transition()
                 .duration(500)
                 .style("opacity", 0);
         });
