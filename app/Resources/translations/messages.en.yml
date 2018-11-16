@@ -37,11 +37,15 @@ csv_short_description: description
 label_short_description: Short description
 
 csv_object_name: object_name
+csv_term_object_name: object_name_term
 label_term_object_name: Term object name
+csv_id_object_name: object_name_id
 label_id_object_name: Identification object name
 
-acquisition: acquisition
+csv_acquisition: acquisition
+csv_term_acquisition: acquisition_term
 label_term_acquisition: Term acquisition
+csv_id_acquisition: acquisition_id
 label_id_acquisition: Identification acquisition
 
 csv_acquisition_source: acquisition_source
@@ -51,21 +55,31 @@ csv_acquisition_date: acquisition_date
 label_acquisition_date: Value acquisition date
 
 csv_main_motif: main_motif
+csv_term_main_motif: main_motif_term
 label_term_main_motif: Term main motif
+csv_term_main_motif: main_motif_id
 label_id_main_motif: Identification main motif
 
 csv_creator: creator
+csv_term_creator: creator_term
 label_term_creator: Name creator
+csv_id_creator: creator_id
 label_id_creator: Identification creator
+csv_role_creator: creator_role
 label_role_creator: Role creator
+csv_qualification_creator: creator_qualification
 label_qualification_creator: Qualification creator
 
 csv_date: date
+csv_start_date: date_start
 label_start_date: Start date
+csv_end_date: date_end
 label_end_date: End date
 
 csv_material: material
+csv_term_material: material_term
 label_term_material: Term material
+csv_id_material: material_id
 label_id_material: Identification material
 
 csv_condition: condition
@@ -75,29 +89,43 @@ csv_condition_assessor: condition_assessor
 label_condition_assessor: Assessor condition
 
 csv_condition_date: condition_date
+csv_start_condition_date: condition_date_start
 label_start_condition_date: Start date condition
+csv_end_condition_date: condition_date_end
 label_end_condition_date: End date condition
 
 csv_measurement: measurement
+csv_extent_measurement: measurement_extent
 label_extent_measurement: Extent measurement
+csv_type_measurement: measurement_dimension
 label_type_measurement: Dimension measurement
+csv_value_measurement: measurement_value
 label_value_measurement: Value measurement
+csv_unit_measurement: measurement_unit
 label_unit_measurement: Unit measurement
 
 csv_displayed_concept: displayed_concept
+csv_term_displayed_concept: displayed_concept_term
 label_term_displayed_concept: Term displayed concept
+csv_id_displayed_concept: displayed_concept_id
 label_id_displayed_concept: Identification displayed concept
 
 csv_displayed_subject: displayed_subject
+csv_term_displayed_subject: displayed_subject_name
 label_term_displayed_subject: Name displayed subject
+csv_id_displayed_subject: displayed_subject_id
 label_id_displayed_subject: Identification displayed subject
 
 csv_displayed_location: displayed_location
+csv_term_displayed_location: displayed_location_name
 label_term_displayed_location: Name displayed location
+csv_id_displayed_location: displayed_location_id
 label_id_displayed_location: Identification displayed location
 
 csv_displayed_event: displayed_event
+csv_term_displayed_event: displayed_event_term
 label_term_displayed_event: Name displayed event
+csv_id_displayed_event: displayed_event_id
 label_id_displayed_event: Identification displayed event
 
 csv_work_pid: work_pid
@@ -113,23 +141,33 @@ csv_application_id: record_id
 label_application_id: Online record ID
 
 csv_object_category: object_category
+csv_term_object_category: object_category_term
 label_term_object_category: Term object category
+csv_id_object_category: object_category_id
 label_id_object_category: Identification object category
 
 csv_rights_data: rights_status
+csv_term_rights_data: rights_status_term
 label_term_rights_data: Term rights status
+csv_id_rights_data: rights_status_id
 label_id_rights_data: Identification rights status
 
 csv_rights_work: rights_work
+csv_term_rights_work: rights_work_term
 label_term_rights_work: Term rights work
+csv_id_rights_work: rights_work_id
 label_id_rights_work: Identification rights work
 
 csv_rights_digital_representation: rights_digital_representation
+csv_term_rights_digital_representation: rights_digital_representation_term
 label_term_rights_digital_representation: Term rights digital representation
+csv_id_rights_digital_representation: rights_digital_representation_id
 label_id_rights_digital_representation: Identification digital representation
 
 csv_data_provider: data_provider
+csv_term_data_provider: data_provider_term
 label_term_data_provider: Name data provider
+csv_id_data_provider: data_provider_id
 label_id_data_provider: Identification data provider
 
 label_completeness: Completeness
@@ -267,7 +305,6 @@ no_authorities_for_these_terms: There are no authorities for these terms.
 amount_of_records: Amount of records
 undefined: undefined
 no_terms_for_this_field: There are no terms for this field.
-
 
 
 # DownloadController.php

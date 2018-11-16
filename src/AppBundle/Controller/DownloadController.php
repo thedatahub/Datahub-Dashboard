@@ -26,6 +26,7 @@ class DownloadController extends Controller
     {
         $this->provider = $provider;
         $this->question = $question;
+        $field = str_replace('.', '/', $field);
         if($field !== '')
             $this->field = $field;
 
@@ -60,17 +61,34 @@ class DownloadController extends Controller
         // Generate response
         $response = new Response();
         if($this->field) {
-            $field = preg_replace("/[^A-Za-z0-9 _-]/", '', $field);
-            if(array_key_exists($field, $this->dataDef) && array_key_exists('csv', $this->dataDef[$field])) {
-                $label = $this->translator->trans($this->dataDef[$field]['csv']);
+            $fallback = true;
+            $field = preg_replace("/[^A-Za-z0-9 _\/-]/", '', $field);
+            if(strpos($field, '/')) {
+                $parts = explode('/', $field);
+                if(array_key_exists($parts[0], $this->dataDef)) {
+                    $subPart = $this->dataDef[$parts[0]];
+                    if(array_key_exists($parts[1], $subPart)) {
+                        if(array_key_exists('csv', $subPart[$parts[1]])) {
+                            $label = $this->translator->trans($subPart[$parts[1]]['csv']);
+                            $fallback = false;
+                        }
+                    }
+                }
             }
-            else {
+            else if(array_key_exists($field, $this->dataDef)) {
+                if(array_key_exists('csv', $this->dataDef[$field])) {
+                    $label = $this->translator->trans($this->dataDef[$field]['csv']);
+                    $fallback = false;
+                }
+            }
+            if($fallback) {
                 $label = $this->questionLabel . '_' . $this->translator->trans($field);
             }
             $filename = $provider . '_' . $aspectLabel . '_' . $label . '.csv';
         } else {
             $filename = $provider . '_' . $aspectLabel . '_' . $this->questionLabel . '.csv';
         }
+        $filename = preg_replace("/[^A-Za-z0-9_.-]/", '', $filename);
         $filename = strtolower(str_replace(' ', '_', $filename));
 
         // Set headers
@@ -90,9 +108,20 @@ class DownloadController extends Controller
         return $this->get('doctrine_mongodb')->getManager();
     }
 
-    private function getAllRecords()
+    private function getAllRecords($field)
     {
-        return $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $this->provider));
+        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . str_replace('/', '.', $field));
+        $query = $qb->getQuery();
+        $data = $query->execute();
+        return $data;
+    }
+
+    private function getAllRecordsWithIds($field)
+    {
+        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . str_replace('/', '.', $field), 'data.application_id', 'data.object_number');
+        $query = $qb->getQuery();
+        $data = $query->execute();
+        return $data;
     }
 
     private function extractFieldFromRecord($record, $field)
@@ -143,7 +172,7 @@ class DownloadController extends Controller
 
     private function fieldOverview()
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecordsWithIds($this->field);
 
         $csvArray = array();
         if($records) {
@@ -207,7 +236,7 @@ class DownloadController extends Controller
 
     private function ambigIds($field, $label)
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecordsWithIds($field);
         $ids = array();
         $csvArray = array();
         if($records) {
@@ -347,7 +376,7 @@ class DownloadController extends Controller
 
     private function ambigtermPie($field)
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecords($field);
 
         $termsWithId = array();
         $termsWithoutId = array();
@@ -467,7 +496,7 @@ class DownloadController extends Controller
 
     private function ambigtermBar($field)
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecords($field);
 
         $termsWithId = array();
         $termsWithoutId = array();
@@ -619,7 +648,7 @@ class DownloadController extends Controller
 
     private function richOccurrencesBar($field)
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecordsWithIds($field);
         $csvArray = array();
         if($records) {
             foreach ($records as $record) {
@@ -743,7 +772,7 @@ class DownloadController extends Controller
 
     private function richTermBar($field)
     {
-        $records = $this->getAllRecords();
+        $records = $this->getAllRecordsWithIds($field);
         $csvArray = array();
         if($records) {
             foreach ($records as $record) {

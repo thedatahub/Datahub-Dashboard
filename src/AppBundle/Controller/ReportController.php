@@ -97,7 +97,7 @@ class ReportController extends Controller
 
     private function getAllRecords($field)
     {
-        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . $field);
+        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . str_replace('/', '.', $field));
         $query = $qb->getQuery();
         $data = $query->execute();
         return $data;
@@ -200,7 +200,7 @@ class ReportController extends Controller
                 if (strpos($key, '/')) {
                     $parts = explode('/', $key);
                     $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
-                    $key = $parts[0];
+                    $key = $parts[0] . '.' . $parts[1];
                 } else {
                     $label = $this->dataDef[$key]['label'];
                 }
@@ -214,7 +214,7 @@ class ReportController extends Controller
                     if (strpos($key, '/')) {
                         $parts = explode('/', $key);
                         $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
-                        $key = $parts[0];
+                        $key = $parts[0] . '.' . $parts[1];
                     } else {
                         $label = $this->dataDef[$key]['label'];
                     }

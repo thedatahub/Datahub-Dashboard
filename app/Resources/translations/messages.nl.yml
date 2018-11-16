@@ -37,11 +37,15 @@ csv_short_description: beschrijving
 label_short_description: Korte beschrijving
 
 csv_object_name: objectnaam
+csv_term_object_name: objectnaam_term
 label_term_object_name: Term objectnaam
+csv_id_object_name: objectnaam_id
 label_id_object_name: Identificatie objectnaam
 
-acquisition: verwervingsmethode
+csv_acquisition: verwervingsmethode
+csv_term_acquisition: verwervingsmethode_term
 label_term_acquisition: Term verwervingsmethode
+csv_id_acquisition: verwervingsmethode_id
 label_id_acquisition: Identificatie verwervingsmethode
 
 csv_acquisition_source: verwervingsbron
@@ -51,21 +55,31 @@ csv_acquisition_date: verwervingsdatum
 label_acquisition_date: Waarde verwervingsdatum
 
 csv_main_motif: hoofdmotief
+csv_term_main_motif: hoofdmotief_term
 label_term_main_motif: Term hoofdmotief
+csv_id_main_motif: hoofdmotief_id
 label_id_main_motif: Identificatie hoofdmotief
 
 csv_creator: vervaardiger
+csv_term_creator: vervaardiger_naam
 label_term_creator: Naam vervaardiger
+csv_id_creator: vervaardiger_id
 label_id_creator: Identificatie vervaardiger
+csv_role_creator: vervaardiger_rol
 label_role_creator: Rol vervaardiger
+csv_qualification_creator: vervaardiger_kwalificatie
 label_qualification_creator: Kwalificatie vervaardiger
 
 csv_date: datum
+csv_start_date: begindatum
 label_start_date: Begindatum
+csv_end_date: einddatum
 label_end_date: Einddatum
 
 csv_material: materiaal
+csv_term_material: materiaal_term
 label_term_material: Term materiaal
+csv_id_material: materiaal_id
 label_id_material: Identificatie materiaal
 
 csv_condition: conditie
@@ -75,29 +89,43 @@ csv_condition_assessor: conditie_assessor
 label_condition_assessor: Assessor conditie
 
 csv_condition_date: conditiedatum
+csv_start_condition_date: conditie_begindatum
 label_start_condition_date: Begindatum conditie
+csv_end_condition_date: conditie_einddatum
 label_end_condition_date: Einddatum conditie
 
 csv_measurement: afmeting
+csv_extent_measurement: afmeting_onderdeel
 label_extent_measurement: Onderdeel afmeting
+csv_type_measurement: afmeting_dimensie
 label_type_measurement: Dimensie afmeting
+csv_value_measurement: afmeting_waarde
 label_value_measurement: Waarde afmeting
+csv_unit_measurement: afmeting_eenheid
 label_unit_measurement: Eenheid afmeting
 
 csv_displayed_concept: afgebeeld_concept
+csv_term_displayed_concept: afgebeeld_concept_term
 label_term_displayed_concept: Term afgebeeld concept
+csv_id_displayed_concept: afgebeeld_concept_id
 label_id_displayed_concept: Identificatie afgebeeld concept
 
 csv_displayed_subject: afgebeelde_persoon_of_instelling
+csv_term_displayed_subject: afgebeelde_persoon_of_instelling_naam
 label_term_displayed_subject: Naam afgebeelde persoon of instelling
+csv_id_dislayed_subject: afgebeelde_persoon_of_instelling_id
 label_id_displayed_subject: Identificatie afgebeelde persoon of instelling
 
 csv_displayed_location: afgebeelde_locatie
+csv_term_displayed_location: afgebeelde_locatie_naam
 label_term_displayed_location: Naam afgebeelde locatie
+csv_id_displayed_location: afgebeelde_locatie_id
 label_id_displayed_location: Identificatie afgebeelde locatie
 
 csv_displayed_event: afgebeelde_gebeurtenis
+csv_term_displayed_event: afgebeelde_gebeurtenis_naam
 label_term_displayed_event: Naam afgebeelde gebeurtenis
+csv_id_displayed_event: afgebeelde_gebeurtenis_id
 label_id_displayed_event: Identificatie afgebeelde gebeurtenis
 
 csv_work_pid: work_pid
@@ -113,23 +141,33 @@ csv_application_id: record_id
 label_application_id: Online record ID
 
 csv_object_category: objectcategorie
+csv_term_object_category: objectcategorie_term
 label_term_object_category: Term objectcategorie
+csv_id_object_category: objectcategorie_id
 label_id_object_category: Identificatie objectcategorie
 
 csv_rights_data: rechten_status
+csv_term_rights_data: rechten_status_term
 label_term_rights_data: Term rechten status
+csv_id_rights_data: rechten_status_id
 label_id_rights_data: Identificatie rechten status
 
 csv_rights_work: rechten_werk
+csv_term_rights_work: rechten_werk_term
 label_term_rights_work: Term rechten werk
+csv_id_rights_work: rechten_werk_id
 label_id_rights_work: Identificatie rechten werk
 
 csv_rights_digital_representation: rechten_digitale_representatie
+csv_term_rights_digital_representation: rechten_digitale_representatie_term
 label_term_rights_digital_representation: Term rechten digitale representatie
+csv_id_rights_digital_representation: rechten_digitale_representatie_id
 label_id_rights_digital_representation: Identificatie rechten digitale representatie
 
 csv_data_provider: data_provider
+csv_term_data_provider: data_provider_naam
 label_term_data_provider: Naam data provider
+csv_id_data_provider: data_provider_id
 label_id_data_provider: Identificatie data provider
 
 label_completeness: Volledigheid

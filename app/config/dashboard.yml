@@ -39,10 +39,12 @@ parameters:
             csv: 'csv_object_name'
             term:
                 class: 'minimum'
+                csv: 'csv_term_object_name'
                 label: 'label_term_object_name'
                 xpath: 'term[@pref="preferred"]'
             id:
                 class: 'extended'
+                csv: 'csv_id_object_name'
                 label: 'label_id_object_name'
                 xpath: 'conceptID'
         acquisition:
@@ -51,10 +53,12 @@ parameters:
             csv: 'csv_acquisition'
             term:
                 class: 'minimum'
+                csv: 'csv_term_acquisition'
                 label: 'label_term_acquisition'
                 xpath: 'term'
             id:
                 class: 'extended'
+                csv: 'csv_id_acquisition'
                 label: 'label_id_acquisition'
                 xpath: 'conceptID'
         acquisition_source:
@@ -74,10 +78,12 @@ parameters:
             csv: 'csv_main_motif'
             term:
                 class: 'basic'
+                csv: 'csv_term_main_motif'
                 label: 'label_term_main_motif'
                 xpath: 'term'
             id:
                 class: 'extended'
+                csv: 'csv_id_main_motif'
                 label: 'label_id_main_motif'
                 xpath: 'conceptID'
         creator:
@@ -85,18 +91,22 @@ parameters:
             csv: 'csv_creator'
             term:
                 class: 'basic'
+                csv: 'csv_term_creator'
                 label: 'label_term_creator'
                 xpath: 'actor/nameActorSet/appellationValue[@pref="preferred"]'
             id:
                 class: 'extended'
+                csv: 'csv_id_creator'
                 label: 'label_id_creator'
                 xpath: 'actor/actorID'
             role:
                 class: 'extended'
+                csv: 'csv_role_creator'
                 label: 'label_role_creator'
                 xpath: 'roleActor/term'
             qualification:
                 class: 'extended'
+                csv: 'csv_qualification_creator'
                 label: 'label_qualification_creator'
                 xpath: 'attributionQualifierActor'
         date:
@@ -104,10 +114,12 @@ parameters:
             csv: 'csv_date'
             start:
                 class: 'basic'
+                csv: 'csv_start_date'
                 label: 'label_start_date'
                 xpath: 'earliestDate'
             end:
                 class: 'basic'
+                csv: 'csv_end_date'
                 label: 'label_end_date'
                 xpath: 'latestDate'
         material:
@@ -115,10 +127,12 @@ parameters:
             csv: 'csv_material'
             term:
                 class: 'basic'
+                csv: 'csv_term_material'
                 label: 'label_term_material'
                 xpath: 'term[@pref="preferred"]'
             id:
                 class: 'extended'
+                csv: 'csv_id_material'
                 label: 'label_id_material'
                 xpath: 'conceptID'
         condition:
@@ -137,10 +151,12 @@ parameters:
             csv: 'csv_condition_date'
             start:
                 class: 'extended'
+                csv: 'csv_start_condition_date'
                 label: 'label_start_condition_date'
                 xpath: 'earliestDate'
             end:
                 class: 'extended'
+                csv: 'csv_end_condition_date'
                 label: 'label_end_condition_date'
                 xpath: 'latestDate'
         measurement:
@@ -148,18 +164,22 @@ parameters:
             csv: 'csv_measurement'
             extent:
                 class: 'basic'
+                csv: 'csv_extent_measurement'
                 label: 'label_extent_measurement'
                 xpath: 'extentMeasurements'
             type:
                 class: 'basic'
+                csv: 'csv_type_measurement'
                 label: 'label_type_measurement'
                 xpath: 'measurementsSet/measurementType'
             value:
                 class: 'basic'
+                csv: 'csv_value_measurement'
                 label: 'label_value_measurement'
                 xpath: 'measurementsSet/measurementValue'
             unit:
                 class: 'basic'
+                csv: 'csv_unit_measurement'
                 label: 'label_unit_measurement'
                 xpath: 'measurementsSet/measurementUnit'
         displayed_concept:
@@ -167,10 +187,12 @@ parameters:
             csv: 'csv_displayed_concept'
             term:
                 class: 'basic'
+                csv: 'csv_term_displayed_concept'
                 label: 'label_term_displayed_concept'
                 xpath: 'term'
             id:
                 class: 'extended'
+                csv: 'csv_id_displayed_concept'
                 label: 'label_id_displayed_concept'
                 xpath: 'conceptID'
         displayed_subject:
@@ -178,10 +200,12 @@ parameters:
             csv: 'csv_displayed_subject'
             term:
                 class: 'basic'
+                csv: 'csv_term_displayed_subject'
                 label: 'label_term_displayed_subject'
                 xpath: 'nameActorSet/appellationValue'
             id:
                 class: 'extended'
+                csv: 'csv_id_displayed_subject'
                 label: 'label_id_displayed_subject'
                 xpath: 'actorID'
         displayed_location:
@@ -189,10 +213,12 @@ parameters:
             csv: 'csv_displayed_location'
             term:
                 class: 'basic'
+                csv: 'csv_term_displayed_location'
                 label: 'label_term_displayed_location'
                 xpath: 'namePlaceSet/appellationValue'
             id:
                 class: 'extended'
+                csv: 'csv_id_displayed_location'
                 label: 'label_id_displayed_location'
                 xpath: 'placeID'
         displayed_event:
@@ -200,10 +226,12 @@ parameters:
             csv: 'csv_displayed_event'
             term:
                 class: 'basic'
+                csv: 'csv_term_displayed_event'
                 label: 'label_term_displayed_event'
                 xpath: 'eventName/appellationValue'
             id:
                 class: 'extended'
+                csv: 'csv_id_displayed_event'
                 label: 'label_id_displayed_event'
                 xpath: 'eventID'
         work_pid:
@@ -231,10 +259,12 @@ parameters:
             csv: 'csv_object_category'
             term:
                 class: 'extended'
+                csv: 'csv_term_object_category'
                 label: 'label_term_object_category'
                 xpath: 'term'
             id:
                 class: 'extended'
+                csv: 'csv_id_object_category'
                 label: 'label_id_object_category'
                 xpath: 'conceptID'
         data_provider:
@@ -242,10 +272,12 @@ parameters:
             csv: 'csv_data_provider'
             term:
                 class: 'extended'
+                csv: 'csv_term_data_provider'
                 label: 'label_term_data_provider'
                 xpath: 'legalBodyName/appellationValue'
             id:
                 class: 'extended'
+                csv: 'csv_id_data_provider'
                 label: 'label_id_data_provider'
                 xpath: 'legalBodyID'
         rights_data:
@@ -253,9 +285,11 @@ parameters:
             csv: 'csv_rights_data'
             term:
                 class: 'rights_data'
+                csv: 'csv_term_rights_data'
                 label: 'label_term_rights_data'
                 xpath: 'term'
             id:
+                csv: 'csv_id_rights_data'
                 label: 'label_id_rights_data'
                 xpath: 'conceptID'
         rights_work:
@@ -263,9 +297,11 @@ parameters:
             csv: 'csv_rights_work'
             term:
                 class: 'rights_work'
+                csv: 'csv_term_rights_work'
                 label: 'label_term_rights_work'
                 xpath: 'term'
             id:
+                csv: 'csv_id_rights_work'
                 label: 'label_id_rights_work'
                 xpath: 'conceptID'
         rights_digital_representation:
@@ -273,9 +309,11 @@ parameters:
             csv: 'csv_rights_digital_representation'
             term:
                 class: 'rights_digital_representation'
+                csv: 'csv_term_rights_digital_representation'
                 label: 'label_term_rights_digital_representation'
                 xpath: 'term'
             id:
+                csv: 'csv_id_rights_digital_representation'
                 label: 'label_id_rights_digital_representation'
                 xpath: 'conceptID'
 
