@@ -95,9 +95,13 @@ class ReportController extends Controller
         return $this->get('doctrine_mongodb')->getManager();
     }
 
-    private function getAllRecords()
+    private function getAllRecords($field)
     {
-        return $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $this->provider));
+        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . $field);
+        $query = $qb->getQuery();
+        $data = $query->execute();
+        memory_get_usage()
+        return $data;
     }
 
     private function generateBarChart($csvData, $header)
@@ -334,7 +338,7 @@ class ReportController extends Controller
 
     private function ambigIds($field, $label, $description)
     {
-        $allRecords = $this->getAllRecords();
+        $allRecords = $this->getAllRecords($field);
         $counts = array();
         if($allRecords) {
             $ids = array();
@@ -454,7 +458,7 @@ class ReportController extends Controller
 
     private function ambigTerms($field)
     {
-        $allRecords = $this->getAllRecords();
+        $allRecords = $this->getAllRecords($field);
         $authorities = array();
         $localIds = array();
         $termsWithId = array();
@@ -689,7 +693,7 @@ class ReportController extends Controller
 
     private function richOccurrences($field)
     {
-        $allRecords = $this->getAllRecords();
+        $allRecords = $this->getAllRecords($field);
         $counts = array();
         if($allRecords) {
             foreach ($allRecords as $record) {
@@ -808,7 +812,7 @@ class ReportController extends Controller
     {
         $undefinedKey = '(undefined)';
 
-        $allRecords = $this->getAllRecords();
+        $allRecords = $this->getAllRecords($field);
         $counts = array();
         if($allRecords) {
             foreach ($allRecords as $record) {
