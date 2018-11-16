@@ -100,7 +100,6 @@ class ReportController extends Controller
         $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . $field);
         $query = $qb->getQuery();
         $data = $query->execute();
-        memory_get_usage()
         return $data;
     }
 
