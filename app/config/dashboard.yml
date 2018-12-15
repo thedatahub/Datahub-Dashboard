@@ -7,6 +7,8 @@ parameters:
     providers:
       Museum voor Schone Kunsten Gent: 'msk'
       Musea Brugge - Groeningemuseum: 'gro'
+#      should only be added once the old wrong 'KMSKA' provider is gone from the Datahub
+#      Koninklijk Museum voor Schone Kunsten Antwerpen: 'kmska'
 
     data_definition:
         # provider should always be present; other terms can be changed, added or removed at will
@@ -49,10 +51,10 @@ parameters:
                 xpath: 'conceptID'
         acquisition:
             parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventMethod'
-            exclude: true
             csv: 'csv_acquisition'
             term:
                 class: 'minimum'
+                exclude: true
                 csv: 'csv_term_acquisition'
                 label: 'label_term_acquisition'
                 xpath: 'term'

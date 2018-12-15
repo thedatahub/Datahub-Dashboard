@@ -66,6 +66,7 @@ class FetchDataCommand extends ContainerAwareCommand
             $dm->getDocumentCollection('RecordBundle:Record')->remove([]);
 
             $providers = array();
+            $recordIds = array();
             $i = 0;
             foreach ($recs as $rec) {
                 $i++;
@@ -75,17 +76,30 @@ class FetchDataCommand extends ContainerAwareCommand
                 $fetchedData = $this->fetchData($dataDef, $namespace, $data, $providers, $providerDef, $verbose);
 
                 // Create & store a new record based on this data
-                if(array_key_exists('provider', $fetchedData) && count($fetchedData['provider']) > 0) {
-                    $record = new Record();
-                    $record->setProvider($fetchedData['provider'][0]);
-                    $record->setData($fetchedData);
-                    $dm->persist($record);
+                if(array_key_exists('provider', $fetchedData)) {
+                    if(count($fetchedData['provider']) > 0) {
+                        $providerId = $fetchedData['provider'][0];
+                        $record = new Record();
+                        $record->setProvider($providerId);
+                        $record->setData($fetchedData);
+                        $dm->persist($record);
+
+                        if (!array_key_exists($providerId, $recordIds)) {
+                            $recordIds[$providerId] = array();
+                        }
+                        $recordIds[$providerId][] = $record->getId();
+                    }
                 }
-                if($verbose && $i % 1000 === 0) {
-                    echo 'At ' . $i . PHP_EOL;
+                if($i % 100 === 0) {
+                    $dm->flush();
+                    $dm->clear();
+                    if($verbose && $i % 1000 === 0) {
+                        echo 'At ' . $i . PHP_EOL;
+                    }
                 }
             }
             $dm->flush();
+            $dm->clear();
             $this->storeProviders($providers);
         }
         else {
@@ -93,7 +107,7 @@ class FetchDataCommand extends ContainerAwareCommand
         }
 
         // Generate & store the report & trends
-        $this->generateAndStoreReport($dataDef, $providers);
+        $this->generateAndStoreReport($dataDef, $providers, $recordIds);
     }
 
     private function fetchData($dataDef, $namespace, $data, &$providers, $providerDef, $verbose)
@@ -214,25 +228,56 @@ class FetchDataCommand extends ContainerAwareCommand
             $dm->persist($provider);
         }
         $dm->flush();
+        $dm->clear();
     }
 
-    private function generateAndStoreReport($dataDef, $providers)
+    private function getAllRecords($providerId, $field)
+    {
+        // Clear the document manager cache, otherwise it will just return old results with the wrong data
+        $this->getDocumentManager()->flush();
+        $this->getDocumentManager()->clear();
+
+        $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($providerId)->select('data.' . $field);
+        $query = $qb->getQuery();
+        $data = $query->execute();
+        return $data;
+    }
+
+    private function unsetCompleteness(&$complete, $value, $id) {
+        $class = $value['class'];
+        if(array_key_exists($class, $complete)) {
+            $exclude = false;
+            if(array_key_exists('exclude', $value)) {
+                if($value['exclude'] === true) {
+                    $exclude = true;
+                }
+            }
+            if(!$exclude) {
+                $index = array_search($id, $complete[$class]);
+                if($index !== false) {
+                    unset($complete[$class][$index]);
+                }
+                // If minimum registration is not fulfilled, then basic registration isn't either
+                if($value['class'] === 'minimum') {
+                    $index = array_search($id, $complete['basic']);
+                    if($index !== false) {
+                        unset($complete['basic'][$index]);
+                    }
+                }
+            }
+        }
+    }
+
+    private function generateAndStoreReport($dataDef, $providers, $recordIds)
     {
         $dm = $this->getDocumentManager();
         $dm->getDocumentCollection('ReportBundle:CompletenessReport')->remove([]);
         $dm->getDocumentCollection('ReportBundle:FieldReport')->remove([]);
+        $dm->flush();
+        $dm->clear();
 
         foreach($providers as $provider) {
             $providerId = $provider->getIdentifier();
-
-            $allRecords = $this->getDocumentManager()->getRepository('RecordBundle:Record')->findBy(array('provider' => $providerId));
-
-            if(!$allRecords) {
-                continue;
-            }
-
-            $completenessReport = new CompletenessReport();
-            $completenessReport->setProvider($providerId);
 
             $fields = array(
                 'minimum' => array(),
@@ -243,21 +288,16 @@ class FetchDataCommand extends ContainerAwareCommand
                 'rights_digital_representation' => array()
             );
 
-            foreach ($dataDef as $key => $value) {
-                if (array_key_exists('xpath', $value)) {
-                    if(array_key_exists('class', $value)) {
-                        $fields[$value['class']][$key] = array();
-                    }
-                }
-                elseif (array_key_exists('parent_xpath', $value)) {
-                    foreach ($value as $k => $v) {
-                        if (RecordUtil::excludeKey($k) || !array_key_exists('class', $v)) {
-                            continue;
-                        }
-                        if (array_key_exists('xpath', $v)) {
-                            $fields[$v['class']][$key . '/' . $k] = array();
-                        }
-                    }
+            $complete = array(
+                'minimum' => array(),
+                'basic' => array(),
+                'rights_data' => array(),
+                'rights_work' => array(),
+                'rights_digital_representation' => array()
+            );
+            foreach($complete as $class => $arr) {
+                foreach($recordIds[$providerId] as $recordId) {
+                    $complete[$class][] = $recordId;
                 }
             }
 
@@ -267,79 +307,72 @@ class FetchDataCommand extends ContainerAwareCommand
                 $termIds[$field] = array();
             }
 
-            foreach ($allRecords as $record) {
-                $data = $record->getData();
-                $minimumComplete = true;
-                $basicComplete = true;
-                $rightsDataComplete = true;
-                $rightsWorkComplete = true;
-                $rightsDigitalRepresentationComplete = true;
-                foreach ($dataDef as $key => $value) {
-                    if (array_key_exists('xpath', $value)) {
-                        if (is_array($data) && array_key_exists($key, $data) && is_array($data[$key])) {
-                            if(count($data[$key]) > 0 && array_key_exists('class', $value)) {
-                                $fields[$value['class']][$key][] = $record->getId();
-                            }
-                        }
-                        else {
-                            $exclude = false;
-                            if(array_key_exists('exclude', $value)) {
-                                if($value['exclude'] === true) {
-                                    $exclude = true;
+            foreach ($dataDef as $field => $value) {
+                if (array_key_exists('xpath', $value)) {
+                    if(array_key_exists('class', $value)) {
+                        $fields[$value['class']][$field] = array();
+                        $allRecords = $this->getAllRecords($providerId, $field);
+                        if($allRecords) {
+                            foreach ($allRecords as $record) {
+                                $data = $record->getData();
+                                $remove = true;
+                                if (array_key_exists($field, $data)) {
+                                    if(count($data[$field]) > 0) {
+                                        $fields[$value['class']][$field][] = $record->getId();
+                                        $remove = false;
+                                    }
                                 }
-                            }
-                            if(!$exclude && array_key_exists('class', $value)) {
-                                if ($value['class'] === 'minimum') {
-                                    $minimumComplete = false;
-                                    $basicComplete = false;
-                                } elseif ($value['class'] === 'basic') {
-                                    $basicComplete = false;
-                                } elseif($value['class'] === 'rights_data') {
-                                    $rightsDataComplete = false;
-                                } elseif($value['class'] === 'rights_work') {
-                                    $rightsWorkComplete = false;
-                                } elseif($value['class'] === 'rights_digital_representation') {
-                                    $rightsDigitalRepresentationComplete = false;
+                                if($remove) {
+                                    $this->unsetCompleteness($complete, $value, $record->getId());
                                 }
                             }
                         }
-                    } elseif (array_key_exists('parent_xpath', $value)) {
-                        foreach ($value as $k => $v) {
-                            if (RecordUtil::excludeKey($k)) {
+                    }
+                }
+                elseif (array_key_exists('parent_xpath', $value)) {
+                    $allRecords = $this->getAllRecords($providerId, $field);
+                    if($allRecords) {
+                        foreach ($value as $subField => $v) {
+                            if (RecordUtil::excludeKey($subField) || !array_key_exists('class', $v)) {
                                 continue;
                             }
                             if (array_key_exists('xpath', $v)) {
-                                $found = false;
-                                foreach ($data as $fieldName => $fieldValues) {
-                                    if($fieldName === $key && $fieldValues) {
-                                        foreach ($fieldValues as $fieldValue) {
-                                            if ($fieldValue) {
-                                                if (array_key_exists($k, $fieldValue) && is_array($fieldValue[$k])) {
-                                                    if (count($fieldValue[$k]) > 0) {
-                                                        if($k === 'id') {
-                                                            foreach($fieldValue[$k] as $id) {
-                                                                if($id['type'] === 'purl') {
-                                                                    $found = true;
-                                                                    break;
-                                                                }
+                                $fields[$v['class']][$field . '/' . $subField] = array();
+                                foreach ($allRecords as $record) {
+                                    $data = $record->getData();
+                                    $remove = true;
+                                    if (array_key_exists($field, $data)) {
+                                        if(count($data[$field]) > 0) {
+                                            if(array_key_exists($subField, $data[$field])) {
+                                                if(count($data[$field][$subField]) > 0) {
+                                                    $fields[$v['class']][$field . '/' . $subField][] = $record->getId();
+                                                    $remove = false;
+
+                                                    if($subField === 'id') {
+                                                        // Consider record incomplete unless there is a purl id
+                                                        $remove = true;
+                                                        foreach($data[$field][$subField] as $id) {
+                                                            if($id['type'] === 'purl') {
+                                                                $remove = false;
+                                                                break;
                                                             }
                                                         }
-                                                        else {
-                                                            $found = true;
-                                                        }
-                                                        if ($k === 'term') {
-                                                            $term = RecordUtil::getPreferredTerm($fieldValue['term']);
-                                                            if ($term && array_key_exists('id', $fieldValue) && is_array($fieldValue['id'])) {
-                                                                if (count($fieldValue['id']) > 0 && !array_key_exists($term, $termIds[$key])) {
+                                                    }
+
+                                                    if ($subField === 'term') {
+                                                        $term = RecordUtil::getPreferredTerm($data[$field][$subField]);
+                                                        if ($term && array_key_exists('id', $data[$field])) {
+                                                            if (is_array($data[$field]['id'])) {
+                                                                if (count($data[$field]['id']) > 0 && !array_key_exists($term, $termIds[$field])) {
                                                                     $firstPurlId = null;
-                                                                    foreach ($fieldValue['id'] as $termId) {
+                                                                    foreach ($data[$field]['id'] as $termId) {
                                                                         if ($termId['type'] === 'purl') {
                                                                             $firstPurlId = $termId['id'];
                                                                             break;
                                                                         }
                                                                     }
                                                                     if ($firstPurlId != null) {
-                                                                        $termIds[$key][$term] = $firstPurlId;
+                                                                        $termIds[$field][$term] = $firstPurlId;
                                                                     }
                                                                 }
                                                             }
@@ -349,54 +382,24 @@ class FetchDataCommand extends ContainerAwareCommand
                                             }
                                         }
                                     }
-                                }
-                                if($found && array_key_exists('class', $v)) {
-                                    $fields[$v['class']][$key . '/' . $k][] = $record->getId();
-                                }
-                                else {
-                                    $exclude = false;
-                                    if(array_key_exists('exclude', $value)) {
-                                        if($value['exclude'] === true) {
-                                            $exclude = true;
-                                        }
-                                    }
-                                    if(!$exclude && array_key_exists('class', $v)) {
-                                        if ($v['class'] === 'minimum') {
-                                            $minimumComplete = false;
-                                            $basicComplete = false;
-                                        } elseif ($v['class'] === 'basic') {
-                                            $basicComplete = false;
-                                        } elseif($v['class'] === 'rights_data') {
-                                            $rightsDataComplete = false;
-                                        } elseif($v['class'] === 'rights_work') {
-                                            $rightsWorkComplete = false;
-                                        } elseif($v['class'] === 'rights_digital_representation') {
-                                            $rightsDigitalRepresentationComplete = false;
-                                        }
+                                    if($remove) {
+                                        $this->unsetCompleteness($complete, $v, $record->getId());
                                     }
                                 }
                             }
                         }
                     }
                 }
-                $completenessReport->incrementTotal();
-                if ($minimumComplete) {
-                    $completenessReport->incrementMinimum();
-                }
-                if ($basicComplete) {
-                    $completenessReport->incrementBasic();
-                }
-                if($rightsWorkComplete) {
-                    $completenessReport->incrementRightsWork();
-                }
-                if($rightsDigitalRepresentationComplete) {
-                    $completenessReport->incrementRightsDigitalRepresentation();
-                }
-                if($rightsDataComplete) {
-                    $completenessReport->incrementRightsData();
-                }
             }
 
+            $completenessReport = new CompletenessReport();
+            $completenessReport->setProvider($providerId);
+            $completenessReport->setTotal(count($recordIds[$providerId]));
+            $completenessReport->setMinimum(count($complete['minimum']));
+            $completenessReport->setBasic(count($complete['basic']));
+            $completenessReport->setRightsData(count($complete['rights_data']));
+            $completenessReport->setRightsWork(count($complete['rights_work']));
+            $completenessReport->setRightsDigitalRepresentation(count($complete['rights_digital_representation']));
             $dm->persist($completenessReport);
 
             $completenessTrend = new CompletenessTrend();
@@ -419,8 +422,8 @@ class FetchDataCommand extends ContainerAwareCommand
             $dm->persist($fieldReport);
 
             $termsWithIds = array();
-            foreach($termIds as $key => $terms) {
-                $termsWithIds[$key] = count($terms);
+            foreach($termIds as $field => $terms) {
+                $termsWithIds[$field] = count($terms);
             }
             $fieldTrend = new FieldTrend();
             $fieldTrend->setProvider($providerId);
@@ -429,6 +432,7 @@ class FetchDataCommand extends ContainerAwareCommand
             $dm->persist($fieldTrend);
 
             $dm->flush();
+            $dm->clear();
         }
     }
 }

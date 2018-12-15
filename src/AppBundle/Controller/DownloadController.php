@@ -1,14 +1,11 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\RecordBundle\Document\Record;
 use AppBundle\Util\RecordUtil;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Twig\Error\RuntimeError;
 
 class DownloadController extends Controller
 {

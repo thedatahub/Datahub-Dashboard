@@ -97,6 +97,9 @@ class ReportController extends Controller
 
     private function getAllRecords($field)
     {
+        // Clear the document manager cache, otherwise it will just return old results with the wrong data
+        $this->getDocumentManager()->clear();
+
         $qb = $this->getDocumentManager()->createQueryBuilder('RecordBundle:Record')->field('provider')->equals($this->provider)->select('data.' . str_replace('/', '.', $field));
         $query = $qb->getQuery();
         $data = $query->execute();
@@ -187,28 +190,15 @@ class ReportController extends Controller
         $reports = $this->getDocumentManager()->getRepository('ReportBundle:FieldReport')->findBy(array('provider' => $this->provider));
         $csvData = '';
         $total = 0;
-        if($reports && count($reports) > 0) {
-            $report = $reports[0];
-            $total = $report->getTotal();
-            if($isMinimum || $isBasic) {
-                $data = $report->getMinimum();
-            } elseif($isExtended) {
-                $data = $report->getExtended();
-            }
-            foreach ($data as $key => $value) {
-                $label = null;
-                if (strpos($key, '/')) {
-                    $parts = explode('/', $key);
-                    $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
-                    $key = $parts[0] . '.' . $parts[1];
-                } else {
-                    $label = $this->dataDef[$key]['label'];
+        if($reports) {
+            if(count($reports) > 0) {
+                $report = $reports[0];
+                $total = $report->getTotal();
+                if ($isMinimum || $isBasic) {
+                    $data = $report->getMinimum();
+                } elseif ($isExtended) {
+                    $data = $report->getExtended();
                 }
-                $label = $this->translator->trans($label);
-                $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","' . ($isBasic ? '1"' : '0"');
-            }
-            if($isBasic) {
-                $data = $report->getBasic();
                 foreach ($data as $key => $value) {
                     $label = null;
                     if (strpos($key, '/')) {
@@ -219,7 +209,22 @@ class ReportController extends Controller
                         $label = $this->dataDef[$key]['label'];
                     }
                     $label = $this->translator->trans($label);
-                    $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","0"';
+                    $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","' . ($isBasic ? '1"' : '0"');
+                }
+                if ($isBasic) {
+                    $data = $report->getBasic();
+                    foreach ($data as $key => $value) {
+                        $label = null;
+                        if (strpos($key, '/')) {
+                            $parts = explode('/', $key);
+                            $label = $this->dataDef[$parts[0]][$parts[1]]['label'];
+                            $key = $parts[0] . '.' . $parts[1];
+                        } else {
+                            $label = $this->dataDef[$key]['label'];
+                        }
+                        $label = $this->translator->trans($label);
+                        $csvData .= PHP_EOL . '"' . $key . '","' . $label . '","' . count($value) . '","0"';
+                    }
                 }
             }
         }
@@ -343,12 +348,14 @@ class ReportController extends Controller
             $ids = array();
             foreach ($allRecords as $record) {
                 $data = $record->getData();
-                if ($data[$field] && count($data[$field]) > 0) {
-                    $id = $data[$field][0];
-                    if (!array_key_exists($id, $ids)) {
-                        $ids[$id] = 1;
-                    } else {
-                        $ids[$id]++;
+                if ($data[$field]) {
+                    if(count($data[$field]) > 0) {
+                        $id = $data[$field][0];
+                        if (!array_key_exists($id, $ids)) {
+                            $ids[$id] = 1;
+                        } else {
+                            $ids[$id]++;
+                        }
                     }
                 }
             }

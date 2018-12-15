@@ -37,6 +37,11 @@ class CompletenessReport
     /**
      * @ODM\Field(type="int")
      */
+    private $rightsData;
+
+    /**
+     * @ODM\Field(type="int")
+     */
     private $rightsWork;
 
     /**
@@ -44,19 +49,14 @@ class CompletenessReport
      */
     private $rightsDigitalRepresentation;
 
-    /**
-     * @ODM\Field(type="int")
-     */
-    private $rightsData;
-
     public function __construct()
     {
         $this->total = 0;
         $this->minimum = 0;
         $this->basic = 0;
+        $this->rightsData = 0;
         $this->rightsWork = 0;
         $this->rightsDigitalRepresentation = 0;
-        $this->rightsData = 0;
     }
 
     public function getId()
@@ -124,6 +124,21 @@ class CompletenessReport
         $this->basic++;
     }
 
+    public function getRightsData()
+    {
+        return $this->rightsData;
+    }
+
+    public function setRightsData($rightsData)
+    {
+        $this->rightsData = $rightsData;
+    }
+
+    public function incrementRightsData()
+    {
+        $this->rightsData++;
+    }
+
     public function getRightsWork()
     {
         return $this->rightsWork;
@@ -152,20 +167,5 @@ class CompletenessReport
     public function incrementRightsDigitalRepresentation()
     {
         $this->rightsDigitalRepresentation++;
-    }
-
-    public function getRightsData()
-    {
-        return $this->rightsData;
-    }
-
-    public function setRightsData($rightsData)
-    {
-        $this->rightsData = $rightsData;
-    }
-
-    public function incrementRightsData()
-    {
-        $this->rightsData++;
     }
 }
