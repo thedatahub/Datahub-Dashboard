@@ -343,36 +343,42 @@ class FetchDataCommand extends ContainerAwareCommand
                                     $remove = true;
                                     if (array_key_exists($field, $data)) {
                                         if(count($data[$field]) > 0) {
-                                            if(array_key_exists($subField, $data[$field])) {
-                                                if(count($data[$field][$subField]) > 0) {
-                                                    $fields[$v['class']][$field . '/' . $subField][] = $record->getId();
-                                                    $remove = false;
+                                            $idAdded = false;
+                                            foreach ($data[$field] as $fieldData) {
+                                                if (array_key_exists($subField, $fieldData)) {
+                                                    if (count($fieldData[$subField]) > 0) {
+                                                        if(!$idAdded) {
+                                                            $fields[$v['class']][$field . '/' . $subField][] = $record->getId();
+                                                            $idAdded = true;
+                                                        }
+                                                        $remove = false;
 
-                                                    if($subField === 'id') {
-                                                        // Consider record incomplete unless there is a purl id
-                                                        $remove = true;
-                                                        foreach($data[$field][$subField] as $id) {
-                                                            if($id['type'] === 'purl') {
-                                                                $remove = false;
-                                                                break;
+                                                        if ($subField === 'id') {
+                                                            // Consider record incomplete unless there is a purl id
+                                                            $remove = true;
+                                                            foreach ($fieldData[$subField] as $id) {
+                                                                if ($id['type'] === 'purl') {
+                                                                    $remove = false;
+                                                                    break;
+                                                                }
                                                             }
                                                         }
-                                                    }
 
-                                                    if ($subField === 'term') {
-                                                        $term = RecordUtil::getPreferredTerm($data[$field][$subField]);
-                                                        if ($term && array_key_exists('id', $data[$field])) {
-                                                            if (is_array($data[$field]['id'])) {
-                                                                if (count($data[$field]['id']) > 0 && !array_key_exists($term, $termIds[$field])) {
-                                                                    $firstPurlId = null;
-                                                                    foreach ($data[$field]['id'] as $termId) {
-                                                                        if ($termId['type'] === 'purl') {
-                                                                            $firstPurlId = $termId['id'];
-                                                                            break;
+                                                        if ($subField === 'term') {
+                                                            $term = RecordUtil::getPreferredTerm($fieldData[$subField]);
+                                                            if ($term && array_key_exists('id', $fieldData)) {
+                                                                if (is_array($fieldData['id'])) {
+                                                                    if (count($fieldData['id']) > 0 && !array_key_exists($term, $termIds[$field])) {
+                                                                        $firstPurlId = null;
+                                                                        foreach ($fieldData['id'] as $termId) {
+                                                                            if ($termId['type'] === 'purl') {
+                                                                                $firstPurlId = $termId['id'];
+                                                                                break;
+                                                                            }
                                                                         }
-                                                                    }
-                                                                    if ($firstPurlId != null) {
-                                                                        $termIds[$field][$term] = $firstPurlId;
+                                                                        if ($firstPurlId != null) {
+                                                                            $termIds[$field][$term] = $firstPurlId;
+                                                                        }
                                                                     }
                                                                 }
                                                             }
