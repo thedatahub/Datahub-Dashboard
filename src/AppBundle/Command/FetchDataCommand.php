@@ -364,7 +364,8 @@ class FetchDataCommand extends ContainerAwareCommand
                                                             }
                                                         }
 
-                                                        if ($subField === 'term') {
+                                                        // Link terms with purl id's
+                                                        if ($subField === 'term' && array_key_exists($field, $termIds)) {
                                                             $term = RecordUtil::getPreferredTerm($fieldData[$subField]);
                                                             if ($term && array_key_exists('id', $fieldData)) {
                                                                 if (is_array($fieldData['id'])) {

@@ -321,7 +321,7 @@ parameters:
 
     terms_with_ids:
       - 'object_name'
-      - 'object_category'
+      - 'acquisition'
       - 'main_motif'
       - 'creator'
       - 'material'
@@ -329,6 +329,8 @@ parameters:
       - 'displayed_subject'
       - 'displayed_location'
       - 'displayed_event'
+      - 'object_category'
+      - 'data_provider'
       - 'rights_data'
       - 'rights_work'
       - 'rights_digital_representation'
