@@ -38,6 +38,8 @@
 
         var m = 20,
             r = 125;
+            w = r * 2 + 64.5 + 64.5;
+            h = (r + m) * 2;
         var cols = ["#00BCE4", "#05E9FF", "#087D93", "#0EBFC0", "#50A6B9"];
         var lastCol = "#FFFFFF";
 
@@ -45,12 +47,11 @@
             .data(data)
             .enter()
             .append("svg")
-            .attr("viewBox", "0 0")
-            .attr("width", r * 2 + 69.5 + 35.25)
-            .attr("height", (r + m) * 2)
+            .attr("viewBox", "0 0 " + w + " " + h)
+            .attr("width", "50%")
             .append("g")
             .attr("class", "slice")
-            .attr("transform", "translate(" + (r + 69.5) + "," + (r + m) + ")");
+            .attr("transform", "translate(" + (r + 64.5) + "," + (r + m) + ")");
 
 
         // Declare an arc generator function
