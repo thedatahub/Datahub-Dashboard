@@ -25,7 +25,7 @@ parameters:
             class: 'minimum'
             csv: 'csv_object_number'
             label: 'label_object_number'
-            xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="objectnummer"]'
+            xpath: 'descriptiveMetadata/objectIdentificationWrap/repositoryWrap/repositorySet/workID[@type="object-number"]'
         title:
             class: 'minimum'
             csv: 'csv_title'
@@ -76,7 +76,7 @@ parameters:
             label: 'label_acquisition_date'
             xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="acquisition"]/eventDate/displayDate'
         main_motif:
-            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="hoofdmotief"]'
+            parent_xpath: 'descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject[@type="content-motif-general"]'
             csv: 'csv_main_motif'
             term:
                 class: 'basic'
@@ -125,7 +125,7 @@ parameters:
                 label: 'label_end_date'
                 xpath: 'latestDate'
         material:
-            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech'
+            parent_xpath: 'descriptiveMetadata/eventWrap/eventSet/event[eventType/term="production"]/eventMaterialsTech/materialsTech/termMaterialsTech[@type="material"]'
             csv: 'csv_material'
             term:
                 class: 'basic'
@@ -257,7 +257,7 @@ parameters:
             label: 'label_application_id'
             xpath: 'lidoRecID[@pref="preferred"]'
         object_category:
-            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="objectcategorie"]'
+            parent_xpath: 'descriptiveMetadata/objectClassificationWrap/classificationWrap/classification[@type="object-category"]'
             csv: 'csv_object_category'
             term:
                 class: 'extended'
