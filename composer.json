@@ -35,7 +35,7 @@
         "symfony/symfony": "3.4.*",
         "symfony/webpack-encore-pack": "^1.0",
         "twbs/bootstrap": "4.1.1",
-        "twig/twig": "^1.0"
+        "twig/twig": "^2.15"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
